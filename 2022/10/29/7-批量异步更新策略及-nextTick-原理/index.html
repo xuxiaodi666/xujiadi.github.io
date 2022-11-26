@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>7.批量异步更新策略及 nextTick 原理 | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="为什么要异步更新通过前面几个章节我们介绍，相信大家已经明白了 Vue.js 是如何在我们修改 data 中的数据后修改视图了。简单回顾一下，这里面其实就是一个“setter -&gt; Dep -&gt; Watcher -&gt; patch -&gt; 视图”的过程。 假设我们有如下这么一种情况。 123456&lt;template&gt;  &lt;div&gt;    &lt;div&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.批量异步更新策略及 nextTick 原理">
+<meta property="og:url" content="http://example.com/2022/10/29/7-%E6%89%B9%E9%87%8F%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%E5%8F%8A-nextTick-%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="为什么要异步更新通过前面几个章节我们介绍，相信大家已经明白了 Vue.js 是如何在我们修改 data 中的数据后修改视图了。简单回顾一下，这里面其实就是一个“setter -&gt; Dep -&gt; Watcher -&gt; patch -&gt; 视图”的过程。 假设我们有如下这么一种情况。 123456&lt;template&gt;  &lt;div&gt;    &lt;div&amp;g">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/24/161285d6b2d9e6bd~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="article:published_time" content="2022-10-29T12:13:45.000Z">
+<meta property="article:modified_time" content="2022-10-29T12:18:35.425Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/24/161285d6b2d9e6bd~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-7-批量异步更新策略及-nextTick-原理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/29/7-%E6%89%B9%E9%87%8F%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%E5%8F%8A-nextTick-%E5%8E%9F%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2022-10-29T12:13:45.000Z" itemprop="datePublished">2022-10-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      7.批量异步更新策略及 nextTick 原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="为什么要异步更新"><a href="#为什么要异步更新" class="headerlink" title="为什么要异步更新"></a>为什么要异步更新</h2><p>通过前面几个章节我们介绍，相信大家已经明白了 Vue.js 是如何在我们修改 <code>data</code> 中的数据后修改视图了。简单回顾一下，这里面其实就是一个“<code>setter -&gt; Dep -&gt; Watcher -&gt; patch -&gt; 视图</code>”的过程。</p>
+<p>假设我们有如下这么一种情况。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123;number&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> @<span class="attr">click</span>=<span class="string">&quot;handleClick&quot;</span>&gt;</span>click<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">export default &#123;</span><br><span class="line">    data () &#123;</span><br><span class="line">        return &#123;</span><br><span class="line">            number: <span class="number">0</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">        handleClick () &#123;</span><br><span class="line">            for(let <span class="selector-tag">i</span> = <span class="number">0</span>; <span class="selector-tag">i</span> &lt; <span class="number">1000</span>; <span class="selector-tag">i</span>++) &#123;</span><br><span class="line">                this<span class="selector-class">.number</span>++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们按下 click 按钮的时候，<code>number</code> 会被循环增加1000次。</p>
+<p>那么按照之前的理解，每次 <code>number</code> 被 +1 的时候，都会触发 <code>number</code> 的 <code>setter</code> 方法，从而根据上面的流程一直跑下来最后修改真实 DOM。那么在这个过程中，DOM 会被更新 1000 次！太可怕了。</p>
+<p>Vue.js 肯定不会以如此低效的方法来处理。Vue.js在默认情况下，每次触发某个数据的 <code>setter</code> 方法后，对应的 <code>Watcher</code> 对象其实会被 <code>push</code> 进一个队列 <code>queue</code> 中，在下一个 tick 的时候将这个队列 <code>queue</code> 全部拿出来 <code>run</code>（ <code>Watcher</code> 对象的一个方法，用来触发 <code>patch</code> 操作） 一遍。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/24/161285d6b2d9e6bd~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>那么什么是下一个 tick 呢？</p>
+<h2 id="nextTick"><a href="#nextTick" class="headerlink" title="nextTick"></a>nextTick</h2><p>Vue.js 实现了一个 <code>nextTick</code> 函数，传入一个 <code>cb</code> ，这个 <code>cb</code> 会被存储到一个队列中，在下一个 tick 时触发队列中的所有 <code>cb</code> 事件。</p>
+<p>因为目前浏览器平台并没有实现 <code>nextTick</code> 方法，所以 Vue.js 源码中分别用 <code>Promise</code>、<code>setTimeout</code>、<code>setImmediate</code> 等方式在 microtask（或是task）中创建一个事件，目的是在当前调用栈执行完毕以后（不一定立即）才会去执行这个事件。</p>
+<p>笔者用 <code>setTimeout</code> 来模拟这个方法，当然，真实的源码中会更加复杂，笔者在小册中只讲原理，有兴趣了解源码中 <code>nextTick</code> 的具体实现的同学可以参考<a href="https://link.juejin.cn/?target=https://github.com/vuejs/vue/blob/dev/src/core/util/next-tick.js%23L90" title="https://github.com/vuejs/vue/blob/dev/src/core/util/next-tick.js#L90">next-tick</a>。</p>
+<p>首先定义一个 <code>callbacks</code> 数组用来存储 <code>nextTick</code>，在下一个 tick 处理这些回调函数之前，所有的 <code>cb</code> 都会被存在这个 <code>callbacks</code> 数组中。<code>pending</code> 是一个标记位，代表一个等待的状态。</p>
+<p><code>setTimeout</code> 会在 task 中创建一个事件 <code>flushCallbacks</code> ，<code>flushCallbacks</code> 则会在执行时将 <code>callbacks</code> 中的所有 <code>cb</code> 依次执行。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">let <span class="attr">callbacks</span> = []<span class="comment">;</span></span><br><span class="line">let <span class="attr">pending</span> = <span class="literal">false</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line">function nextTick (cb) &#123;</span><br><span class="line">    callbacks.push(cb)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    if (!pending) &#123;</span><br><span class="line">        <span class="attr">pending</span> = <span class="literal">true</span><span class="comment">;</span></span><br><span class="line">        setTimeout(flushCallbacks, 0)<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function flushCallbacks () &#123;</span><br><span class="line">    <span class="attr">pending</span> = <span class="literal">false</span><span class="comment">;</span></span><br><span class="line">    const <span class="attr">copies</span> = callbacks.slice(<span class="number">0</span>)<span class="comment">;</span></span><br><span class="line">    <span class="attr">callbacks.length</span> = <span class="number">0</span><span class="comment">;</span></span><br><span class="line">    for (let <span class="attr">i</span> = <span class="number">0</span><span class="comment">; i &lt; copies.length; i++) &#123;</span></span><br><span class="line">        copies<span class="section">[i]</span>()<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="再写-Watcher"><a href="#再写-Watcher" class="headerlink" title="再写 Watcher"></a>再写 Watcher</h2><p>第一个例子中，当我们将 <code>number</code> 增加 1000 次时，先将对应的 <code>Watcher</code> 对象给 <code>push</code> 进一个队列 <code>queue</code> 中去，等下一个 tick 的时候再去执行，这样做是对的。但是有没有发现，另一个问题出现了？</p>
+<p>因为 <code>number</code> 执行 ++ 操作以后对应的 <code>Watcher</code> 对象都是同一个，我们并不需要在下一个 tick 的时候执行 1000 个同样的 <code>Watcher</code> 对象去修改界面，而是只需要执行一个 <code>Watcher</code> 对象，使其将界面上的 0 变成 1000 即可。</p>
+<p>那么，我们就需要执行一个过滤的操作，同一个的 <code>Watcher</code> 在同一个 tick 的时候应该只被执行一次，也就是说队列 <code>queue</code> 中不应该出现重复的 <code>Watcher</code> 对象。</p>
+<p>那么我们给 <code>Watcher</code> 对象起个名字吧～用 <code>id</code> 来标记每一个 <code>Watcher</code> 对象，让他们看起来“不太一样”。</p>
+<p>实现 <code>update</code> 方法，在修改数据后由 <code>Dep</code> 来调用， 而 <code>run</code> 方法才是真正的触发 <code>patch</code> 更新视图的方法。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">let uid = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Watcher</span> &#123;</span><br><span class="line">    <span class="keyword">constructor</span> () &#123;</span><br><span class="line">        <span class="keyword">this</span>.id = ++uid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    update () &#123;</span><br><span class="line">        console.log(<span class="string">&#x27;watch&#x27;</span> + <span class="keyword">this</span>.id + <span class="string">&#x27; update&#x27;</span>);</span><br><span class="line">        queueWatcher(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    run () &#123;</span><br><span class="line">        console.log(<span class="string">&#x27;watch&#x27;</span> + <span class="keyword">this</span>.id + <span class="string">&#x27;视图更新啦～&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="queueWatcher"><a href="#queueWatcher" class="headerlink" title="queueWatcher"></a>queueWatcher</h2><p>不知道大家注意到了没有？笔者已经将 <code>Watcher</code> 的 <code>update</code> 中的实现改成了</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">queueWatcher(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>Watcher</code> 对象自身传递给 <code>queueWatcher</code> 方法。</p>
+<p>我们来实现一下 <code>queueWatcher</code> 方法。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">let <span class="attr">has</span> = &#123;&#125;<span class="comment">;</span></span><br><span class="line">let <span class="attr">queue</span> = []<span class="comment">;</span></span><br><span class="line">let <span class="attr">waiting</span> = <span class="literal">false</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line">function queueWatcher(watcher) &#123;</span><br><span class="line">    const <span class="attr">id</span> = watcher.id<span class="comment">;</span></span><br><span class="line">    if (has<span class="section">[id]</span> == null) &#123;</span><br><span class="line">        has<span class="section">[id]</span> = true<span class="comment">;</span></span><br><span class="line">        queue.push(watcher)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">        if (!waiting) &#123;</span><br><span class="line">            <span class="attr">waiting</span> = <span class="literal">true</span><span class="comment">;</span></span><br><span class="line">            nextTick(flushSchedulerQueue)<span class="comment">;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用一个叫做 <code>has</code> 的 map，里面存放 id -&gt; true ( false ) 的形式，用来判断是否已经存在相同的 <code>Watcher</code> 对象 （这样比每次都去遍历 <code>queue</code> 效率上会高很多）。</p>
+<p>如果目前队列 <code>queue</code> 中还没有这个 <code>Watcher</code> 对象，则该对象会被 <code>push</code> 进队列 <code>queue</code> 中去。</p>
+<p><code>waiting</code> 是一个标记位，标记是否已经向 <code>nextTick</code> 传递了 <code>flushSchedulerQueue</code> 方法，在下一个 tick 的时候执行 <code>flushSchedulerQueue</code> 方法来 flush 队列 <code>queue</code>，执行它里面的所有 <code>Watcher</code> 对象的 <code>run</code> 方法。</p>
+<h2 id="flushSchedulerQueue"><a href="#flushSchedulerQueue" class="headerlink" title="flushSchedulerQueue"></a>flushSchedulerQueue</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function flushSchedulerQueue () &#123;</span><br><span class="line">    let watcher, id<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    for (<span class="attr">index</span> = <span class="number">0</span><span class="comment">; index &lt; queue.length; index++) &#123;</span></span><br><span class="line">        <span class="attr">watcher</span> = queue[index]<span class="comment">;</span></span><br><span class="line">        <span class="attr">id</span> = watcher.id<span class="comment">;</span></span><br><span class="line">        has<span class="section">[id]</span> = null<span class="comment">;</span></span><br><span class="line">        watcher.run()<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attr">waiting</span>  = <span class="literal">false</span><span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">let <span class="attr">watch1</span> = new Watcher()<span class="comment">;</span></span><br><span class="line">let <span class="attr">watch2</span> = new Watcher()<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">watch1.update()<span class="comment">;</span></span><br><span class="line">watch1.update()<span class="comment">;</span></span><br><span class="line">watch2.update()<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们现在 new 了两个 <code>Watcher</code> 对象，因为修改了 <code>data</code> 的数据，所以我们模拟触发了两次 <code>watch1</code> 的 <code>update</code> 以及 一次 <code>watch2</code> 的 <code>update</code>。</p>
+<p>假设没有批量异步更新策略的话，理论上应该执行 <code>Watcher</code> 对象的 <code>run</code>，那么会打印。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">watch1 <span class="keyword">update</span></span><br><span class="line">watch1视图更新啦～</span><br><span class="line">watch1 <span class="keyword">update</span></span><br><span class="line">watch1视图更新啦～</span><br><span class="line">watch2 <span class="keyword">update</span></span><br><span class="line">watch2视图更新啦～</span><br></pre></td></tr></table></figure>
+
+<p>实际上则执行</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">watch1 <span class="keyword">update</span></span><br><span class="line">watch1 <span class="keyword">update</span></span><br><span class="line">watch2 <span class="keyword">update</span></span><br><span class="line">watch1视图更新啦～</span><br><span class="line">watch2视图更新啦～</span><br></pre></td></tr></table></figure>
+
+<p>这就是异步更新策略的效果，相同的 <code>Watcher</code> 对象会在这个过程中被剔除，在下一个 tick 的时候去更新视图，从而达到对我们第一个例子的优化。</p>
+<p>我们再回过头聊一下第一个例子， <code>number</code> 会被不停地进行 <code>++</code> 操作，不断地触发它对应的 <code>Dep</code> 中的 <code>Watcher</code> 对象的 <code>update</code> 方法。然后最终 <code>queue</code> 中因为对相同 <code>id</code> 的 <code>Watcher</code> 对象进行了筛选，从而 <code>queue</code> 中实际上只会存在一个 <code>number</code> 对应的 <code>Watcher</code> 对象。在下一个 tick 的时候（此时 <code>number</code> 已经变成了 1000），触发 <code>Watcher</code> 对象的 <code>run</code> 方法来更新视图，将视图上的 <code>number</code> 从 0 直接变成 1000。</p>
+<p>到这里，批量异步更新策略及 nextTick 原理已经讲完了，接下来让我们学习一下 Vuex 状态管理的工作原理。</p>
+<p>注：本节代码参考<a href="https://link.juejin.cn/?target=https://github.com/answershuto/VueDemo/blob/master/%25E3%2580%258A%25E6%2589%25B9%25E9%2587%258F%25E5%25BC%2582%25E6%25AD%25A5%25E6%259B%25B4%25E6%2596%25B0%25E7%25AD%2596%25E7%2595%25A5%25E5%258F%258A%2520nextTick%2520%25E5%258E%259F%25E7%2590%2586%25E3%2580%258B.js" title="https://github.com/answershuto/VueDemo/blob/master/%E3%80%8A%E6%89%B9%E9%87%8F%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%E5%8F%8A%20nextTick%20%E5%8E%9F%E7%90%86%E3%80%8B.js">《批量异步更新策略及 nextTick 原理》</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/29/7-%E6%89%B9%E9%87%8F%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%E5%8F%8A-nextTick-%E5%8E%9F%E7%90%86/" data-id="claxeer9l0006v8w1drxv6uqj" data-title="7.批量异步更新策略及 nextTick 原理" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/10/29/8-Vuex-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          8.Vuex 状态管理的工作原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/10/29/6-%E6%95%B0%E6%8D%AE%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%97%B6%E7%9A%84%E5%B7%AE%E5%BC%82-diff-%E5%8F%8A-patch-%E6%9C%BA%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">6.数据状态更新时的差异 diff 及 patch 机制</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

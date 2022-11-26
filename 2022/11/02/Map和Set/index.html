@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Map和Set | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="set是一种被叫做集合的数据结构，是由一堆无序的，相关联的，不重复的元素组成的 map是一种叫做字典的数据结构，每一个元素都有他对应的名字 SetSet是ES6新增的数据集合，与数组相似，但Set的值都是唯一的，不会出现重复 Set本身也是一个构造函数，可以直接用来生成实例 Set的类型也是一个对象 1const s &#x3D; new Set();  Set的遍历顺序就是插入顺序 Set的增删改查 ​">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Map和Set">
+<meta property="og:url" content="http://example.com/2022/11/02/Map%E5%92%8CSet/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="set是一种被叫做集合的数据结构，是由一堆无序的，相关联的，不重复的元素组成的 map是一种叫做字典的数据结构，每一个元素都有他对应的名字 SetSet是ES6新增的数据集合，与数组相似，但Set的值都是唯一的，不会出现重复 Set本身也是一个构造函数，可以直接用来生成实例 Set的类型也是一个对象 1const s &#x3D; new Set();  Set的遍历顺序就是插入顺序 Set的增删改查 ​">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-02T11:46:59.000Z">
+<meta property="article:modified_time" content="2022-11-02T11:47:29.343Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Map和Set" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/Map%E5%92%8CSet/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:46:59.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Map和Set
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>set是一种被叫做集合的数据结构，是由一堆无序的，相关联的，不重复的元素组成的</p>
+<p>map是一种叫做字典的数据结构，每一个元素都有他对应的名字</p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>Set是ES6新增的数据集合，与数组相似，但Set的值都是唯一的，不会出现重复</p>
+<p>Set本身也是一个构造函数，可以直接用来生成实例</p>
+<p>Set的类型也是一个对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const s = new Set();</span><br></pre></td></tr></table></figure>
+
+<p>Set的遍历顺序就是插入顺序</p>
+<p>Set的增删改查</p>
+<p>​	<strong>增删改查</strong></p>
+<p>​	add（）</p>
+<p>​	该方法可以向Set中添加一个值，返回的是他本身，对于已经存在的值，Set不会进行处理</p>
+<p>​	delete（）</p>
+<p>​	该方法用于删除一个值，返回的是布尔值，来表示操作是否成功</p>
+<p>​	has（）</p>
+<p>​	该方法返回一个布尔值，用来查找该值是否为Set的成员</p>
+<p>​	clear（）</p>
+<p>​	清除Set中的所有成员</p>
+<p><strong>遍历</strong></p>
+<p>keys（）返回键名</p>
+<p>values（）返回键值</p>
+<p>因为Set没有键名，只有键值所有两个方法行为一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">let set = new Set([&#x27;red&#x27;, &#x27;green&#x27;, &#x27;blue&#x27;]);</span><br><span class="line"></span><br><span class="line">for (let item of set.keys()) &#123;</span><br><span class="line">  console.log(item);</span><br><span class="line">&#125;//red, green, blue</span><br><span class="line"></span><br><span class="line">for (let item of set.values()) &#123;</span><br><span class="line">  console.log(item);</span><br><span class="line">&#125;//red, green, blue</span><br></pre></td></tr></table></figure>
+
+<p>entries（）返回键值对</p>
+<p>forEach（）用于对每个成员执行某种操作，没有返回值，同时forEach方法有第二个参数，用于绑定处理函数的this</p>
+<p>Set的默认遍历结构就是values（），所以可以直接使用for. . .of遍历</p>
+<p>一般Set常与扩展运算符（. . .）一起实现数组或者字符串的去重</p>
+<p>通过再加上filter来实现并集，交际和差集</p>
+<p>还可以使用数组的map方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">let a = new Set([1, 2, 3]);</span><br><span class="line">let b = new Set([4, 3, 2]);</span><br><span class="line"></span><br><span class="line">a = new Set([...a].map(x =&gt; x * 2));</span><br><span class="line">// 返回Set结构：&#123;2, 4, 6&#125;</span><br><span class="line"></span><br><span class="line">// 并集</span><br><span class="line">let union = new Set([...a, ...b]);</span><br><span class="line">// Set &#123;1, 2, 3, 4&#125;</span><br><span class="line"></span><br><span class="line">// 交集</span><br><span class="line">let intersect = new Set([...a].filter(x =&gt; b.has(x)));</span><br><span class="line">// set &#123;2, 3&#125;</span><br><span class="line"></span><br><span class="line">// （a 相对于 b 的）差集</span><br><span class="line">let difference = new Set([...a].filter(x =&gt; !b.has(x)));</span><br><span class="line">// Set &#123;1&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map是一种有序列表，他的键和值可以是任意类型</p>
+<p>Map本身也是一个构造函数，可以用来直接生成实例</p>
+<p><strong>增删改查</strong></p>
+<p>Map同样也具有增删改查的方法</p>
+<p>​	size 用来返回Map的成员总数</p>
+<p>​	set（）有两个参数，第一个是键名，第二个是键值，如果已有键名，那么就会传入新的键值，如果没有就生成该键值对，set也可以采用链式写法</p>
+<p>​	get（）可以用来读取对应的键值，找不到则返回undefined</p>
+<p>​	has（）用来检测Map中是否存在某个键，返回布尔值</p>
+<p>​	delete（）用于删除某个键，返回一个布尔值来表明操作结果</p>
+<p>​	clear（）用于清除所有的成员</p>
+<p><strong>遍历</strong></p>
+<p>keys（）返回Map中的所有键名</p>
+<p>values（）返回所有键值</p>
+<p>entries（）返回所有键值对</p>
+<p>forEach（）遍历所有成员,同Set的forEach</p>
+<h2 id="WeakSet和WeakMap"><a href="#WeakSet和WeakMap" class="headerlink" title="WeakSet和WeakMap"></a>WeakSet和WeakMap</h2><h3 id="WeakSet"><a href="#WeakSet" class="headerlink" title="WeakSet"></a>WeakSet</h3><p>​	WeakSet与Set结构类似，同样值不会重复，但WeakSet的成员只能是对象，且WeakSet是弱引用，垃圾回收机制不考虑，所以WeakSet没有存储当前对象的列表，无法遍历</p>
+<p>​	WeakSet有三个方法add（），delete（），has（）</p>
+<p>​	</p>
+<h3 id="WeakMap"><a href="#WeakMap" class="headerlink" title="WeakMap"></a>WeakMap</h3><p>​	WeakMap和Map也是类似的，同样也是只接受对象作为键名，其他与WeakSet类似</p>
+<p>​	WeakMap有四个用法 get（），set（），has（），delete（）</p>
+<p>​	</p>
+<p>WeakMap和WeakSet都用于存储DOM节点，因为他们的垃圾回收机制，能够很好的防止内存泄漏</p>
+<p>​	</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/Map%E5%92%8CSet/" data-id="claxeer9p000bv8w1bea6777g" data-title="Map和Set" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          排序“
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/11/02/%E7%8E%A9%E8%BD%AC-Webpack-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%BA%94%E5%AF%B9%E9%A1%B9%E7%9B%AE%E4%BC%98%E5%8C%96%E9%9C%80%E6%B1%82%EF%BC%88%E4%B8%8B%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">玩转 Webpack 高级特性应对项目优化需求（下）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

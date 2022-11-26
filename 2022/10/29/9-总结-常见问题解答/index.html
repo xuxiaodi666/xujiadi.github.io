@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>9.总结 &amp; 常见问题解答 | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="总结在本小册的第一节中，笔者对 Vue.js 内部运行机制做了一个全局的概览，当时通过下面这张图把 Vue.js 拆分成一个一个小模块来介绍，之后通过这一系列小节的学习，相信大家已经对 Vue.js 内部的原理有了一个更进一步的了解，对这张图也再也不会感觉到那么陌生。  每个小节中的代码都是笔者根据 Vue.js 原理单独抽离出来写成的 Demo，大家可以在我的 Gtihub 上查看完整的代码 (">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.总结 &amp; 常见问题解答">
+<meta property="og:url" content="http://example.com/2022/10/29/9-%E6%80%BB%E7%BB%93-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="总结在本小册的第一节中，笔者对 Vue.js 内部运行机制做了一个全局的概览，当时通过下面这张图把 Vue.js 拆分成一个一个小模块来介绍，之后通过这一系列小节的学习，相信大家已经对 Vue.js 内部的原理有了一个更进一步的了解，对这张图也再也不会感觉到那么陌生。  每个小节中的代码都是笔者根据 Vue.js 原理单独抽离出来写成的 Demo，大家可以在我的 Gtihub 上查看完整的代码 (">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/19/1606e7eaa2a664e8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="article:published_time" content="2022-10-29T12:14:13.000Z">
+<meta property="article:modified_time" content="2022-10-29T12:18:46.128Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/19/1606e7eaa2a664e8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-9-总结-常见问题解答" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/29/9-%E6%80%BB%E7%BB%93-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94/" class="article-date">
+  <time class="dt-published" datetime="2022-10-29T12:14:13.000Z" itemprop="datePublished">2022-10-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      9.总结 &amp; 常见问题解答
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在本小册的第一节中，笔者对 Vue.js 内部运行机制做了一个全局的概览，当时通过下面这张图把 Vue.js 拆分成一个一个小模块来介绍，之后通过这一系列小节的学习，相信大家已经对 Vue.js 内部的原理有了一个更进一步的了解，对这张图也再也不会感觉到那么陌生。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/19/1606e7eaa2a664e8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>每个小节中的代码都是笔者根据 Vue.js 原理单独抽离出来写成的 Demo，大家可以在我的 <a href="https://link.juejin.cn/?target=https://github.com/answershuto" title="https://github.com/answershuto">Gtihub</a> 上查看完整的代码 (见 <a href="https://link.juejin.cn/?target=https://github.com/answershuto/VueDemo" title="https://github.com/answershuto/VueDemo">VueDemo</a> 项目)。</p>
+<p>本小册对 Vue.js 原理进行了初步的介绍，希望能够起到一个抛砖引玉的作用，读者读完以后，可以利用这些基础对 Vue.js 进行一个更加深入的探索，相信会有更大的收获。</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ol>
+<li>怎么实现 <code>this._test</code> 改变而不是 <code>this._data.test</code> 改变触发更新？</li>
+</ol>
+<p>答：其实这中间有一个<strong>代理</strong>的过程。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">_proxy</span>(options.<span class="property">data</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">_proxy</span> (data) &#123;</span><br><span class="line">    <span class="keyword">const</span> that = <span class="variable language_">this</span>;</span><br><span class="line">    <span class="title class_">Object</span>.<span class="title function_">keys</span>(data).<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(that, key, &#123;</span><br><span class="line">            <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">            <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">            <span class="attr">get</span>: <span class="keyword">function</span> <span class="title function_">proxyGetter</span> () &#123;</span><br><span class="line">                <span class="keyword">return</span> that.<span class="property">_data</span>[key];</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">set</span>: <span class="keyword">function</span> <span class="title function_">proxySetter</span> (val) &#123;</span><br><span class="line">                that.<span class="property">_data</span>[key] = val;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本质就是通过 <code>Object.defineProperty</code> 使在访问 <code>this</code> 上的某属性时从 <code>this._data</code> 中读取（写入）。</p>
+<ol start="2">
+<li>能不能将依赖收集中讲到的 <code>dep.addSub(Dep.target)</code> 改成 <code>dep.addSub(new Watcher())</code>呢？</li>
+</ol>
+<p>为了便于读者理解这部分内容，我将代码做了简化，实际上一个 <code>Watcher</code> 对象可能会在多个 <code>Dep</code> 中，并不是每次 <code>addSub</code> 都是一个新的 <code>Watcher</code> 对象，需依赖 <code>Dep.target</code> 进行收集（实际上 <code>Dep.target</code> 也是通过 <code>Watcher</code> 对象的 <code>get</code> 方法调用 <code>pushTarget</code> 将自身赋值给 <code>Dep.target</code>）。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>从 2017 年 12 月开始写这本小册到现在差不多 2 个月的时间，虽说之前写过类似的内容，但是将 Vue.js 源码抽离成一个一个 Demo 还是花了很多时间，对于这本小册也是前前后后改了好几次才让自己满意。</p>
+<p>因为读者的基础不一致，而小册的定位是偏向于对新手读者更加友好，所以我尽量用更加浅显易懂的方式去写这本小册的内容。希望大家可以通过这本小册初步掌握 Vue.js 的原理，掌握这些原理以后再去尝试阅读 <a href="https://link.juejin.cn/?target=https://github.com/vuejs/vue" title="https://github.com/vuejs/vue">Vue.js 源码</a>，相信会事半功倍，也会对 Vue.js 有更深一层的理解。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/29/9-%E6%80%BB%E7%BB%93-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94/" data-id="claxeer9o000av8w13zddhxad" data-title="9.总结 &amp; 常见问题解答" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/11/01/vue3%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          vue3快速上手
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/10/29/8-Vuex-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">8.Vuex 状态管理的工作原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

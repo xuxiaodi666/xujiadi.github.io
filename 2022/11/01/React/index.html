@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>React | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="React的使用##特点： ​	1.声明式编程：只需要维护状态，当状态发生改变时，React可以根据最新的状态去渲染我们的ui界面 ​	2.组件化开发：将复杂的界面拆成一个个小的组件 ​	3.多平台适配 ##React开发依赖： ​	1.react：包含react所必须的核心代码 ​	2.react-dom：react渲染在不同平台所需要的核心代码 ​	3.babel：将jsx转换成React代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React">
+<meta property="og:url" content="http://example.com/2022/11/01/React/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="React的使用##特点： ​	1.声明式编程：只需要维护状态，当状态发生改变时，React可以根据最新的状态去渲染我们的ui界面 ​	2.组件化开发：将复杂的界面拆成一个个小的组件 ​	3.多平台适配 ##React开发依赖： ​	1.react：包含react所必须的核心代码 ​	2.react-dom：react渲染在不同平台所需要的核心代码 ​	3.babel：将jsx转换成React代码">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220805203533168.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220806215401917.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220808223021319.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220809213804027.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822150317996.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822152954214.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822153022366.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822160455672.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822171432674.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822193411264.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194130264.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194256166.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194446293.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194811600.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822203113532.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823105752859.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823110120160.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823111612850.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823151633117.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823153753112.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823192248613.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823220609378.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824093009127.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824094937985.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824095817088.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824145817263.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825090736404.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825090751431.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827094304510.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825112738763.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825114110840.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825183857978.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825184324845.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220826162744584.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220826164036256.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827100310787.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827143133873.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827143051277.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827144511249.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827144721190.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827162453163.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828105017835.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828105140702.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828112937224.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828112945968.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828125713493.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828134258374.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828160712753.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829103441976.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829144800545.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171149761.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171419859.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171535790.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829175503243.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829175602113.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829180321206.png">
+<meta property="og:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829191240082.png">
+<meta property="article:published_time" content="2022-11-01T01:17:31.000Z">
+<meta property="article:modified_time" content="2022-11-01T01:25:59.973Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220805203533168.png">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-React" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/01/React/" class="article-date">
+  <time class="dt-published" datetime="2022-11-01T01:17:31.000Z" itemprop="datePublished">2022-11-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      React
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="React的使用"><a href="#React的使用" class="headerlink" title="React的使用"></a>React的使用</h1><p>##特点：</p>
+<p>​	1.声明式编程：只需要维护状态，当状态发生改变时，React可以根据最新的状态去渲染我们的ui界面</p>
+<p>​	2.组件化开发：将复杂的界面拆成一个个小的组件</p>
+<p>​	3.多平台适配</p>
+<p>##React开发依赖：</p>
+<p>​	1.react：包含react所必须的核心代码</p>
+<p>​	2.react-dom：react渲染在不同平台所需要的核心代码</p>
+<p>​	3.babel：将jsx转换成React代码的工具</p>
+<h3 id="JSX的本质："><a href="#JSX的本质：" class="headerlink" title="JSX的本质："></a>JSX的本质：</h3><ul>
+<li>实际上，jsx仅仅是<code>React.createElement(component,prop,...children)</code>函数的语法糖<ul>
+<li>所有的jsx最终都会被转换成<code>React.createElement</code>的函数调用</li>
+</ul>
+<p>	</p>
+</li>
+<li>createElement需要传递三个参数<ul>
+<li>参数一：type<ul>
+<li>当前ReactElement的类型</li>
+<li>如果是标签元素，那么就使用字符串表示”div”</li>
+<li>如果是组件元素，那么就直接使用组件的名称</li>
+</ul>
+</li>
+<li>参数二：config<ul>
+<li>所有jsx中的属性都在config中以对象的属性和值的形式存储</li>
+</ul>
+</li>
+<li>参数三：children<ul>
+<li>存放在标签中的内容，以children数组的方式存储</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>###React中虚拟DOM的创建过程</p>
+<p>通过<code>React.createElement</code> 最终创建出来一个ReactElement对象</p>
+<p>####虚拟DOM其实就是一个js对象   为什么要将真实DOM转为虚拟DOM?</p>
+<ol>
+<li>​	因为去操作真实DOM时，效率低，而操作虚拟    DOM，实际上是在内存中操作对象，效率高</li>
+<li>很难追踪状态的改变：原有的开发模式，我们很难追踪到状态发生的改变，不方便针对性调试</li>
+<li>DOM操作性能非常低<ol>
+<li>首先<code>document.createElement</code>本身创建出来的就是一个非常复杂的对象</li>
+<li>其次DOM操作会引起浏览器的回流和重绘，所以在开发中应该避免频繁的DOM操作</li>
+</ol>
+</li>
+</ol>
+<h3 id="声明式编程"><a href="#声明式编程" class="headerlink" title="声明式编程"></a>声明式编程</h3><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220805203533168.png" alt="image-20220805203533168"></p>
+<h3 id="React脚手架生成目录结构"><a href="#React脚手架生成目录结构" class="headerlink" title="React脚手架生成目录结构"></a>React脚手架生成目录结构</h3><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220806215401917.png" alt="image-20220806215401917"></p>
+<h3 id="PWA"><a href="#PWA" class="headerlink" title="PWA"></a>PWA</h3><ul>
+<li>​	脚手架生成的目录结构整体比较好理解，但有一个PWA相关的概念：<ul>
+<li>PWA全称Progressive Web App，即渐进式WEB应用。</li>
+<li>一个PWA应用首先是一个网页，可以通过Web技术编写出一个网页应用</li>
+<li>随后添加上App Manifest和Service Worker 来实现PWA的安装和离线等功能</li>
+<li>这种Web存在的形式，我们也称之为Web App</li>
+</ul>
+</li>
+<li>PWA解决了那些问题？<ul>
+<li>可以添加至主屏幕，点击主屏幕图标可以实现启动动画以及隐藏地址栏</li>
+<li>实现离线缓存功能，即使用户手机没有网络，依然可以使用一些离线功能</li>
+<li>实现消息推送</li>
+<li>等等一系列类似于Native App相关的功能</li>
+</ul>
+</li>
+</ul>
+<h3 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h3><p>React的组件化相对于vue更加灵活和多样，按照不同的方式可以分为很多类组件</p>
+<ul>
+<li>根据组件的定义方式：可以分为函数式组件和类组件</li>
+<li>根据组件内部是否有状态需要维护，可以分为：无状态组件和有状态组件</li>
+<li>根据组件的不同职责，可以分为：展示型组件和容器型组件</li>
+</ul>
+<h4 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h4><ul>
+<li>在jsx中组件的名称是以大写字母开头的（无论类组件还是函数组件）</li>
+<li>类组件需要继承自React.Component</li>
+<li>类组件必须实现render函数</li>
+</ul>
+<p>使用class定义一个组件：</p>
+<ul>
+<li>constructor是可选的，我们通常在constructor中初始化一些数据；</li>
+<li>this.state中维护的就是我们组件内部的数据；</li>
+<li>render()方法是class组件中唯一必须实现的方法</li>
+</ul>
+<h4 id="函数式组件"><a href="#函数式组件" class="headerlink" title="函数式组件"></a>函数式组件</h4><p>函数式组件的特点：</p>
+<ul>
+<li>没有this对象（组件实例）</li>
+<li>没有生命周期，也会被更行并挂载，但是没有生命周期函数</li>
+<li>没有内部的状态（state）</li>
+</ul>
+<h4 id="render函数的返回值"><a href="#render函数的返回值" class="headerlink" title="render函数的返回值"></a>render函数的返回值</h4><p>当render被调用时，他会检查this.props和this.state的变化并返回以下类型之一</p>
+<ul>
+<li><strong>React元素</strong>：<ul>
+<li>通常通过JSX创建</li>
+<li>例如：<div/>会被react渲染为DOM节点，<MyComponent/>会被react渲染为自定义组件</li>
+<li>无论是<div/>还是<MyComponent/>均为React元素</li>
+</ul>
+</li>
+<li><strong>数组或fragments</strong>:使得render方法可以返回多个元素</li>
+<li><strong>Portals</strong>：可以渲染子节点到不同的DOM子树中。</li>
+<li><strong>字符串或数值类型</strong>：他们在DOM中会被渲染为文本节点</li>
+</ul>
+<h4 id="React生命周期"><a href="#React生命周期" class="headerlink" title="React生命周期"></a>React生命周期</h4><p>生命周期是一个抽象的概念，在生命周期的整个过程，分成了很多阶段：</p>
+<ul>
+<li>装载阶段（Mount），组件第一次在DOM树中被渲染的过程</li>
+<li>更新过程（Update），组件状态发生变化，重新更新渲染的过程</li>
+<li>卸载过程（Unmount），组件从DOM树中被移除的过程</li>
+</ul>
+<p>React内部为了告诉我们当前处于那些阶段，会对我们组件内部实现的某些函数进行回调，这些函数就是生命周期函数：</p>
+<ul>
+<li><code>componentDidMount</code>函数：组件已经挂载到DOM上时，就会回调。</li>
+<li><code>componentDidUpdate</code>函数：组件已经发生更新时，就会回调。</li>
+<li><code>componentWillUnmount</code>函数：组件即将被移除时，就会回调</li>
+</ul>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220808223021319.png" alt="image-20220808223021319"></p>
+<h5 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h5><ul>
+<li>如果不初始化state或不进行方法绑定，则不需要为React组件实现构造函数</li>
+<li>constructor中通常只做两件事：<ul>
+<li>通过给this.state赋值对象来初始化内部的state</li>
+<li>为事件绑定实例（this）</li>
+</ul>
+</li>
+<li><code>componentDidMount</code><ul>
+<li><code>componentDidMount()</code>会在组件挂载后（插在DOM树中）立即调用</li>
+<li><code>componentDidMount</code>中通常进行<ul>
+<li>依赖于DOM的操作可以在这里进行</li>
+<li>在此处发送网络请求就是最好的地方</li>
+<li>可以在此处添加一些订阅（会在<code>componentWillUnmount</code>取消订阅）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>componentDidUpdate</code><ul>
+<li><code>componentDidUpdate()</code>会在更新后立即被调用，首次渲染不会执行<ul>
+<li>当组件更新后，可以在此处对DOM进行操作</li>
+<li>如果你对更新后的props进行了比较，也可以在此处进行网络请求；（例如，当props未发生变化时，则不会执行网络请求）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>componentWillUnmount</code><ul>
+<li><code>componentWillUnmount()</code>会在组件卸载及销毁之前直接调用<ul>
+<li>在此方法中执行必要的清理操作</li>
+<li>例如清除timer，取消网络请求或清除在<code>componentDidMount()</code>中创建的订阅等；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220809213804027.png" alt="image-20220809213804027"></p>
+<h4 id="context组件通信"><a href="#context组件通信" class="headerlink" title="context组件通信"></a>context组件通信</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822150317996.png" alt="image-20220822150317996"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822152954214.png" alt="image-20220822152954214"></p>
+<p>当为函数式组件时，此时红色的value就是<code>UserContext</code>中的value值</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822153022366.png" alt="image-20220822153022366"></p>
+<h4 id="setState-异步更新"><a href="#setState-异步更新" class="headerlink" title="setState   异步更新"></a>setState   异步更新</h4><p>为什么组件中并没有<code>setState</code>但我们可以调用它？</p>
+<p>因为<code>setState</code>是我们从继承的&#x3D;&#x3D;Component&#x3D;&#x3D;中拿到的</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822160455672.png" alt="image-20220822160455672"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822171432674.png" alt="image-20220822171432674"></p>
+<h4 id="setState为什么要是不可变数据"><a href="#setState为什么要是不可变数据" class="headerlink" title="setState为什么要是不可变数据"></a>setState为什么要是不可变数据</h4><p>####React更新机制以及diff算法</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822193411264.png" alt="image-20220822193411264"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194130264.png" alt="image-20220822194130264"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194256166.png" alt="image-20220822194256166"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194446293.png" alt="image-20220822194446293"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822194811600.png" alt="image-20220822194811600"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220822203113532.png" alt="image-20220822203113532"></p>
+<h4 id="React中ref的使用"><a href="#React中ref的使用" class="headerlink" title="React中ref的使用"></a>React中ref的使用</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823105752859.png" alt="image-20220823105752859"></p>
+<h4 id="受控组件和非受控组件"><a href="#受控组件和非受控组件" class="headerlink" title="受控组件和非受控组件"></a>受控组件和非受控组件</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823110120160.png" alt="image-20220823110120160"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823111612850.png" alt="image-20220823111612850"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823151633117.png" alt="image-20220823151633117"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823153753112.png" alt="image-20220823153753112"></p>
+<p> <img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823192248613.png" alt="image-20220823192248613"></p>
+<p>####严格模式检查什么？</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220823220609378.png" alt="image-20220823220609378"></p>
+<h4 id="React中的样式（css）"><a href="#React中的样式（css）" class="headerlink" title="React中的样式（css）"></a>React中的样式（css）</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824093009127.png" alt="image-20220824093009127"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824094937985.png" alt="image-20220824094937985"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824095817088.png" alt="image-20220824095817088"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220824145817263.png" alt="image-20220824145817263"></p>
+<h4 id="React中的动画与过度"><a href="#React中的动画与过度" class="headerlink" title="React中的动画与过度"></a>React中的动画与过度</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825090736404.png" alt="image-20220825090736404"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825090751431.png" alt="image-20220825090751431"></p>
+<h4 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h4><ul>
+<li>1.确定的输入，一定要有确定的输出</li>
+<li>2.函数在执行过程中，没有产生副作用</li>
+</ul>
+<h4 id="redux"><a href="#redux" class="headerlink" title="redux"></a>redux</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827094304510.png" alt="image-20220827094304510"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825112738763.png" alt="image-20220825112738763"></p>
+<h5 id="redux的三大核心理念"><a href="#redux的三大核心理念" class="headerlink" title="redux的三大核心理念"></a>redux的三大核心理念</h5><ul>
+<li>1.store</li>
+<li>2.action</li>
+<li>3.reducer</li>
+</ul>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825114110840.png" alt="image-20220825114110840"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825183857978.png" alt="image-20220825183857978"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220825184324845.png" alt="image-20220825184324845"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220826162744584.png" alt="image-20220826162744584"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220826164036256.png" alt="image-20220826164036256"></p>
+<h4 id="React-router"><a href="#React-router" class="headerlink" title="React-router"></a>React-router</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827100310787.png" alt="image-20220827100310787"></p>
+<p>router4&#x2F;5</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827143133873.png" alt="image-20220827143133873"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827143051277.png" alt="image-20220827143051277"></p>
+<p>如果此时路由既满足了前三个，第四个第五个依然会显示  那是因为第四个是动态路由，第五个匹配所有路由  只要满足就显示 ，所以如果要只显示匹配到的哪一个  就需要使用switch组件在外面包裹</p>
+<p> <img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827144511249.png" alt="image-20220827144511249"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827144721190.png" alt="image-20220827144721190"></p>
+<p>编程式路由导航</p>
+<p>通过路由渲染出来的组件，v5的时候  路由对props进行了增强吗，可以通过props去做编程式导航</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220827162453163.png" alt="image-20220827162453163"></p>
+<p>如果想要所有组件的props都被增强  就要使用withRouter，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">withRouter(App)</span><br><span class="line"></span><br><span class="line">再去使用app时  需要在App最外层用路由包裹</span><br><span class="line">这样才会对props进行增强</span><br><span class="line">&lt;BrowserRouter&gt;</span><br><span class="line">	&lt;App&gt;&lt;/App&gt;</span><br><span class="line">&lt;/BrowserRouter&gt;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828105017835.png" alt="image-20220828105017835"></p>
+<p>如果想要想vue中一样去写路由配置表 需要使用一个库  react-router-config  react18中不需要再使用这个库 router6中可以使用</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828105140702.png" alt="image-20220828105140702"></p>
+<p>子路由配置后还需要在组件中使用</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828112937224.png" alt="image-20220828112937224"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828112945968.png" alt="image-20220828112945968"></p>
+<h4 id="Hooks"><a href="#Hooks" class="headerlink" title="Hooks"></a>Hooks</h4><p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828125713493.png" alt="image-20220828125713493">	<img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828134258374.png" alt="image-20220828134258374"></p>
+<p> <img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220828160712753.png" alt="image-20220828160712753"></p>
+<h4 id="useCallback和useMemo区别"><a href="#useCallback和useMemo区别" class="headerlink" title="useCallback和useMemo区别"></a>useCallback和useMemo区别</h4><p>useCallback其实是对其传入的回调函数做优化，哪里用到了这个回调函数，他所没有依赖的变量发生变化时，该回调函数，不会做多余的执行</p>
+<p>useMemo时对其传入的回调函数的返回值做优化，哪里用到了该返回值，他所没有依赖的变量发生变化时，该返回值所用到的组件不会重新渲染</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829103441976.png" alt="image-20220829103441976"></p>
+<h4 id="Fiber原理"><a href="#Fiber原理" class="headerlink" title="Fiber原理"></a>Fiber原理</h4><p>GUI的渲染和JavaScript的代码执行是在一个线程：互斥</p>
+<p>JavaScript代码执行时，不会执行GUI的渲染，因为JavaScript是单线程的</p>
+<p>（用户事件的响应，键盘事件响应，js代码执行，raf（requestAnimationFrameCallback中的回调），layout布局，paint绘制）都是在一个线程的</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829144800545.png" alt="image-20220829144800545"></p>
+<p>因为GUI的渲染与JavaScript的代码执行是在一个线程中，当去执行JavaScript代码时，GUI的渲染就会被中断，一旦某段代码耗时过长就会造成页面卡顿，所以react为了解决这个问题，就提出了fiber碎片化，当浏览器去执行一些用户事件的响应，键盘事件响应，把该执行的代码以及必须执行的代码执行完，就会去执行浏览器所提供的一个函数requestIdleCallback函数中的回调函数，浏览器一有空闲时间就会去执行回调函数中的fiber碎片：比如说，浏览器一帧16.666ms，其中一帧中的10ms去执行用户事件的响应，剩下的6.66ms就会去赶紧执行requestIdleCallback中的fiber碎片。这样就避免了一些比较耗时的操作，引起的页面卡顿，因为耗时的操作都被变成Fiber碎片，并在浏览器闲余时间执行。</p>
+<p>但requestIdleCallback这个函数有兼容问题，所以有的浏览器没有这个函数，所有react自己实现了一个叫做Channel函数来替代requesIdleCallback函数</p>
+<h4 id="路由中相关的hook"><a href="#路由中相关的hook" class="headerlink" title="路由中相关的hook"></a>路由中相关的hook</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const element = useRoutes(router)   element就是所需要渲染的元素</span><br><span class="line">const location= useLocation() 可以获取当前路由的一些配置信息</span><br><span class="line"></span><br><span class="line">const params = useParams() 可以获取当前路由所传的参数</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">v5版本  const to = useHistory()</span><br><span class="line"></span><br><span class="line">v6版本  const to = useNavigate() //返回一个方法  ，可以做编程式路由导航 </span><br><span class="line">	//to(path,config)</span><br></pre></td></tr></table></figure>
+
+<p>​	这里面的path&#x3D;’&#x2F;user&#x2F;<em>‘表示 可以匹配User组件中的二级路由  一定要写</em><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171149761.png" alt="image-20220829171149761"></p>
+<p>路由匹配404页面</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171419859.png" alt="image-20220829171419859"></p>
+<p>二级路由匹配404</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829171535790.png" alt="image-20220829171535790"></p>
+<p>路由懒加载</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829175503243.png" alt="image-20220829175503243"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829175602113.png" alt="image-20220829175602113"></p>
+<p>避免闪屏，可以将首页不进行懒加载 ，只对其内容进行懒加载</p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829180321206.png" alt="image-20220829180321206"></p>
+<p><img src="C:\Users\c\AppData\Roaming\Typora\typora-user-images\image-20220829191240082.png" alt="image-20220829191240082"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/01/React/" data-id="claxeer9p000cv8w14u1ageaz" data-title="React" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/11/02/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E4%B8%8E%E8%B7%A8%E5%9F%9F%E6%96%B9%E6%A1%88/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          浏览器同源策略与跨域方案
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/11/01/VUE3%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">VUE3笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

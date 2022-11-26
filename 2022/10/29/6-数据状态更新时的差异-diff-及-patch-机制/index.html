@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>6.数据状态更新时的差异 diff 及 patch 机制 | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="数据更新视图之前讲到，在对 model 进行操作对时候，会触发对应 Dep 中的 Watcher 对象。Watcher 对象会调用对应的 update 来修改视图。最终是将新产生的 VNode 节点与老 VNode 进行一个 patch 的过程，比对得出「差异」，最终将这些「差异」更新到视图上。 这一章就来介绍一下这个 patch 的过程，因为 patch 过程本身比较复杂，这一章的内容会比较多，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.数据状态更新时的差异 diff 及 patch 机制">
+<meta property="og:url" content="http://example.com/2022/10/29/6-%E6%95%B0%E6%8D%AE%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%97%B6%E7%9A%84%E5%B7%AE%E5%BC%82-diff-%E5%8F%8A-patch-%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="数据更新视图之前讲到，在对 model 进行操作对时候，会触发对应 Dep 中的 Watcher 对象。Watcher 对象会调用对应的 update 来修改视图。最终是将新产生的 VNode 节点与老 VNode 进行一个 patch 的过程，比对得出「差异」，最终将这些「差异」更新到视图上。 这一章就来介绍一下这个 patch 的过程，因为 patch 过程本身比较复杂，这一章的内容会比较多，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/28/1609be691ed64525~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/28/1609be700a80c98a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b707df4902029~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b70ecf5967f0a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b71f5a48631f4~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b7228b9ecb23a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b723af0fd706a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b72ae720954cd~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b73aa8f758342~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b73f50ed43932~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b7457cae26687~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b744a2c07257d~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+<meta property="article:published_time" content="2022-10-29T12:13:31.000Z">
+<meta property="article:modified_time" content="2022-10-29T12:18:30.120Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/28/1609be691ed64525~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-6-数据状态更新时的差异-diff-及-patch-机制" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/29/6-%E6%95%B0%E6%8D%AE%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%97%B6%E7%9A%84%E5%B7%AE%E5%BC%82-diff-%E5%8F%8A-patch-%E6%9C%BA%E5%88%B6/" class="article-date">
+  <time class="dt-published" datetime="2022-10-29T12:13:31.000Z" itemprop="datePublished">2022-10-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      6.数据状态更新时的差异 diff 及 patch 机制
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="数据更新视图"><a href="#数据更新视图" class="headerlink" title="数据更新视图"></a>数据更新视图</h2><p>之前讲到，在对 <code>model</code> 进行操作对时候，会触发对应 <code>Dep</code> 中的 <code>Watcher</code> 对象。<code>Watcher</code> 对象会调用对应的 <code>update</code> 来修改视图。最终是将新产生的 VNode 节点与老 VNode 进行一个 <code>patch</code> 的过程，比对得出「差异」，最终将这些「差异」更新到视图上。</p>
+<p>这一章就来介绍一下这个 <code>patch</code> 的过程，因为 <code>patch</code> 过程本身比较复杂，这一章的内容会比较多，但是不要害怕，我们逐块代码去看，一定可以理解。</p>
+<h2 id="跨平台"><a href="#跨平台" class="headerlink" title="跨平台"></a>跨平台</h2><p>因为使用了 Virtual DOM 的原因，Vue.js具有了跨平台的能力，Virtual DOM 终归只是一些 JavaScript 对象罢了，那么最终是如何调用不同平台的 API 的呢？</p>
+<p>这就需要依赖一层适配层了，将不同平台的 API 封装在内，以同样的接口对外提供。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const nodeOps = &#123;</span><br><span class="line">    setTextContent (text) &#123;</span><br><span class="line">        if (platform === &#x27;weex&#x27;) &#123;</span><br><span class="line">            node<span class="selector-class">.parentNode</span><span class="selector-class">.setAttr</span>(&#x27;value&#x27;, text);</span><br><span class="line">        &#125; else if (platform === &#x27;web&#x27;) &#123;</span><br><span class="line">            node<span class="selector-class">.textContent</span> = text;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    parentNode () &#123;</span><br><span class="line">        <span class="comment">//......</span></span><br><span class="line">    &#125;,</span><br><span class="line">    removeChild () &#123;</span><br><span class="line">        <span class="comment">//......</span></span><br><span class="line">    &#125;,</span><br><span class="line">    nextSibling () &#123;</span><br><span class="line">        <span class="comment">//......</span></span><br><span class="line">    &#125;,</span><br><span class="line">    insertBefore () &#123;</span><br><span class="line">        <span class="comment">//......</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>举个例子，现在我们有上述一个 <code>nodeOps</code> 对象做适配，根据 platform 区分不同平台来执行当前平台对应的API，而对外则是提供了一致的接口，供 Virtual DOM 来调用。</p>
+<h2 id="一些API"><a href="#一些API" class="headerlink" title="一些API"></a>一些API</h2><p>接下来我们来介绍其他的一些 API，这些API在下面 <code>patch</code> 的过程中会被用到，他们最终都会调用 <code>nodeOps</code> 中的相应函数来操作平台。</p>
+<p><code>insert</code> 用来在 <code>parent</code> 这个父节点下插入一个子节点，如果指定了 <code>ref</code> 则插入到 <code>ref</code> 这个子节点前面。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">function <span class="title">insert</span> (<span class="params">parent, elm, <span class="keyword">ref</span></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (parent) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">ref</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">ref</span>.parentNode === parent) &#123;</span><br><span class="line">                nodeOps.insertBefore(parent, elm, <span class="keyword">ref</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            nodeOps.appendChild(parent, elm)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>createElm</code> 用来新建一个节点， <code>tag</code> 存在创建一个标签节点，否则创建一个文本节点。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function createElm (vnode, parentElm, refElm) &#123;</span><br><span class="line">    if (vnode.tag) &#123;</span><br><span class="line">        <span class="built_in">insert</span>(parentElm, nodeOps.createElement(vnode.tag), refElm);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        <span class="built_in">insert</span>(parentElm, nodeOps.createTextNode(vnode.text), refElm);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>addVnodes</code> 用来批量调用 <code>createElm</code> 新建节点。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx) &#123;</span><br><span class="line">    for (; startIdx &lt;= endIdx; ++startIdx) &#123;</span><br><span class="line">        <span class="built_in">createElm</span>(vnodes[startIdx], parentElm, refElm);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>removeNode</code> 用来移除一个节点。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function removeNode (el) &#123;</span><br><span class="line">    const <span class="attr">parent</span> = nodeOps.parentNode(el)<span class="comment">;</span></span><br><span class="line">    if (parent) &#123;</span><br><span class="line">        nodeOps.removeChild(parent, el)<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>removeVnodes</code> 会批量调用 <code>removeNode</code> 移除节点。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function removeVnodes (parentElm, vnodes, startIdx, endIdx) &#123;</span><br><span class="line">    for (; startIdx &lt;= endIdx; ++startIdx) &#123;</span><br><span class="line">        const ch = vnodes<span class="selector-attr">[startIdx]</span></span><br><span class="line">        if (ch) &#123;</span><br><span class="line">            <span class="built_in">removeNode</span>(ch.elm);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="patch"><a href="#patch" class="headerlink" title="patch"></a>patch</h2><p>首先说一下 <code>patch</code> 的核心 diff 算法，我们用 diff 算法可以比对出两颗树的「差异」，我们来看一下，假设我们现在有如下两颗树，它们分别是新老 VNode 节点，这时候到了 <code>patch</code> 的过程，我们需要将他们进行比对。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/28/1609be691ed64525~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>diff 算法是通过同层的树节点进行比较而非对树进行逐层搜索遍历的方式，所以时间复杂度只有 O(n)，是一种相当高效的算法，如下图。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/12/28/1609be700a80c98a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>。</p>
+<p>这张图中的相同颜色的方块中的节点会进行比对，比对得到「<strong>差异</strong>」后将这些「<strong>差异</strong>」更新到视图上。因为只进行同层级的比对，所以十分高效。</p>
+<p><code>patch</code> 的过程相当复杂，我们先用简单的代码来看一下。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function patch (oldVnode, vnode, parentElm) &#123;</span><br><span class="line">    if (!oldVnode) &#123;</span><br><span class="line">        <span class="built_in">addVnodes</span>(parentElm, null, vnode, <span class="number">0</span>, vnode.length - <span class="number">1</span>);</span><br><span class="line">    &#125; else if (!vnode) &#123;</span><br><span class="line">        <span class="built_in">removeVnodes</span>(parentElm, oldVnode, <span class="number">0</span>, oldVnode.length - <span class="number">1</span>);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (sameVnode(oldVNode, vnode)) &#123;</span><br><span class="line">            <span class="built_in">patchVnode</span>(oldVNode, vnode);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            <span class="built_in">removeVnodes</span>(parentElm, oldVnode, <span class="number">0</span>, oldVnode.length - <span class="number">1</span>);</span><br><span class="line">            <span class="built_in">addVnodes</span>(parentElm, null, vnode, <span class="number">0</span>, vnode.length - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>patch</code> 的主要功能是比对两个 VNode 节点，将「差异」更新到视图上，所以入参有新老两个 VNode 以及父节点的 element 。我们来逐步捋一下逻辑， <code>addVnodes</code> 、 <code>removeVnodes</code> 等函数后面会讲。</p>
+<p>首先在 <code>oldVnode</code>（老 VNode 节点）不存在的时候，相当于新的 VNode 替代原本没有的节点，所以直接用 <code>addVnodes</code> 将这些节点批量添加到 <code>parentElm</code> 上。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (!oldVnode) &#123;</span><br><span class="line">    <span class="built_in">addVnodes</span>(parentElm, null, vnode, <span class="number">0</span>, vnode.length - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后同理，在 <code>vnode</code>（新 VNode 节点）不存在的时候，相当于要把老的节点删除，所以直接使用 <code>removeVnodes</code> 进行批量的节点删除即可。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">else if (!vnode) &#123;</span><br><span class="line">    <span class="built_in">removeVnodes</span>(parentElm, oldVnode, <span class="number">0</span>, oldVnode.length - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后一种情况，当 <code>oldVNode</code> 与 <code>vnode</code> 都存在的时候，需要判断它们是否属于 <code>sameVnode</code>（相同的节点）。如果是则进行patchVnode（比对 VNode ）操作，否则删除老节点，增加新节点。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (sameVnode(oldVNode, vnode)) &#123;</span><br><span class="line">    <span class="built_in">patchVnode</span>(oldVNode, vnode);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    <span class="built_in">removeVnodes</span>(parentElm, oldVnode, <span class="number">0</span>, oldVnode.length - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">addVnodes</span>(parentElm, null, vnode, <span class="number">0</span>, vnode.length - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="sameVnode"><a href="#sameVnode" class="headerlink" title="sameVnode"></a>sameVnode</h2><p>上面这些比较好理解，下面我们来看看什么情况下两个 VNode 会属于 <code>sameVnode</code> （相同的节点）呢？</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function sameVnode () &#123;</span><br><span class="line">    return (</span><br><span class="line">        <span class="selector-tag">a</span><span class="selector-class">.key</span> === <span class="selector-tag">b</span><span class="selector-class">.key</span> &amp;&amp;</span><br><span class="line">        <span class="selector-tag">a</span><span class="selector-class">.tag</span> === <span class="selector-tag">b</span><span class="selector-class">.tag</span> &amp;&amp;</span><br><span class="line">        <span class="selector-tag">a</span><span class="selector-class">.isComment</span> === <span class="selector-tag">b</span><span class="selector-class">.isComment</span> &amp;&amp;</span><br><span class="line">        (!!<span class="selector-tag">a</span><span class="selector-class">.data</span>) === (!!<span class="selector-tag">b</span><span class="selector-class">.data</span>) &amp;&amp;</span><br><span class="line">        sameInputType(<span class="selector-tag">a</span>, <span class="selector-tag">b</span>)</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function sameInputType (<span class="selector-tag">a</span>, <span class="selector-tag">b</span>) &#123;</span><br><span class="line">    if (<span class="selector-tag">a</span><span class="selector-class">.tag</span> !== &#x27;<span class="selector-tag">input</span>&#x27;) return true</span><br><span class="line">    let <span class="selector-tag">i</span></span><br><span class="line">    const typeA = (<span class="selector-tag">i</span> = <span class="selector-tag">a</span><span class="selector-class">.data</span>) &amp;&amp; (<span class="selector-tag">i</span> = <span class="selector-tag">i</span><span class="selector-class">.attrs</span>) &amp;&amp; <span class="selector-tag">i</span><span class="selector-class">.type</span></span><br><span class="line">    const typeB = (<span class="selector-tag">i</span> = <span class="selector-tag">b</span><span class="selector-class">.data</span>) &amp;&amp; (<span class="selector-tag">i</span> = <span class="selector-tag">i</span><span class="selector-class">.attrs</span>) &amp;&amp; <span class="selector-tag">i</span><span class="selector-class">.type</span></span><br><span class="line">    return typeA === typeB</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sameVnode</code> 其实很简单，只有当 <code>key</code>、 <code>tag</code>、 <code>isComment</code>（是否为注释节点）、 <code>data</code>同时定义（或不定义），同时满足当标签类型为 input 的时候 type 相同（某些浏览器不支持动态修改<input>类型，所以他们被视为不同类型）即可。</p>
+<h2 id="patchVnode"><a href="#patchVnode" class="headerlink" title="patchVnode"></a>patchVnode</h2><p>之前patch的过程还剩下 <code>patchVnode</code> 这个函数没有讲，这也是最复杂的一个，我们现在来看一下。因为这个函数是在符合 <code>sameVnode</code> 的条件下触发的，所以会进行「<strong>比对</strong>」。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">function patchVnode (oldVnode, vnode) &#123;</span><br><span class="line">    if (<span class="attr">oldVnode</span> === vnode) &#123;</span><br><span class="line">        return<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (vnode.isStatic &amp;&amp; oldVnode.isStatic &amp;&amp; <span class="attr">vnode.key</span> === oldVnode.key) &#123;</span><br><span class="line">        <span class="attr">vnode.elm</span> = oldVnode.elm<span class="comment">;</span></span><br><span class="line">        <span class="attr">vnode.componentInstance</span> = oldVnode.componentInstance<span class="comment">;</span></span><br><span class="line">        return<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const <span class="attr">elm</span> = vnode.elm = oldVnode.elm<span class="comment">;</span></span><br><span class="line">    const <span class="attr">oldCh</span> = oldVnode.children<span class="comment">;</span></span><br><span class="line">    const <span class="attr">ch</span> = vnode.children<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    if (vnode.text) &#123;</span><br><span class="line">        nodeOps.setTextContent(elm, vnode.text)<span class="comment">;</span></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (oldCh &amp;&amp; ch &amp;&amp; (oldCh !== ch)) &#123;</span><br><span class="line">            updateChildren(elm, oldCh, ch)<span class="comment">;</span></span><br><span class="line">        &#125; else if (ch) &#123;</span><br><span class="line">            if (oldVnode.text) nodeOps.setTextContent(elm, &#x27;&#x27;)<span class="comment">;</span></span><br><span class="line">            addVnodes(elm, null, ch, 0, ch.length - 1)<span class="comment">;</span></span><br><span class="line">        &#125; else if (oldCh) &#123;</span><br><span class="line">            removeVnodes(elm, oldCh, 0, oldCh.length - 1)</span><br><span class="line">        &#125; else if (oldVnode.text) &#123;</span><br><span class="line">            nodeOps.setTextContent(elm, &#x27;&#x27;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先在新老 VNode 节点相同的情况下，就不需要做任何改变了，直接 return 掉。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (<span class="attr">oldVnode</span> === vnode) &#123;</span><br><span class="line">    return<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面的这种情况也比较简单，在当新老 VNode 节点都是 <code>isStatic</code>（静态的），并且 <code>key</code> 相同时，只要将 <code>componentInstance</code> 与 <code>elm</code> 从老 VNode 节点“拿过来”即可。这里的 <code>isStatic</code> 也就是前面提到过的「编译」的时候会将静态节点标记出来，这样就可以跳过比对的过程。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (vnode.isStatic &amp;&amp; oldVnode.isStatic &amp;&amp; <span class="attr">vnode.key</span> === oldVnode.key) &#123;</span><br><span class="line">    <span class="attr">vnode.elm</span> = oldVnode.elm<span class="comment">;</span></span><br><span class="line">    <span class="attr">vnode.componentInstance</span> = oldVnode.componentInstance<span class="comment">;</span></span><br><span class="line">    return<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，当新 VNode 节点是文本节点的时候，直接用 <code>setTextContent</code> 来设置 text，这里的 <code>nodeOps</code> 是一个适配层，根据不同平台提供不同的操作平台 DOM 的方法，实现跨平台。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (vnode.text) &#123;</span><br><span class="line">    nodeOps.<span class="built_in">setTextContent</span>(elm, vnode.text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当新 VNode 节点是非文本节点当时候，需要分几种情况。</p>
+<ul>
+<li><code>oldCh</code> 与 <code>ch</code> 都存在且不相同时，使用 <code>updateChildren</code> 函数来更新子节点，这个后面重点讲。</li>
+<li>如果只有 <code>ch</code> 存在的时候，如果老节点是文本节点则先将节点的文本清除，然后将 <code>ch</code> 批量插入插入到节点elm下。</li>
+<li>同理当只有 <code>oldch</code> 存在时，说明需要将老节点通过 <code>removeVnodes</code> 全部清除。</li>
+<li>最后一种情况是当只有老节点是文本节点的时候，清除其节点文本内容。</li>
+</ul>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">if (oldCh &amp;&amp; ch &amp;&amp; (oldCh !== ch)) &#123;</span><br><span class="line">    <span class="built_in">updateChildren</span>(elm, oldCh, ch);</span><br><span class="line">&#125; else if (ch) &#123;</span><br><span class="line">    if (oldVnode.text) nodeOps<span class="selector-class">.setTextContent</span>(elm, &#x27;&#x27;);</span><br><span class="line">    <span class="built_in">addVnodes</span>(elm, null, ch, <span class="number">0</span>, ch.length - <span class="number">1</span>);</span><br><span class="line">&#125; else if (oldCh) &#123;</span><br><span class="line">    <span class="built_in">removeVnodes</span>(elm, oldCh, <span class="number">0</span>, oldCh.length - <span class="number">1</span>)</span><br><span class="line">&#125; else if (oldVnode.text) &#123;</span><br><span class="line">    nodeOps<span class="selector-class">.setTextContent</span>(elm, &#x27;&#x27;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="updateChildren"><a href="#updateChildren" class="headerlink" title="updateChildren"></a>updateChildren</h2><p>接下来就要讲一下 <code>updateChildren</code> 函数了。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">function updateChildren (parentElm, oldCh, newCh) &#123;</span><br><span class="line">    let <span class="attr">oldStartIdx</span> = <span class="number">0</span><span class="comment">;</span></span><br><span class="line">    let <span class="attr">newStartIdx</span> = <span class="number">0</span><span class="comment">;</span></span><br><span class="line">    let <span class="attr">oldEndIdx</span> = oldCh.length - <span class="number">1</span><span class="comment">;</span></span><br><span class="line">    let <span class="attr">oldStartVnode</span> = oldCh[<span class="number">0</span>]<span class="comment">;</span></span><br><span class="line">    let <span class="attr">oldEndVnode</span> = oldCh[oldEndIdx]<span class="comment">;</span></span><br><span class="line">    let <span class="attr">newEndIdx</span> = newCh.length - <span class="number">1</span><span class="comment">;</span></span><br><span class="line">    let <span class="attr">newStartVnode</span> = newCh[<span class="number">0</span>]<span class="comment">;</span></span><br><span class="line">    let <span class="attr">newEndVnode</span> = newCh[newEndIdx]<span class="comment">;</span></span><br><span class="line">    let oldKeyToIdx, idxInOld, elmToMove, refElm<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    while (oldStartIdx &lt;= oldEndIdx &amp;&amp; newStartIdx &lt;= newEndIdx) &#123;</span><br><span class="line">        if (!oldStartVnode) &#123;</span><br><span class="line">            <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else if (!oldEndVnode) &#123;</span><br><span class="line">            <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else if (sameVnode(oldStartVnode, newStartVnode)) &#123;</span><br><span class="line">            patchVnode(oldStartVnode, newStartVnode)<span class="comment">;</span></span><br><span class="line">            <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">            <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else if (sameVnode(oldEndVnode, newEndVnode)) &#123;</span><br><span class="line">            patchVnode(oldEndVnode, newEndVnode)<span class="comment">;</span></span><br><span class="line">            <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">            <span class="attr">newEndVnode</span> = newCh[--newEndIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else if (sameVnode(oldStartVnode, newEndVnode)) &#123;</span><br><span class="line">            patchVnode(oldStartVnode, newEndVnode)<span class="comment">;</span></span><br><span class="line">            nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))<span class="comment">;</span></span><br><span class="line">            <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">            <span class="attr">newEndVnode</span> = newCh[--newEndIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else if (sameVnode(oldEndVnode, newStartVnode)) &#123;</span><br><span class="line">            patchVnode(oldEndVnode, newStartVnode)<span class="comment">;</span></span><br><span class="line">            nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)<span class="comment">;</span></span><br><span class="line">            <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">            <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            let <span class="attr">elmToMove</span> = oldCh[idxInOld]<span class="comment">;</span></span><br><span class="line">            if (!oldKeyToIdx) <span class="attr">oldKeyToIdx</span> = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)<span class="comment">;</span></span><br><span class="line">            <span class="attr">idxInOld</span> = newStartVnode.key ? oldKeyToIdx[newStartVnode.key] : null<span class="comment">;</span></span><br><span class="line">            if (!idxInOld) &#123;</span><br><span class="line">                createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">                <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                <span class="attr">elmToMove</span> = oldCh[idxInOld]<span class="comment">;</span></span><br><span class="line">                if (sameVnode(elmToMove, newStartVnode)) &#123;</span><br><span class="line">                    patchVnode(elmToMove, newStartVnode)<span class="comment">;</span></span><br><span class="line">                    oldCh<span class="section">[idxInOld]</span> = undefined<span class="comment">;</span></span><br><span class="line">                    nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)<span class="comment">;</span></span><br><span class="line">                    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">                    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (oldStartIdx &gt; oldEndIdx) &#123;</span><br><span class="line">        <span class="attr">refElm</span> = (newCh[newEndIdx + <span class="number">1</span>]) ? newCh[newEndIdx + <span class="number">1</span>].elm : null<span class="comment">;</span></span><br><span class="line">        addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx)<span class="comment">;</span></span><br><span class="line">    &#125; else if (newStartIdx &gt; newEndIdx) &#123;</span><br><span class="line">        removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到代码那么多先不要着急，我们还是一点一点地讲解。</p>
+<p>首先我们定义 <code>oldStartIdx</code>、<code>newStartIdx</code>、<code>oldEndIdx</code> 以及 <code>newEndIdx</code> 分别是新老两个 VNode 的两边的索引，同时 <code>oldStartVnode</code>、<code>newStartVnode</code>、<code>oldEndVnode</code> 以及 <code>newEndVnode</code> 分别指向这几个索引对应的 VNode 节点。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b707df4902029~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>接下来是一个 <code>while</code> 循环，在这过程中，<code>oldStartIdx</code>、<code>newStartIdx</code>、<code>oldEndIdx</code> 以及 <code>newEndIdx</code> 会逐渐向中间靠拢。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (oldStartIdx &lt;= oldEndIdx &amp;&amp; newStartIdx &lt;= newEndIdx) </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b70ecf5967f0a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>首先当 <code>oldStartVnode</code> 或者 <code>oldEndVnode</code> 不存在的时候，<code>oldStartIdx</code> 与 <code>oldEndIdx</code> 继续向中间靠拢，并更新对应的 <code>oldStartVnode</code> 与 <code>oldEndVnode</code> 的指向（注：下面讲到的 <code>oldStartIdx</code>、<code>newStartIdx</code>、<code>oldEndIdx</code> 以及 <code>newEndIdx</code> 移动都会伴随着 <code>oldStartVnode</code>、<code>newStartVnode</code>、<code>oldEndVnode</code> 以及 <code>newEndVnode</code> 的指向的变化，之后的部分只会讲 <code>Idx</code> 的移动）。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (!oldStartVnode) &#123;</span><br><span class="line">    <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">&#125; else if (!oldEndVnode) &#123;</span><br><span class="line">    <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来这一块，是将 <code>oldStartIdx</code>、<code>newStartIdx</code>、<code>oldEndIdx</code> 以及 <code>newEndIdx</code> 两两比对的过程，一共会出现 2*2&#x3D;4 种情况。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> else if (sameVnode(oldStartVnode, newStartVnode)) &#123;</span><br><span class="line">    patchVnode(oldStartVnode, newStartVnode)<span class="comment">;</span></span><br><span class="line">    <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">&#125; else if (sameVnode(oldEndVnode, newEndVnode)) &#123;</span><br><span class="line">    patchVnode(oldEndVnode, newEndVnode)<span class="comment">;</span></span><br><span class="line">    <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">    <span class="attr">newEndVnode</span> = newCh[--newEndIdx]<span class="comment">;</span></span><br><span class="line">&#125; else if (sameVnode(oldStartVnode, newEndVnode)) &#123;</span><br><span class="line">    patchVnode(oldStartVnode, newEndVnode)<span class="comment">;</span></span><br><span class="line">    nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))<span class="comment">;</span></span><br><span class="line">    <span class="attr">oldStartVnode</span> = oldCh[++oldStartIdx]<span class="comment">;</span></span><br><span class="line">    <span class="attr">newEndVnode</span> = newCh[--newEndIdx]<span class="comment">;</span></span><br><span class="line">&#125; else if (sameVnode(oldEndVnode, newStartVnode)) &#123;</span><br><span class="line">    patchVnode(oldEndVnode, newStartVnode)<span class="comment">;</span></span><br><span class="line">    nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)<span class="comment">;</span></span><br><span class="line">    <span class="attr">oldEndVnode</span> = oldCh[--oldEndIdx]<span class="comment">;</span></span><br><span class="line">    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>首先是 <code>oldStartVnode</code> 与 <code>newStartVnode</code> 符合 <code>sameVnode</code> 时，说明老 VNode 节点的头部与新 VNode 节点的头部是相同的 VNode 节点，直接进行 <code>patchVnode</code>，同时 <code>oldStartIdx</code> 与 <code>newStartIdx</code> 向后移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b71f5a48631f4~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>其次是 <code>oldEndVnode</code> 与 <code>newEndVnode</code> 符合 <code>sameVnode</code>，也就是两个 VNode 的结尾是相同的 VNode，同样进行 <code>patchVnode</code> 操作并将 <code>oldEndVnode</code> 与 <code>newEndVnode</code> 向前移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b7228b9ecb23a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>接下来是两种交叉的情况。</p>
+<p>先是 <code>oldStartVnode</code> 与 <code>newEndVnode</code> 符合 <code>sameVnode</code> 的时候，也就是老 VNode 节点的头部与新 VNode 节点的尾部是同一节点的时候，将 <code>oldStartVnode.elm</code> 这个节点直接移动到 <code>oldEndVnode.elm</code> 这个节点的后面即可。然后 <code>oldStartIdx</code> 向后移动一位，<code>newEndIdx</code> 向前移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b723af0fd706a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>同理，<code>oldEndVnode</code> 与 <code>newStartVnode</code> 符合 <code>sameVnode</code> 时，也就是老 VNode 节点的尾部与新 VNode 节点的头部是同一节点的时候，将 <code>oldEndVnode.elm</code> 插入到 <code>oldStartVnode.elm</code> 前面。同样的，<code>oldEndIdx</code> 向前移动一位，<code>newStartIdx</code> 向后移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b72ae720954cd~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>最后是当以上情况都不符合的时候，这种情况怎么处理呢？</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">else &#123;</span><br><span class="line">    let <span class="attr">elmToMove</span> = oldCh[idxInOld]<span class="comment">;</span></span><br><span class="line">    if (!oldKeyToIdx) <span class="attr">oldKeyToIdx</span> = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)<span class="comment">;</span></span><br><span class="line">    <span class="attr">idxInOld</span> = newStartVnode.key ? oldKeyToIdx[newStartVnode.key] : null<span class="comment">;</span></span><br><span class="line">    if (!idxInOld) &#123;</span><br><span class="line">        createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">        <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        <span class="attr">elmToMove</span> = oldCh[idxInOld]<span class="comment">;</span></span><br><span class="line">        if (sameVnode(elmToMove, newStartVnode)) &#123;</span><br><span class="line">            patchVnode(elmToMove, newStartVnode)<span class="comment">;</span></span><br><span class="line">            oldCh<span class="section">[idxInOld]</span> = undefined<span class="comment">;</span></span><br><span class="line">            nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)<span class="comment">;</span></span><br><span class="line">            <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">            <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function createKeyToOldIdx (children, beginIdx, endIdx) &#123;</span><br><span class="line">    let i, key</span><br><span class="line">    const <span class="attr">map</span> = &#123;&#125;</span><br><span class="line">    for (<span class="attr">i</span> = beginIdx<span class="comment">; i &lt;= endIdx; ++i) &#123;</span></span><br><span class="line">        <span class="attr">key</span> = children[i].key</span><br><span class="line">        if (isDef(key)) map<span class="section">[key]</span> = i</span><br><span class="line">    &#125;</span><br><span class="line">    return map</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>createKeyToOldIdx</code> 的作用是产生 <code>key</code> 与 <code>index</code> 索引对应的一个 map 表。比如说：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;xx: xx, <span class="keyword">key</span>: <span class="comment">&#x27;key0&#x27;&#125;,</span></span><br><span class="line">    &#123;xx: xx, <span class="keyword">key</span>: <span class="comment">&#x27;key1&#x27;&#125;, </span></span><br><span class="line">    &#123;xx: xx, <span class="keyword">key</span>: <span class="comment">&#x27;key2&#x27;&#125;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>在经过 <code>createKeyToOldIdx</code> 转化以后会变成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">key0:</span> <span class="number">0</span>, </span><br><span class="line">    <span class="attr">key1:</span> <span class="number">1</span>, </span><br><span class="line">    <span class="attr">key2:</span> <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以根据某一个 key 的值，快速地从 <code>oldKeyToIdx</code>（<code>createKeyToOldIdx</code> 的返回值）中获取相同 key 的节点的索引 <code>idxInOld</code>，然后找到相同的节点。</p>
+<p>如果没有找到相同的节点，则通过 <code>createElm</code> 创建一个新节点，并将 <code>newStartIdx</code> 向后移动一位。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if (!idxInOld) &#123;</span><br><span class="line">    createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>否则如果找到了节点，同时它符合 <code>sameVnode</code>，则将这两个节点进行 <code>patchVnode</code>，将该位置的老节点赋值 undefined（之后如果还有新节点与该节点key相同可以检测出来提示已有重复的 key ），同时将 <code>newStartVnode.elm</code> 插入到 <code>oldStartVnode.elm</code> 的前面。同理，<code>newStartIdx</code> 往后移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b73aa8f758342~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">else &#123;</span><br><span class="line">    <span class="attr">elmToMove</span> = oldCh[idxInOld]<span class="comment">;</span></span><br><span class="line">    if (sameVnode(elmToMove, newStartVnode)) &#123;</span><br><span class="line">        patchVnode(elmToMove, newStartVnode)<span class="comment">;</span></span><br><span class="line">        oldCh<span class="section">[idxInOld]</span> = undefined<span class="comment">;</span></span><br><span class="line">        nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)<span class="comment">;</span></span><br><span class="line">        <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果不符合 <code>sameVnode</code>，只能创建一个新节点插入到 <code>parentElm</code> 的子节点中，<code>newStartIdx</code> 往后移动一位。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b73f50ed43932~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">else &#123;</span><br><span class="line">    createElm(newStartVnode, parentElm)<span class="comment">;</span></span><br><span class="line">    <span class="attr">newStartVnode</span> = newCh[++newStartIdx]<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后一步就很容易啦，当 <code>while</code> 循环结束以后，如果 <code>oldStartIdx &gt; oldEndIdx</code>，说明老节点比对完了，但是新节点还有多的，需要将新节点插入到真实 DOM 中去，调用 <code>addVnodes</code> 将这些节点插入即可。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b7457cae26687~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<p>同理，如果满足 <code>newStartIdx &gt; newEndIdx</code> 条件，说明新节点比对完了，老节点还有多，将这些无用的老节点通过 <code>removeVnodes</code> 批量删除即可。</p>
+<p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/1/2/160b744a2c07257d~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp"></p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (oldStartIdx &gt; oldEndIdx) &#123;</span><br><span class="line">    refElm = (newCh[newEndIdx + <span class="number">1</span>]) ? newCh<span class="selector-attr">[newEndIdx + 1]</span><span class="selector-class">.elm</span> : null;</span><br><span class="line">    <span class="built_in">addVnodes</span>(parentElm, refElm, newCh, newStartIdx, newEndIdx);</span><br><span class="line">&#125; else if (newStartIdx &gt; newEndIdx) &#123;</span><br><span class="line">    <span class="built_in">removeVnodes</span>(parentElm, oldCh, oldStartIdx, oldEndIdx);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到这里，比对的核心实现已经讲完了，这部分比较复杂，不过仔细地梳理一下比对的过程，相信一定能够理解得更加透彻的。</p>
+<p>注：本节代码参考<a href="https://link.juejin.cn/?target=https://github.com/answershuto/VueDemo/blob/master/%25E3%2580%258A%25E6%2595%25B0%25E6%258D%25AE%25E7%258A%25B6%25E6%2580%2581%25E6%259B%25B4%25E6%2596%25B0%25E6%2597%25B6%25E7%259A%2584%25E5%25B7%25AE%25E5%25BC%2582%2520diff%2520%25E5%258F%258A%2520patch%2520%25E6%259C%25BA%25E5%2588%25B6%25E3%2580%258B.js" title="https://github.com/answershuto/VueDemo/blob/master/%E3%80%8A%E6%95%B0%E6%8D%AE%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%97%B6%E7%9A%84%E5%B7%AE%E5%BC%82%20diff%20%E5%8F%8A%20patch%20%E6%9C%BA%E5%88%B6%E3%80%8B.js">《数据状态更新时的差异 diff 及 patch 机制》</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/29/6-%E6%95%B0%E6%8D%AE%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0%E6%97%B6%E7%9A%84%E5%B7%AE%E5%BC%82-diff-%E5%8F%8A-patch-%E6%9C%BA%E5%88%B6/" data-id="claxeer9l0005v8w1898j9lno" data-title="6.数据状态更新时的差异 diff 及 patch 机制" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/10/29/7-%E6%89%B9%E9%87%8F%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%E5%8F%8A-nextTick-%E5%8E%9F%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          7.批量异步更新策略及 nextTick 原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/10/29/5-template-%E6%A8%A1%E6%9D%BF%E6%98%AF%E6%80%8E%E6%A0%B7%E9%80%9A%E8%BF%87-Compile-%E7%BC%96%E8%AF%91%E7%9A%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">5.template 模板是怎样通过 Compile 编译的</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

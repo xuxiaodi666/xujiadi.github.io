@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>4.实现 Virtual DOM 下的一个 VNode 节点 | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="什么是VNode我们知道，render function 会被转化成 VNode 节点。Virtual DOM 其实就是一棵以 JavaScript 对象（VNode 节点）作为基础的树，用对象属性来描述节点，实际上它只是一层对真实 DOM 的抽象。最终可以通过一系列操作使这棵树映射到真实环境上。由于 Virtual DOM 是以 JavaScript 对象为基础而不依赖真实平台环境，所以使它具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.实现 Virtual DOM 下的一个 VNode 节点">
+<meta property="og:url" content="http://example.com/2022/10/29/4-%E5%AE%9E%E7%8E%B0-Virtual-DOM-%E4%B8%8B%E7%9A%84%E4%B8%80%E4%B8%AA-VNode-%E8%8A%82%E7%82%B9/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="什么是VNode我们知道，render function 会被转化成 VNode 节点。Virtual DOM 其实就是一棵以 JavaScript 对象（VNode 节点）作为基础的树，用对象属性来描述节点，实际上它只是一层对真实 DOM 的抽象。最终可以通过一系列操作使这棵树映射到真实环境上。由于 Virtual DOM 是以 JavaScript 对象为基础而不依赖真实平台环境，所以使它具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-29T12:13:04.000Z">
+<meta property="article:modified_time" content="2022-10-29T12:18:19.839Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-4-实现-Virtual-DOM-下的一个-VNode-节点" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/29/4-%E5%AE%9E%E7%8E%B0-Virtual-DOM-%E4%B8%8B%E7%9A%84%E4%B8%80%E4%B8%AA-VNode-%E8%8A%82%E7%82%B9/" class="article-date">
+  <time class="dt-published" datetime="2022-10-29T12:13:04.000Z" itemprop="datePublished">2022-10-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      4.实现 Virtual DOM 下的一个 VNode 节点
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是VNode"><a href="#什么是VNode" class="headerlink" title="什么是VNode"></a>什么是VNode</h2><p>我们知道，render function 会被转化成 VNode 节点。Virtual DOM 其实就是一棵以 JavaScript 对象（VNode 节点）作为基础的树，用对象属性来描述节点，实际上它只是一层对真实 DOM 的抽象。最终可以通过一系列操作使这棵树映射到真实环境上。由于 Virtual DOM 是以 JavaScript 对象为基础而不依赖真实平台环境，所以使它具有了跨平台的能力，比如说浏览器平台、Weex、Node 等。</p>
+<h2 id="实现一个VNode"><a href="#实现一个VNode" class="headerlink" title="实现一个VNode"></a>实现一个VNode</h2><p>VNode 归根结底就是一个 JavaScript 对象，只要这个类的一些属性可以正确直观地描述清楚当前节点的信息即可。我们来实现一个简单的 <code>VNode</code> 类，加入一些基本属性，为了便于理解，我们先不考虑复杂的情况。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">VNode</span> &#123;</span><br><span class="line">    <span class="keyword">constructor</span> (tag, <span class="keyword">data</span>, children, text, elm) &#123;</span><br><span class="line">        <span class="comment">/*当前节点的标签名*/</span></span><br><span class="line">        <span class="keyword">this</span>.tag = tag;</span><br><span class="line">        <span class="comment">/*当前节点的一些数据信息，比如props、attrs等数据*/</span></span><br><span class="line">        <span class="keyword">this</span>.<span class="keyword">data</span> = <span class="keyword">data</span>;</span><br><span class="line">        <span class="comment">/*当前节点的子节点，是一个数组*/</span></span><br><span class="line">        <span class="keyword">this</span>.children = children;</span><br><span class="line">        <span class="comment">/*当前节点的文本*/</span></span><br><span class="line">        <span class="keyword">this</span>.text = text;</span><br><span class="line">        <span class="comment">/*当前虚拟节点对应的真实dom节点*/</span></span><br><span class="line">        <span class="keyword">this</span>.elm = elm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如我目前有这么一个 Vue 组件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span> <span class="attr">v-show</span>=<span class="string">&quot;isShow&quot;</span>&gt;</span></span><br><span class="line">    This is a span.</span><br><span class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>用 JavaScript 代码形式就是这样的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">render</span> () &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">VNode</span>(</span><br><span class="line">        <span class="string">&#x27;span&#x27;</span>,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* 指令集合数组 */</span></span><br><span class="line">            <span class="attr">directives</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">/* v-show指令 */</span></span><br><span class="line">                    <span class="attr">rawName</span>: <span class="string">&#x27;v-show&#x27;</span>,</span><br><span class="line">                    <span class="attr">expression</span>: <span class="string">&#x27;isShow&#x27;</span>,</span><br><span class="line">                    <span class="attr">name</span>: <span class="string">&#x27;show&#x27;</span>,</span><br><span class="line">                    <span class="attr">value</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="comment">/* 静态class */</span></span><br><span class="line">            <span class="attr">staticClass</span>: <span class="string">&#x27;demo&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        [ <span class="keyword">new</span> <span class="title class_">VNode</span>(<span class="literal">undefined</span>, <span class="literal">undefined</span>, <span class="literal">undefined</span>, <span class="string">&#x27;This is a span.&#x27;</span>) ]</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看看转换成 VNode 以后的情况。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    tag: <span class="string">&#x27;span&#x27;</span>,</span><br><span class="line">    data: &#123;</span><br><span class="line">        <span class="comment">/* 指令集合数组 */</span></span><br><span class="line">        directives: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">/* v-show指令 */</span></span><br><span class="line">                rawName: <span class="string">&#x27;v-show&#x27;</span>,</span><br><span class="line">                expression: <span class="string">&#x27;isShow&#x27;</span>,</span><br><span class="line">                name: <span class="string">&#x27;show&#x27;</span>,</span><br><span class="line">                value: true</span><br><span class="line">            &#125;</span><br><span class="line">        ],</span><br><span class="line">        <span class="comment">/* 静态class */</span></span><br><span class="line">        staticClass: <span class="string">&#x27;demo&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    text: undefined,</span><br><span class="line">    children: [</span><br><span class="line">        <span class="comment">/* 子节点是一个文本VNode节点 */</span></span><br><span class="line">        &#123;</span><br><span class="line">            tag: undefined,</span><br><span class="line">            data: undefined,</span><br><span class="line">            text: <span class="string">&#x27;This is a span.&#x27;</span>,</span><br><span class="line">            children: undefined</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以将 VNode 进一步封装一下，可以实现一些产生常用 VNode 的方法。</p>
+<ul>
+<li>创建一个空节点</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function createEmptyVNode () &#123;</span><br><span class="line">    const <span class="attr">node</span> = new VNode()<span class="comment">;</span></span><br><span class="line">    <span class="attr">node.text</span> = <span class="string">&#x27;&#x27;</span><span class="comment">;</span></span><br><span class="line">    return node<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建一个文本节点</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">createTextVNode</span> (val) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">VNode</span>(<span class="literal">undefined</span>, <span class="literal">undefined</span>, <span class="literal">undefined</span>, <span class="title class_">String</span>(val));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>克隆一个 VNode 节点</li>
+</ul>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">function <span class="title">cloneVNode</span> <span class="params">(node)</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> cloneVnode = <span class="keyword">new</span> <span class="built_in">VNode</span>(</span><br><span class="line">        node.tag,</span><br><span class="line">        node.data,</span><br><span class="line">        node.children,</span><br><span class="line">        node.text,</span><br><span class="line">        node.elm</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">return</span> cloneVnode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总的来说，VNode 就是一个 JavaScript 对象，用 JavaScript 对象的属性来描述当前节点的一些状态，用 VNode 节点的形式来模拟一棵 Virtual DOM 树。</p>
+<p>注：本节代码参考<a href="https://link.juejin.cn/?target=https://github.com/answershuto/VueDemo/blob/master/%25E3%2580%258A%25E5%25AE%259E%25E7%258E%25B0%2520Virtual%2520DOM%2520%25E4%25B8%258B%25E7%259A%2584%25E4%25B8%2580%25E4%25B8%25AA%2520VNode%2520%25E8%258A%2582%25E7%2582%25B9%25E3%2580%258B.js" title="https://github.com/answershuto/VueDemo/blob/master/%E3%80%8A%E5%AE%9E%E7%8E%B0%20Virtual%20DOM%20%E4%B8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%20VNode%20%E8%8A%82%E7%82%B9%E3%80%8B.js">《实现 Virtual DOM 下的一个 VNode 节点》</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/29/4-%E5%AE%9E%E7%8E%B0-Virtual-DOM-%E4%B8%8B%E7%9A%84%E4%B8%80%E4%B8%AA-VNode-%E8%8A%82%E7%82%B9/" data-id="claxeer9j0002v8w17btp2b1q" data-title="4.实现 Virtual DOM 下的一个 VNode 节点" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/10/29/5-template-%E6%A8%A1%E6%9D%BF%E6%98%AF%E6%80%8E%E6%A0%B7%E9%80%9A%E8%BF%87-Compile-%E7%BC%96%E8%AF%91%E7%9A%84/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          5.template 模板是怎样通过 Compile 编译的
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/10/29/3-%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BE%9D%E8%B5%96%E6%94%B6%E9%9B%86%E8%BF%BD%E8%B8%AA%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">3.响应式系统的依赖收集追踪原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

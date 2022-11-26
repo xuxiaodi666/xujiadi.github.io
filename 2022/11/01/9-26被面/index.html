@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>9.26被面 | 徐嘉迪的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="一、盒子模型二、CSS之圣杯布局与双飞翼布局    1、圣杯布局        header          &#x2F;&#x2F;.wrapper {padding-left: 100px; padding-right: 100px;}            middle  &#x2F;&#x2F; .middle {width: 100%; float:left;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.26被面">
+<meta property="og:url" content="http://example.com/2022/11/01/9-26%E8%A2%AB%E9%9D%A2/index.html">
+<meta property="og:site_name" content="徐嘉迪的个人网站">
+<meta property="og:description" content="一、盒子模型二、CSS之圣杯布局与双飞翼布局    1、圣杯布局        header          &#x2F;&#x2F;.wrapper {padding-left: 100px; padding-right: 100px;}            middle  &#x2F;&#x2F; .middle {width: 100%; float:left;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-01T01:15:55.000Z">
+<meta property="article:modified_time" content="2022-11-01T01:16:06.567Z">
+<meta property="article:author" content="XuJiaDi">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="徐嘉迪的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">徐嘉迪的个人网站</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-9-26被面" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/01/9-26%E8%A2%AB%E9%9D%A2/" class="article-date">
+  <time class="dt-published" datetime="2022-11-01T01:15:55.000Z" itemprop="datePublished">2022-11-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      9.26被面
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>一、盒子模型<br>二、CSS之圣杯布局与双飞翼布局<br>    1、圣杯布局<br>        <div class="header">header</div><br>        <div class="content wrapper">  &#x2F;&#x2F;.wrapper {padding-left: 100px; padding-right: 100px;}<br>            <div class="middle">middle</div>  &#x2F;&#x2F; .middle {width: 100%; float:left;}<br>            <div class="left">left</div><br>            &#x2F;&#x2F;.left { width: 100px; float:left; position: relative; margin-left: -100%; right: 100px;}<br>            <div class="right">right</div>    &#x2F;&#x2F;.right {width: 100px; float:left;  margin-right: -100px;}<br>        </div><br>        <div class="footer">footer</div>      &#x2F;&#x2F;.footer {clear: both;}<br>        首先设置一下左右两栏的宽度，中间栏由于是自适应，所以宽度设置成100%。然后就到了重点，我们需要在每一栏加上浮动向左<br>        首先设置middle栏的padding,让中间这一栏左右留出区域方便我们放进去。<br>        然后只需要移动middle的宽度+右边留出来的100px。接下来就是右边这栏，同理，我们只需要挪动盒子的宽度100px即可。<br>        至此，我们可以说已经基本上完成了圣杯布局，我们可以通过拉伸或缩小窗口验证是否为我们想要的效果。<br>    总结一下，圣杯布局就是将基本布局之后使用向左浮动，middle栏留出两边位置，然后使用相对定位将左右两栏通过margin-left定位到相应位置。（是不是很简单！)<br>    2、双飞翼布局的实现过程<br>    <div class="header">header</div><br>    <div class="main middle"><br>        <div id="main-wrapper">middle</div>   &#x2F;&#x2F;.(1)<br>    </div><br>    <div class="left">left</div> .left {margin-left: -100%;}<br>    <div class="right">right</div> .right {margin-left: -100px;}<br>    <div class="footer">footer</div><br>    样式上也是需要向左浮动，前面的基本一致，现在的效果如下<br>    然后不一样的是， 我们不使用相对定位，而是直接通过margin-left，将left栏移动到middle栏上，right栏也一样。<br>    但是左右两栏覆盖了middle栏的内容。此时应该可以想到，只要将middle栏设置padding即可将内容挤到中间可视区域了。<br>    所以我们需要在middle栏里面再套一层div，(1)<br>    我们再里面这层div上加padding    .main #main-wrapper {padding-left: 100px; padding-right: 100px;}<br>    至此，我们就实现了双飞翼布局：<br>    3、最后总结一下，二者的异同：<br>    （1）实现方法的不同：<br>        圣杯布局是通过float搭建布局+margin使三列布局到一行上+relative相对定位调整位置。<br>        双飞翼布局是通过float+margin，没有使用相对定位。<br>    （2）怎么处理两列的位置：<br>        圣杯布局是给外部容器加padding，通过相对定位把两边定位出来。<br>        双飞翼布局是靠在中间这层外面套一层div加padding将内容挤出来中间。<br>三、css选择符有哪些，那些可以继承<br>    CSS 选择符<br>        id 选择器(#myid)、<br>        类选择器(.myclassname)、<br>        标签选择器(div, h1, p)、<br>        相邻选择器(h1 + p)、<br>        子选择器（ul &gt; li）、<br>        后代选择器（li a）、<br>        通配符选择器（*）、<br>        属性选择器（a[rel&#x3D;”external”]）、<br>        伪类选择器（a:hover, li:nth-child）<br>    可继承的属性<br>        font-size, font-family, color<br>    不可继承的样式<br>        border, padding, margin, width, height<br>    优先级（就近原则）<br>        !important &gt; [ id &gt; class &gt; tag ]<br>        !important 比内联优先级高<br>    CSS 优先级算法如何计算<br>        选择器的特殊性值表述为4个部分，用0,0,0,0表示。<br>            ID 选择器的特殊性值，加 0,1,0,0。<br>            类选择器、属性选择器或伪类，加 0,0,1,0。<br>            元素和伪元素，加 0,0,0,1。<br>            通配选择器*对特殊性没有贡献，即 0,0,0,0。<br>            最后比较特殊的一个标志!important（权重），它没有特殊性值，但它的优先级是最高的，为了方便记忆，可以认为它的特殊性值为 1,0,0,0,0。<br>四、数组常用的方法，那些数组改变原数组<br>    1.不会改变原来数组的有：（十二个）<br>        every()—检测数组元素的每个元素是否都符合条件。<br>        some()—检测数组元素中是否有元素符合指定条件。<br>        map()—通过指定函数处理数组的每个元素，并返回处理后的数组。<br>        slice()—选取数组的的一部分，并返回一个新数组。<br>        filter()—检测数组元素，并返回符合条件所有元素的数组。<br>        find()—返回数组中符合测试函数条件的第一个元素<br>        reduce()—可以作为累加器( reduceRight() )<br>        indexOf()—搜索数组中的元素，并返回它首次出现的位置。<br>        lastIndexOf()—返回一个指定的字符串值最后出现的位置，在一个字符串中的指定位置从后向前搜索。<br>        valueOf()—返回数组对象的原始值。<br>        toString()—把数组转换为字符串，并返回结果。<br>        join()—把数组的所有元素放入一个字符串。<br>        concat()—连接两个或更多的数组，并返回结果。</p>
+<pre><code>2.会改变原来数组的有：（七个）
+    pop()---删除数组的最后一个元素并返回删除的元素。
+    push()---向数组的末尾添加一个或更多元素，并返回新的长度。
+    shift()---删除并返回数组的第一个元素。
+    unshift()---向数组的开头添加一个或更多元素，并返回新的长度。
+    reverse()---反转数组的元素顺序。(瑞我司)
+    sort()---对数组的元素进行排序。
+    splice()---用于插入、删除或替换数组的元素。
+</code></pre>
+<p>五、什么是闭包<br>    一个普通的函数function，如果它可以访问外层作用域的自由变量，那么这个函数就是一个闭包<br>    从广义的角度来说：JavaScript中的函数都是闭包(因为都是可以访问的)<br>    从狭义的角度来说：JavaScript中一个函数，如果访问了外层作用域的变量才叫闭包<br>    总结<br>    JavaScript的内存管理<br>    垃圾回收机制 → 引用计数、标记清除<br>    JavaScript的闭包<br>    什么是闭包? → 闭包是两部分组成的：函数+可以访问的自由变量<br>    AO为何没有被销毁? → 没有被垃圾回收机制识别<br>六、防抖和节流的原理和使用场景<br>    函数防抖和函数节流：优化高频率执行js代码的一种手段，js中的一些事件如浏览器的resize、scroll，鼠标的mousemove、mouseover，input输入框的keypress等事件在触发时，会不断地调用绑定在事件上的回调函数，极大地浪费资源，降低前端性能。为了优化体验，需要对这类事件进行调用次数的限制。<br>    1、防抖：<br>        在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。<br>            var timer; &#x2F;&#x2F; 维护同一个timer<br>            function debounce(fn, delay) {<br>                clearTimeout(timer);<br>                timer &#x3D; setTimeout(function(){<br>                    fn();<br>                }, delay);<br>            }<br>        在上面的代码中，会出现一个问题，var timer只能在setTimeout的父级作用域中，这样才是同一个timer，并且为了方便防抖函数的调用和回调函数fn的传参问题，我们应该用闭包来解决这些问题。<br>        优化后的代码：<br>        function debounce(fn, delay) {<br>            var timer; &#x2F;&#x2F; 维护一个 timer<br>            return function () {<br>                var _this &#x3D; this; &#x2F;&#x2F; 取debounce执行作用域的this<br>                var args &#x3D; arguments;<br>                if (timer) {<br>                    clearTimeout(timer);*9-<br>                }<br>                timer &#x3D; setTimeout(function () {<br>                    fn.apply(_this, args); &#x2F;&#x2F; 用apply指向调用debounce的对象，相当于_this.fn(args);<br>                }, delay);<br>            };<br>        }<br>        使用闭包后，解决传参和封装防抖函数的问题，这样就可以在其他地方随便将需要防抖的函数传入debounce了。<br>    2、节流：<br>        每隔一段时间，只执行一次函数。<br>    3、异同比较<br>        相同点：<br>            都可以通过使用 setTimeout 实现。<br>            目的都是，降低回调执行频率。节省计算资源。<br>        不同点：<br>            函数防抖，在一段连续操作结束后，处理回调，利用clearTimeout 和 setTimeout实现。函数节流，在一段连续操作中，每一段时间只执行一次，频率较高的事件中使用来提高性能。<br>            函数防抖关注一定时间连续触发的事件只在最后执行一次，而函数节流侧重于一段时间内只执行一次。<br>    4、常见应用场景<br>        函数防抖的应用场景:<br>            连续的事件，只需触发一次回调的场景有：<br>            搜索框搜索输入。只需用户最后一次输入完，再发送请求<br>            手机号、邮箱验证输入检测<br>            窗口大小Resize。只需窗口调整完成后，计算窗口大小。防止重复渲染。</p>
+<pre><code>    函数节流的应用场景:
+        间隔一段时间执行一次回调的场景有：
+        滚动加载，加载更多或滚到底部监听
+        谷歌搜索框，搜索联想功能
+        高频点击提交，表单重复提交
+        轮播图的下一页（等这一页滚动完再进行下一页的滚动）
+</code></pre>
+<p>七、Vue 生命周期<br>    vue2生命周期（八个）<br>    beforeCreate: function () {<br>            console.group(‘——beforeCreate创建前状态——‘);<br>        },<br>        created: function () {<br>            console.group(‘——created创建完毕状态——‘);<br>        },<br>    <!-- 在Vue实例创建完毕状态，我们可以去访问data、computed、watch、methods上的方法和数据，但现在还没有将虚拟Dom挂载到真实Dom上，所以我们在此时访问不到我们的Dom元素（el属性，ref属性此时都为空）。 --><br>    <!-- 我们在此时可以进行一些简单的Ajax，并可以对页面进行初始化之类的操作 --><br>        beforeMount: function () {<br>            console.group(‘——beforeMount挂载前状态——‘);<br>        },<br>        mounted: function () {<br>            console.group(‘——mounted 挂载结束状态——‘);<br>        },<br>    <!-- 虚拟Dom已经被挂载到真实Dom上，此时我们可以获取Dom节点，$ref在此时也是可以访问的。 --><br>    <!-- 我们在此时可以去获取节点信息，做Ajax请求，对节点做一些操作 --><br>        beforeUpdate: function () {<br>            console.group(‘beforeUpdate 更新前状态&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;》’);<br>        },<br>    <!-- 响应式数据更新的时候会被调用，beforeupdate的阶段虚拟Dom还没更新，所以在此时依旧可以访问现有的Dom。 --><br>    <!-- 我们可以在此时访问现有的Dom，手动移除一些添加的监听事件 --><br>        updated: function () {<br>            console.group(‘updated 更新完成状态&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;》’);<br>        },<br>    <!-- 此时补丁已经打完了，Dom已经更新完毕，可以执行一些依赖新Dom的操作。 --><br>    <!-- 但还是不建议在此时进行数据操作，避免进入死循环（这个坑我曾经踩过） --><br>        beforeDestroy: function () {<br>            console.group(‘beforeDestroy 销毁前状态&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;》’);<br>        },<br>    <!-- 在Vue实例销毁之前被调用，在此时我们的实例还未被销毁 --><br>    <!-- 在此时可以做一些操作，比如销毁定时器，解绑全局事件，销毁插件对象等 --><br>        destroyed: function () {<br>            console.group(‘destroyed 销毁完成状态&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;》’);<br>        }<br>    vue3生命周期（八个）<br>        beforeCreate： 在实例初始化之后、进行数据侦听和事件&#x2F;侦听器的配置之前同步调用<br>        created：在实例创建完成后被立即同步调用<br>        beforeMount：在挂载开始之前被调用<br>        mounted：在实例挂载完成后被调用<br>        beforeUpdate：在数据发生改变后，DOM 被更新之前被调用<br>        updated：在数据更改导致的虚拟 DOM 重新渲染和更新完毕之后被调用<br>        beforeUnmount(在Vue2中是：beforeDestroy)：在卸载组件实例之前调用<br>        unmounted (在Vue2中是： destroyed)：卸载组件实例后调用<br>八、Vue中的$nextTick有什么作用<br>        Vue 在更新 DOM 时是异步执行的。当数据发生变化，Vue将开启一个异步更新队列，视图需要等队列中所有数据变化完成之后，再统一进行更新。如果没有 nextTick 更新机制，那么 num 每次更新值都会触发视图更新，有了nextTick机制，只需要更新一次，所以nextTick本质是一种优化策略<br>    使用场景<br>        如果想要在修改数据后立刻得到更新后的DOM结构，就可以使用Vue.nextTick()<br>        第一个参数：回调函数（可以获取最近的DOM结构）<br>        第二个参数：执行函数上下文<br>        $nextTick() 会返回一个 Promise 对象，可以是用async&#x2F;await完成相同作用的事情<br>    总结：<br>        把回调函数放入callbacks等待执行<br>        将执行函数放到微任务或者宏任务中<br>        事件循环到了微任务或者宏任务，执行函数依次执行callbacks中的回调<br>九、Vue2和Vue3你认为在那一方面做了改进和优化<br>十、项目中遇到哪些难题，怎样解决的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/01/9-26%E8%A2%AB%E9%9D%A2/" data-id="claxeer9n0008v8w1dg6t7l6g" data-title="9.26被面" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/11/01/VUE3%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          VUE3笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/11/01/9-29%E8%A2%AB%E9%9D%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">9.29被面</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 XuJiaDi<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

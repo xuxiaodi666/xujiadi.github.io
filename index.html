@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://example.com/index.html">
 <meta property="og:site_name" content="徐嘉迪的个人网站">
 <meta property="og:description" content="没有永远的失败者，只有努力的成功者">
-<meta property="og:locale">
+<meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="XuJiaDi">
 <meta name="twitter:card" content="summary">
   
@@ -47,6 +47,10 @@
         <a href="/" id="logo">徐嘉迪的个人网站</a>
       </h1>
       
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有永远的失败者，只有努力的成功者</a>
+        </h2>
+      
     </div>
     <div id="header-inner" class="inner">
       <nav id="main-nav">
@@ -59,12 +63,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
   </div>
@@ -73,10 +77,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-my-first-blog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-为什么React16要更改组件的生命周期-（下）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/10/25/my-first-blog/" class="article-date">
-  <time class="dt-published" datetime="2022-10-25T12:52:52.000Z" itemprop="datePublished">2022-10-25</time>
+    <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-11-26T01:09:46.000Z" itemprop="datePublished">2022-11-26</time>
 </a>
     
   </div>
@@ -87,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/10/25/my-first-blog/">我的第一篇文章</a>
+      <a class="p-name article-title" href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
     </h1>
   
 
@@ -95,11 +99,368 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <p data-nodeid="13784" class="">通过对上一个课时的学习，你已经对 React 15 的生命周期有了系统的掌握和理解。本课时，我将在此基础上，对 React 16 以来的生命周期进行剖析。在理解“是什么”的基础上，我将带你对比新旧两个版本生命周期之间的差异，并探寻变化背后的原因。</p>
+<p data-nodeid="13785">通过本课时的学习，你将明白 React 团队“动作频频”背后的思量与野心，同时也将对时下大热的 Fiber 架构形成初步的认知。</p>
+<h3 data-nodeid="13786">进化的生命周期方法：React 16 生命周期工作流详解</h3>
+<p data-nodeid="13787">关于 React 16 以来的生命周期，<a target="_blank" rel="noopener" href="https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/" data-nodeid="13940">这个民间开源项目</a>为我们提供了目前公认的比较优秀的流程大图（在下不才，自己动手画了半天仍然自觉无法超越下图，所以这里就直接引用过来辅助讲解）。我们先来看 React 16.3 的大图：</p>
+<p data-nodeid="13788"><img src="https://s0.lgstatic.com/i/image/M00/5D/D9/CgqCHl-FVVeAaMJvAAKXOyLlUwM592.png" alt="Drawing 0.png" data-nodeid="13944"></p>
+<p data-nodeid="13789">这里之所以特意将版本号精确到了小数点后面一位，是因为在<strong data-nodeid="13950">React 16.4</strong>之后，React 生命周期在之前版本的基础上又经历了一次微调。不过你先不用着急，在理解 16.3 生命周期的基础上，掌握这个“微调”对你来说将易如反掌。</p>
+<p data-nodeid="13790">接下来，我会先把上面这张 React 16.3 生命周期大图中所涉及的内容讲清楚，然后再对 16.4 的改动进行介绍。还是老规矩，这里我先提供一个 Demo，它将辅助你理解新的生命周期。Demo 代码如下：</p>
+<pre class="lang-js te-preview-highlight" data-nodeid="23159"><code data-language="js"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">"react-dom"</span>;
+<span class="hljs-comment">// 定义子组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;
+  <span class="hljs-keyword">constructor</span>(props) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"进入constructor"</span>);
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-comment">// state 可以在 constructor 里初始化</span>
+    <span class="hljs-keyword">this</span>.state = &#123; <span class="hljs-attr">text</span>: <span class="hljs-string">"子组件的文本"</span> &#125;;
+  &#125;
+  <span class="hljs-comment">// 初始化/更新时调用</span>
+  <span class="hljs-keyword">static</span> getDerivedStateFromProps(props, state) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"getDerivedStateFromProps方法执行"</span>);
+    <span class="hljs-keyword">return</span> &#123;
+      <span class="hljs-attr">fatherText</span>: props.text
+    &#125;
+  &#125;
+  <span class="hljs-comment">// 初始化渲染时调用</span>
+  componentDidMount() &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"componentDidMount方法执行"</span>);
+  &#125;
+  <span class="hljs-comment">// 组件更新时调用</span>
+  shouldComponentUpdate(prevProps, nextState) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"shouldComponentUpdate方法执行"</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  &#125;
+
+
+<p>  <span class="hljs-comment">&#x2F;&#x2F; 组件更新时调用</span><br>  getSnapshotBeforeUpdate(prevProps, prevState) &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“getSnapshotBeforeUpdate方法执行”</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">“haha”</span>;<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 组件更新后调用</span><br>  componentDidUpdate(preProps, preState, valueFromSnapshot) &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“componentDidUpdate方法执行”</span>);<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“从 getSnapshotBeforeUpdate 获取到的值是”</span>, valueFromSnapshot);<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 组件卸载时调用</span><br>  componentWillUnmount() &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“子组件的componentWillUnmount方法执行”</span>);<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，修改子组件文本内容的方法</span><br>  changeText &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">text</span>: <span class="hljs-string">“修改后的子组件文本”</span><br>    &#125;);<br>  &#125;;<br>  render() &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“render方法执行”</span>);<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“container”</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.changeText&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“changeText”</span>&gt;</span><br>          修改子组件文本内容<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“textContent”</span>&gt;</span>&#123;this.state.text&#125;<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">p</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“fatherContent”</span>&gt;</span>&#123;this.props.text&#125;<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">p</span>&gt;</span><br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br><span class="hljs-comment">&#x2F;&#x2F; 定义 LifeCycle 组件的父组件</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycleContainer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;</p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; state 也可以像这样用属性声明的形式初始化</span><br>  state &#x3D; &#123;<br>    <span class="hljs-attr">text</span>: <span class="hljs-string">“父组件的文本”</span>,<br>    <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">false</span><br>  &#125;;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，修改父组件文本的方法</span><br>  changeText &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">text</span>: <span class="hljs-string">“修改后的父组件文本”</span><br>    &#125;);<br>  &#125;;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，隐藏（卸载）LifeCycle 组件的方法</span><br>  hideChild &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">true</span><br>    &#125;);<br>  &#125;;<br>  render() &#123;<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“fatherContainer”</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.changeText&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“changeText”</span>&gt;</span><br>          修改父组件文本内容<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.hideChild&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“hideChild”</span>&gt;</span><br>          隐藏子组件<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        &#123;this.state.hideChild ? null : <span class="hljs-tag">&lt;<span class="hljs-name">LifeCycle</span> <span class="hljs-attr">text</span>&#x3D;<span class="hljs-string">&#123;this.state.text&#125;</span> &#x2F;&gt;</span>&#125;<br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br>ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">LifeCycleContainer</span> &#x2F;&gt;</span></span>, <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">“root”</span>));<br></code></pre></p>
+<p data-nodeid="13792">React 16 以来的生命周期也可以按照“挂载”“更新”和“卸载”三个阶段来看，所以接下来我们要做的事情仍然是分阶段拆解工作流程。在这个过程中，我将把 React 16 新增的生命周期方法，以及流程上相对于 React 15 产生的一些差异，作为我们学习的重点。对于和 React 15 保持一致的部分，这里不再重复讲解。</p>
+<h4 data-nodeid="13793">Mounting 阶段：组件的初始化渲染（挂载）</h4>
+<p data-nodeid="13794">为了凸显 16 和 15 两个版本生命周期之间的差异，我将两个流程绘制到了同一张大图里，请看下面这张图：</p>
+<p data-nodeid="13795"><img src="https://s0.lgstatic.com/i/image/M00/5F/B0/Ciqc1F-Klv6AIeOPAADAZZgLu7U105.png" alt="图片1.png" data-nodeid="13957"></p>
+<p data-nodeid="13796">你现在可以打开开篇我给出的 Demo，将你的 React 版本更新到 16.3，然后运行这个项目，你就可以在控制台看到新的生命周期执行过程了。控制台的输出如图所示：</p>
+<p data-nodeid="13797"><img src="https://s0.lgstatic.com/i/image/M00/5D/CE/Ciqc1F-FVW6AAX_PAADMEGvjdFI487.png" alt="Drawing 2.png" data-nodeid="13961"></p>
+<h5 data-nodeid="13798">消失的 componentWillMount，新增的 getDerivedStateFromProps</h5>
+<p data-nodeid="13799">从上图中不难看出，React 15 生命周期和 React 16.3 生命周期在挂载阶段的主要差异在于，<strong data-nodeid="13968">废弃了 componentWillMount，新增了 getDerivedStateFromProps</strong>。</p>
+<blockquote data-nodeid="13800">
+<p data-nodeid="13801">注：细心的你可能记得，React 16 对 render 方法也进行了一些改进。React 16 之前，render方法必须返回单个元素，而 React 16 允许我们返回元素数组和字符串。但本课时我们更加侧重讨论的是生命周期升级过程中的“主要矛盾”，也就是“工作流”层面的改变，故对现有方法的迭代细节，以及不在主要工作流里的<a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/react-component.html#componentdidcatch" data-nodeid="13972">componentDidCatch</a> 等生命周期不再予以赘述。</p>
+</blockquote>
+<p data-nodeid="13802">一些同学在初次发现这个改变的时候，倾向于认为是 React 16.3 在试图用 getDerivedStateFromProps代替componentWillMount，这种想法是不严谨的。</p>
+<h5 data-nodeid="13803">getDerivedStateFromProps 不是 componentWillMount 的替代品</h5>
+<p data-nodeid="13804">事实上，<strong data-nodeid="13981">componentWillMount 的存在不仅“鸡肋”而且危险，因此它并不值得被“代替”，它就应该被废弃。</strong> 为了证明这点，我将在本文后续的“透过现象看本质”环节为大家细数 componentWillMount 的几宗“罪”。</p>
+<p data-nodeid="13805">而 getDerivedStateFromProps 这个 API，其设计的初衷不是试图替换掉 <strong data-nodeid="13995">componentWillMount</strong>，而是试图替换掉 <strong data-nodeid="13996">componentWillReceiveProps</strong>，因此它有且仅有一个用途：<strong data-nodeid="13997">使用 props 来派生/更新 state</strong>。</p>
+<p data-nodeid="13806">React 团队为了确保 getDerivedStateFromProps 这个生命周期的纯洁性，直接从命名层面约束了它的用途（getDerivedStateFromProps 直译过来就是“从 Props 里派生 State”）。所以，如果你不是出于这个目的来使用 getDerivedStateFromProps，原则上来说都是不符合规范的。</p>
+<p data-nodeid="13807">值得一提的是，getDerivedStateFromProps 在更新和挂载两个阶段都会“出镜”（这点不同于仅在更新阶段出现的 componentWillReceiveProps）。这是因为“派生 state”这种诉求不仅在 props 更新时存在，<strong data-nodeid="14004">在 props 初始化的时候也是存在的</strong>。React 16 以提供特定生命周期的形式，对这类诉求提供了更直接的支持。</p>
+<p data-nodeid="13808">由此看来，挂载阶段的生命周期改变，并不是一个简单的“替换”逻辑，而是一个雄心勃勃的“进化”逻辑。</p>
+<h5 data-nodeid="13809">认识 getDerivedStateFromProps</h5>
+<p data-nodeid="13810">这个新生命周期方法的调用规则如下：</p>
+<pre class="lang-java" data-nodeid="13811"><code data-language="java"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-title">getDerivedStateFromProps</span><span class="hljs-params">(props, state)</span>
+</span></code></pre>
+<p data-nodeid="13812">在使用层面，你需要把握三个重点。</p>
+<p data-nodeid="13813">第一个重点是最特别的一点：<strong data-nodeid="14018">getDerivedStateFromProps 是一个静态方法</strong>。静态方法不依赖组件实例而存在，因此你在这个方法内部是<strong data-nodeid="14019">访问不到 this</strong> 的。若你偏要尝试这样做，必定报错，报错形式如下图所示：</p>
+<p data-nodeid="13814"><img src="https://s0.lgstatic.com/i/image/M00/5D/DA/CgqCHl-FVZSAX16PAAK3atPnbSg411.png" alt="Drawing 3.png" data-nodeid="14022"></p>
+<p data-nodeid="13815">第二个重点，该方法可以接收两个参数：props 和 state，它们分别代表当前组件接收到的来自父组件的 props 和当前组件自身的 state。我们可以尝试在 Demo 中输出这两个参数看一看，输出效果如下图所示：</p>
+<p data-nodeid="13816"><img src="https://s0.lgstatic.com/i/image/M00/5D/DA/CgqCHl-FVZqAJnD-AAQlZUXOgq0760.png" alt="Drawing 4.png" data-nodeid="14026"></p>
+<p data-nodeid="13817">可以看出，挂载阶段输出的 props 正是初始化阶段父组件传进来的 this.props 对象；而 state 是 LifeCycle 组件自身的 state 对象。</p>
+<p data-nodeid="13818">第三个重点，getDerivedStateFromProps 需要一个对象格式的返回值。如果你没有指定这个返回值，那么大概率会被 React 警告一番，警告内容如下图所示：</p>
+<p data-nodeid="13819"><img src="https://s0.lgstatic.com/i/image/M00/5D/CE/Ciqc1F-FVaCAOOnzAALVyD02cdg817.png" alt="Drawing 5.png" data-nodeid="14031"></p>
+<p data-nodeid="13820"><strong data-nodeid="14036">getDerivedStateFromProps 的返回值之所以不可或缺，是因为 React 需要用这个返回值来更新（派生）组件的 state</strong>。因此当你确实不存在“使用 props 派生 state ”这个需求的时候，最好是直接省略掉这个生命周期方法的编写，否则一定记得给它 return 一个 null。</p>
+<p data-nodeid="13821">注意，<strong data-nodeid="14046">getDerivedStateFromProps 方法对 state 的更新动作并非“覆盖”式的更新</strong>，<strong data-nodeid="14047">而是针对某个属性的定向更新</strong>。比如这里我们在 getDerivedStateFromProps 里返回的是这样一个对象，对象里面有一个 fatherText 属性用于表示“父组件赋予的文本”：</p>
+<pre class="lang-js" data-nodeid="13822"><code data-language="js">&#123;
+  <span class="hljs-attr">fatherText</span>: props.text
+&#125;
+</code></pre>
+<p data-nodeid="13823">该对象并不会替换掉组件原始的这个 state：</p>
+<pre class="lang-java" data-nodeid="13824"><code data-language="java"><span class="hljs-keyword">this</span>.state = &#123; text: <span class="hljs-string">"子组件的文本"</span> &#125;;
+</code></pre>
+<p data-nodeid="13825">而是仅仅针对 fatherText 这个属性作更新（这里原有的 state 里没有 fatherText，因此直接新增）。更新后，原有属性与新属性是共存的，如下图所示：</p>
+<p data-nodeid="13826"><img src="https://s0.lgstatic.com/i/image/M00/5D/DA/CgqCHl-FVbiAR1FtAABja-0bwL0578.png" alt="Drawing 6.png" data-nodeid="14052"></p>
+<h4 data-nodeid="13827">Updating 阶段：组件的更新</h4>
+<p data-nodeid="13828">React 15 与 React 16.3 的更新流程对比如下图所示：</p>
+<p data-nodeid="13829"><img src="https://s0.lgstatic.com/i/image/M00/5F/BB/CgqCHl-KlxyAB5MpAAFaH-Kgggo887.png" alt="图片2.png" data-nodeid="14057"></p>
+<p data-nodeid="13830">注意，咱们前面提到 React 16.4 对生命周期流程进行了“微调”，其实就调在了更新过程的getDerivedStateFromProps 这个生命周期上。先来看一张 React 16.4+ 的生命周期大图（出处仍然是<a target="_blank" rel="noopener" href="https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/" data-nodeid="14061">Wojciech Maj 的 react-lifecycle-methods-diagram</a>）：</p>
+<p data-nodeid="13831"><img src="https://s0.lgstatic.com/i/image/M00/5D/CF/Ciqc1F-FVcSALRwNAAIomWwVcQU231.png" alt="Drawing 8.png" data-nodeid="14065"></p>
+<p data-nodeid="13832">React 16.4 的挂载和卸载流程都是与 React 16.3 保持一致的，差异在于更新流程上：</p>
+<ul data-nodeid="13833">
+<li data-nodeid="13834">
+<p data-nodeid="13835">在 React 16.4 中，<strong data-nodeid="14072">任何因素触发的组件更新流程</strong>（包括由 this.setState 和 forceUpdate 触发的更新流程）都会触发 getDerivedStateFromProps；</p>
+</li>
+<li data-nodeid="13836">
+<p data-nodeid="13837">而在 v 16.3 版本时，<strong data-nodeid="14078">只有父组件的更新</strong>会触发该生命周期。</p>
+</li>
+</ul>
+<p data-nodeid="13838">到这里，你已经对 getDerivedStateFromProps 相关的改变有了充分的了解。接下来，我们就基于这层了解，问出生命周期改变背后的第一个“Why”。</p>
+<h5 data-nodeid="13839">改变背后的第一个“Why”：为什么要用 getDerivedStateFromProps 代替 componentWillReceiveProps？</h5>
+<p data-nodeid="13840">对于 getDerivedStateFromProps 这个 API，React 官方曾经给出过这样的描述：</p>
+<blockquote data-nodeid="13841">
+<p data-nodeid="13842">与 componentDidUpdate 一起，这个新的生命周期涵盖过时componentWillReceiveProps 的所有用例。</p>
+</blockquote>
+<p data-nodeid="13843">在这里，请你细细品味这句话，这句话里蕴含了下面两个关键信息：</p>
+<ul data-nodeid="13844">
+<li data-nodeid="13845">
+<p data-nodeid="13846">getDerivedStateFromProps 是作为一个<strong data-nodeid="14089">试图代替 componentWillReceiveProps</strong> 的 API 而出现的；</p>
+</li>
+<li data-nodeid="13847">
+<p data-nodeid="13848">getDerivedStateFromProps<strong data-nodeid="14095">不能完全和 componentWillReceiveProps 画等号</strong>，其特性决定了我们曾经在 componentWillReceiveProps 里面做的事情，不能够百分百迁移到getDerivedStateFromProps 里。</p>
+</li>
+</ul>
+<p data-nodeid="13849">接下来我们就展开说说这两点。</p>
+<ul data-nodeid="13850">
+<li data-nodeid="13851">
+<p data-nodeid="13852">关于 getDerivedStateFromProps 是如何代替componentWillReceiveProps 的，在“挂载”环节已经讨论过：getDerivedStateFromProps 可以代替 componentWillReceiveProps 实现<strong data-nodeid="14102">基于 props 派生 state</strong>。</p>
+</li>
+<li data-nodeid="13853">
+<p data-nodeid="13854">至于它为何不能完全和 componentWillReceiveProps 画等号，则是因为它过于“专注”了。这一点，单单从getDerivedStateFromProps 这个 API 名字上也能够略窥一二。原则上来说，它能做且只能做这一件事。</p>
+</li>
+</ul>
+<p data-nodeid="13855">乍一看，原来的 API 能做的事情更多，现在的 API 却限制重重，难道是 React 16 的生命周期方法“退化”了？</p>
+<p data-nodeid="13856">当然不是。如果你对设计模式有所了解的话，就会知道，<strong data-nodeid="14110">一个 API 并非越庞大越复杂才越优秀</strong>。或者说得更直接一点，庞大和复杂的 API 往往会带来维护层面的“灾难”。</p>
+<p data-nodeid="13857">说回 getDerivedStateFromProps 这个 API，它相对于早期的 componentWillReceiveProps 来说，正是做了“<strong data-nodeid="14116">合理的减法</strong>”。而做这个减法的决心之强烈，从 getDerivedStateFromProps 直接被定义为 static 方法这件事上就可见一斑—— static 方法内部拿不到组件实例的 this，这就导致你无法在 getDerivedStateFromProps 里面做任何类似于 this.fetch()、不合理的 this.setState（会导致死循环的那种）这类可能会产生副作用的操作。</p>
+<p data-nodeid="13858">因此，getDerivedStateFromProps 生命周期替代 componentWillReceiveProps 的背后，<strong data-nodeid="14122">是 React 16 在强制推行“只用 getDerivedStateFromProps 来完成 props 到 state 的映射”这一最佳实践</strong>。意在确保生命周期函数的行为更加可控可预测，从根源上帮开发者避免不合理的编程方式，避免生命周期的滥用；同时，也是在为新的 Fiber 架构铺路。</p>
+<p data-nodeid="13859">到这里，相信你已经对 getDerivedStateFromProps 吃得透透的了。至于什么是 Fiber 架构，这条路该怎么铺，你将在本课时后续的内容中找到答案。现在，我们得回到“更新”这条工作流里来，一起去看看getSnapshotBeforeUpdate 是怎么一回事儿。</p>
+<h5 data-nodeid="13860">消失的 componentWillUpdate 与新增的 getSnapshotBeforeUpdate</h5>
+<p data-nodeid="13861">咱们先来看看 getSnapshotBeforeUpdate 是什么：</p>
+<pre class="lang-js" data-nodeid="13862"><code data-language="js">getSnapshotBeforeUpdate(prevProps, prevState) &#123;
+  <span class="hljs-comment">// ...</span>
+&#125;
+</code></pre>
+<p data-nodeid="13863">这个方法和 getDerivedStateFromProps 颇有几分神似，它们都强调了“我需要一个返回值”这回事。区别在于 <strong data-nodeid="14141">getSnapshotBeforeUpdate 的返回值会作为第三个参数给到 componentDidUpdate</strong>。<strong data-nodeid="14142">它的执行时机是在 render 方法之后，真实 DOM 更新之前</strong>。在这个阶段里，我们可以<strong data-nodeid="14143">同时获取到更新前的真实 DOM 和更新前后的 state&amp;props 信息</strong>。</p>
+<p data-nodeid="13864">尽管在实际工作中，需要用到这么多信息的场景并不多，但在对于实现一些特殊的需求来说，没它还真的挺难办。这里我举一个非常有代表性的例子：实现一个内容会发生变化的滚动列表，要求根据滚动列表的内容是否发生变化，来决定是否要记录滚动条的当前位置。</p>
+<p data-nodeid="13865">这个需求的前半截要求我们对比更新前后的数据（感知变化），后半截则需要获取真实的 DOM 信息（获取位置），这时用 getSnapshotBeforeUpdate 来解决就再合适不过了。</p>
+<p data-nodeid="13866">对于这个生命周期，需要重点把握的是它与 componentDidUpdate 间的通信过程。在 Demo 中我给出了一个使用示例，它将帮助你更加具体地认知这个过程。代码如下：</p>
+<pre class="lang-java" data-nodeid="13867"><code data-language="java"><span class="hljs-comment">// 组件更新时调用</span>
+getSnapshotBeforeUpdate(prevProps, prevState) &#123;
+  console.log(<span class="hljs-string">"getSnapshotBeforeUpdate方法执行"</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"haha"</span>;
+&#125;
+
+
+<p><span class="hljs-comment">&#x2F;&#x2F; 组件更新后调用</span><br>componentDidUpdate(prevProps, prevState, valueFromSnapshot) &#123;<br>  console.log(<span class="hljs-string">“componentDidUpdate方法执行”</span>);<br>  console.log(<span class="hljs-string">“从 getSnapshotBeforeUpdate 获取到的值是”</span>, valueFromSnapshot);<br>&#125;<br></code></pre></p>
+<p data-nodeid="13868">现在我们点击 Demo 界面上“修改子组件文本内容”按钮，就可以看到这两个生命周期的通信效果，如下图所示：</p>
+<p data-nodeid="13869"><img src="https://s0.lgstatic.com/i/image/M00/5D/CF/Ciqc1F-FVlOAX7VMAAE_3SdYf2M700.png" alt="Drawing 9.png" data-nodeid="14150"></p>
+<p data-nodeid="13870">值得一提的是，这个生命周期的设计初衷，是为了“与 componentDidUpdate 一起，涵盖过时的 componentWillUpdate 的所有用例”（引用自 React 官网）。<strong data-nodeid="14156">getSnapshotBeforeUpdate 要想发挥作用，离不开 componentDidUpdate 的配合</strong>。</p>
+<p data-nodeid="13871">那么换个角度想想，<strong data-nodeid="14163">为什么 componentWillUpdate 就非死不可呢</strong>？说到底，还是因为它“挡了 Fiber 的路”。各位莫慌，咱们离真相越来越近了~</p>
+<h4 data-nodeid="13872">Unmounting 阶段：组件的卸载</h4>
+<p data-nodeid="13873">我们先继续把完整的生命周期流程走完，以下是组件卸载阶段的示意图：</p>
+<p data-nodeid="13874"><img src="https://s0.lgstatic.com/i/image/M00/5F/B0/Ciqc1F-KlzqACUOPAABE6JqN9E0200.png" alt="图片3.png" data-nodeid="14168"></p>
+<p data-nodeid="13875">卸载阶段的生命周期与 React 15 完全一致，只涉及 componentWillUnmount 这一个生命周期，此处不再重复讲解。</p>
+<p data-nodeid="13876">接下来，就让一切变化背后的”始作俑者“ Fiber 架构来和大家打个招呼吧！</p>
+<h3 data-nodeid="13877">透过现象看本质：React 16 缘何两次求变？</h3>
+<h5 data-nodeid="13878">Fiber 架构简析</h5>
+<p data-nodeid="13879">Fiber 是 React 16 对 React 核心算法的一次重写。关于 Fiber，我将在“模块二：核心原理”花大量的篇幅来介绍它的原理和细节。在本课时，你只需要 get 到这一个点：<strong data-nodeid="14178">Fiber 会使原本同步的渲染过程变成异步的</strong>。</p>
+<p data-nodeid="13880">在 React 16 之前，每当我们触发一次组件的更新，React 都会构建一棵新的虚拟 DOM 树，通过与上一次的虚拟 DOM 树进行 diff，实现对 DOM 的定向更新。这个过程，是一个递归的过程。下面这张图形象地展示了这个过程的特征：</p>
+<p data-nodeid="13881"><img src="https://s0.lgstatic.com/i/image/M00/5F/B0/Ciqc1F-Kl0WAO2mzAABxddWHnXI121.png" alt="图片4.png" data-nodeid="14182"></p>
+<p data-nodeid="13882">如图所示，<strong data-nodeid="14196">同步渲染的递归调用栈是非常深的</strong>，只有最底层的调用返回了，整个渲染过程才会开始逐层返回。<strong data-nodeid="14198">这个漫长且不可打断的更新过程，将会带来用户体验层面的巨大风险：<strong data-nodeid="14197">同步渲染一旦开始，便会牢牢抓住主线程不放，直到递归彻底完成。在这个过程中，浏览器没有办法处理任何渲染之外的事情，会进入一种</strong>无法处理用户交互</strong>的状态。因此若渲染时间稍微长一点，页面就会面临卡顿甚至卡死的风险。</p>
+<p data-nodeid="13883">而 React 16 引入的 Fiber 架构，恰好能够解决掉这个风险：<strong data-nodeid="14212">Fiber 会将一个大的更新任务拆解为许多个小任务</strong>。每当执行完一个小任务时，<strong data-nodeid="14213">渲染线程都会把主线程交回去</strong>，看看有没有优先级更高的工作要处理，确保不会出现其他任务被“饿死”的情况，进而避免同步渲染带来的卡顿。在这个过程中，<strong data-nodeid="14214">渲染线程不再“一去不回头”，而是可以被打断的</strong>，这就是所谓的“异步渲染”，它的执行过程如下图所示：</p>
+<p data-nodeid="13884"><img src="https://s0.lgstatic.com/i/image/M00/5F/B0/Ciqc1F-Kl1CAA6pwAADpyi-xSnM494.png" alt="图片5.png" data-nodeid="14217"></p>
+<p data-nodeid="13885">如果你初学 Fiber，对上面的两段描述感到陌生或者说“吃不透”，这都是正常的。在本课时，你大可不必如此苛求自己，只需对“同步渲染”和“异步渲染”这两个概念有一个大致的印象，同时把握住 Fiber 架构下“任务拆解”和“可打断”这两个特性即可。接下来，我们继续往下走，看看“同步”变“异步”这个过程，是如何对生命周期构成影响的。</p>
+<h5 data-nodeid="13886">换个角度看生命周期工作流</h5>
+<p data-nodeid="13887">Fiber 架构的重要特征就是<strong data-nodeid="14229">可以被打断的</strong>异步渲染模式。但这个“打断”是有原则的，根据“<strong data-nodeid="14230">能否被打断</strong>”这一标准，React 16 的生命周期被划分为了 render 和 commit 两个阶段，而 commit 阶段又被细分为了 pre-commit 和 commit。每个阶段所涵盖的生命周期如下图所示：</p>
+<p data-nodeid="13888"><img src="https://s0.lgstatic.com/i/image/M00/5D/CF/Ciqc1F-FVn6AEtlxAAIomWwVcQU485.png" alt="Drawing 13.png" data-nodeid="14233"></p>
+<p data-nodeid="13889">我们先来看下三个阶段各自有哪些特征（以下特征翻译自上图）。</p>
+<ul data-nodeid="13890">
+<li data-nodeid="13891">
+<p data-nodeid="13892">render 阶段：纯净且没有副作用，可能会被 React 暂停、终止或重新启动。</p>
+</li>
+<li data-nodeid="13893">
+<p data-nodeid="13894">pre-commit 阶段：可以读取 DOM。</p>
+</li>
+<li data-nodeid="13895">
+<p data-nodeid="13896">commit 阶段：可以使用 DOM，运行副作用，安排更新。</p>
+</li>
+</ul>
+<p data-nodeid="13897"><strong data-nodeid="14241">总的来说，render 阶段在执行过程中允许被打断，而 commit 阶段则总是同步执行的。</strong></p>
+<p data-nodeid="13898">为什么这样设计呢？简单来说，由于 render 阶段的操作对用户来说其实是“不可见”的，所以就算打断再重启，对用户来说也是零感知。而 commit 阶段的操作则涉及真实 DOM 的渲染，再狂的框架也不敢在用户眼皮子底下胡乱更改视图，所以这个过程必须用同步渲染来求稳。</p>
+<h5 data-nodeid="13899">细说生命周期“废旧立新”背后的思考</h5>
+<p data-nodeid="13900">在 Fiber 机制下，<strong data-nodeid="14253">render 阶段是允许暂停、终止和重启的</strong>。当一个任务执行到一半被打断后，下一次渲染线程抢回主动权时，这个任务被重启的形式是“重复执行一遍整个任务”而非“接着上次执行到的那行代码往下走”。<strong data-nodeid="14254">这就导致 render 阶段的生命周期都是有可能被重复执行的</strong>。</p>
+<p data-nodeid="13901">带着这个结论，我们再来看看 React 16 打算废弃的是哪些生命周期：</p>
+<ul data-nodeid="13902">
+<li data-nodeid="13903">
+<p data-nodeid="13904">componentWillMount；</p>
+</li>
+<li data-nodeid="13905">
+<p data-nodeid="13906">componentWillUpdate；</p>
+</li>
+<li data-nodeid="13907">
+<p data-nodeid="13908">componentWillReceiveProps。</p>
+</li>
+</ul>
+<p data-nodeid="13909">这些生命周期的共性，<strong data-nodeid="14264">就是它们都处于 render 阶段，都可能重复被执行</strong>，而且由于这些 API 常年被滥用，它们在重复执行的过程中都存在着不可小觑的风险。</p>
+<p data-nodeid="13910">别的不说，说说我自己在团队 code review 中见过的“骚操作”吧。在“componentWill”开头的生命周期里，你习惯于做的事情可能包括但不限于:</p>
+<ul data-nodeid="13911">
+<li data-nodeid="13912">
+<p data-nodeid="13913">setState()；</p>
+</li>
+<li data-nodeid="13914">
+<p data-nodeid="13915">fetch 发起异步请求；</p>
+</li>
+<li data-nodeid="13916">
+<p data-nodeid="13917">操作真实 DOM。</p>
+</li>
+</ul>
+<p data-nodeid="13918">这些操作的问题（或不必要性）包括但不限于以下 3 点：</p>
+<p data-nodeid="13919"><strong data-nodeid="14274">（1）完全可以转移到其他生命周期（尤其是 componentDidxxx）里去做</strong>。</p>
+<p data-nodeid="13920">比如在 componentWillMount 里发起异步请求。很多同学因为太年轻，以为这样做就可以让异步请求回来得“早一点”，从而避免首次渲染白屏。</p>
+<p data-nodeid="13921">可惜你忘了，异步请求再怎么快也快不过（React 15 下）同步的生命周期。componentWillMount 结束后，render 会迅速地被触发，所以说<strong data-nodeid="14281">首次渲染依然会在数据返回之前执行</strong>。这样做不仅没有达到你预想的目的，还会导致服务端渲染场景下的冗余请求等额外问题，得不偿失。</p>
+<p data-nodeid="13922"><strong data-nodeid="14286">（2）在 Fiber 带来的异步渲染机制下，可能会导致非常严重的 Bug</strong>。</p>
+<p data-nodeid="13923">试想，假如你在 componentWillxxx 里发起了一个付款请求。由于 render 阶段里的生命周期都可以重复执行，在 componentWillxxx 被<strong data-nodeid="14292">打断 + 重启多次</strong>后，就会发出多个付款请求。</p>
+<p data-nodeid="13924">比如说，这件商品单价只要 10 块钱，用户也只点击了一次付款。但实际却可能因为 componentWillxxx 被<strong data-nodeid="14298">打断 + 重启多次</strong>而多次调用付款接口，最终付了 50 块钱；又或者你可能会习惯在 componentWillReceiveProps 里操作 DOM（比如说删除符合某个特征的元素），那么 componentWillReceiveProps 若是执行了两次，你可能就会一口气删掉两个符合该特征的元素。</p>
+<p data-nodeid="13925">结合上面的分析，我们再去思考 getDerivedStateFromProps 为何会在设计层面直接被约束为一个触碰不到 this 的静态方法，其背后的原因也就更加充分了——避免开发者触碰 this，就是在避免各种危险的骚操作。</p>
+<p data-nodeid="13926"><strong data-nodeid="14303">（3）即使你没有开启异步，React 15 下也有不少人能把自己“玩死”。</strong></p>
+<p data-nodeid="13927">比如在 componentWillReceiveProps &nbsp;和 componentWillUpdate 里滥用 setState 导致重复渲染死循环的，大家都懂哈（邪魅一笑）。</p>
+<p data-nodeid="13928">总的来说，<strong data-nodeid="14322">React 16 改造生命周期的主要动机是为了配合 Fiber 架构带来的异步渲染机制</strong>。在这个改造的过程中，React 团队精益求精，<strong data-nodeid="14323">针对生命周期中长期被滥用的部分推行了具有强制性的最佳实践</strong>。这一系列的工作做下来，首先是<strong data-nodeid="14324">确保了 Fiber 机制下数据和视图的安全性</strong>，同时也<strong data-nodeid="14325">确保了生命周期方法的行为更加纯粹、可控、可预测</strong>。</p>
+<h3 data-nodeid="13929">总结</h3>
+<p data-nodeid="13930">通过 02 和 03 两个课时的学习，大家已经对 React 15、16 两个版本的生命周期有了深入的掌握，同时对 React 生命周期的一系列的变化以及其背后的原因都有了深刻而健全的理解。</p>
+<p data-nodeid="13931" class="">生命周期看似简单，但要想真正吃透，竟然需要挑战这么长的一个知识链路，实在不简单！在使用 React 进行项目开发的 5 年里，我曾不止一次地为各路合作伙伴在生命周期里“为所欲为”而感到痛苦，也曾不止一次地为 React 基础知识结构摇摇欲坠的候选人感到可惜。若你能够耐下心来彻底消化掉这两个课时，相信这世上定能多出一个靠谱的前端！</p>
+<p data-nodeid="13932">话说回来，现有的生命周期，虽然已经对方法的最佳实践做了强约束，但是仍然无法覆盖所有的“误操作”，其中最为典型的，就是对 getDerivedStateFromProps 的滥用。关于这点，社区的讨论不是很多，但是 <a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html" data-nodeid="14332">React 团队给出的这篇文章</a>就帮助大家规避“误操作”来说是绰绰有余的。</p>
+<p data-nodeid="13933" class="">经过了漫长的两个课时的学习，我们终于征服了生命周期这座小山包。一个组件的一生如何度过，我们已经领教过了。那么，多个组件之间如何“心意相通”呢？在下个课时，将围绕“数据在组件间的流动”展开讲解，探索“心意相通”的艺术。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="用户9471："><a href="#用户9471：" class="headerlink" title="**用户9471："></a>**用户9471：</h5><blockquote>
+<p>打卡 老师太棒了 值得多看几遍 细细品味 老师辛苦了</p>
+</blockquote>
+<h5 id="wjk："><a href="#wjk：" class="headerlink" title="wjk："></a>wjk：</h5><blockquote>
+<p>React 16 基于两个原因做出了生命周期的调整，其一：为同步渲染改异步渲染的 Fiber 铺路，把 有可能多次执行的 render 阶段中 componentWillMount&#x2F;componentWillUpdate&#x2F;componentWillRecevieProps 三个方法弃用；其二：为在一定程度上防止用户对生命周期的错用和滥用，把新增的 getDerivedStateFromProps 用 static 修饰，阻止用户在其内部使用 this 。</p>
+</blockquote>
+<h5 id="倩："><a href="#倩：" class="headerlink" title="*倩："></a>*倩：</h5><blockquote>
+<p>打卡，写的好棒</p>
+</blockquote>
+<h5 id="前："><a href="#前：" class="headerlink" title="*前："></a>*前：</h5><blockquote>
+<p>老师肯定看网络小说，哈哈，邪魅一笑</p>
+</blockquote>
+<h5 id="用户7412："><a href="#用户7412：" class="headerlink" title="**用户7412："></a>**用户7412：</h5><blockquote>
+<p>这篇文章从WHAT到WHY解释了15到16生命周期的变化，很是精彩，尤其是对那些在16被移除的生命周期，之前不太理解，经过老师的解释终于理解了，并且知道为啥他们被重命名为“UNSAFE_”了，哈哈。</p>
+</blockquote>
+<h5 id="洋："><a href="#洋：" class="headerlink" title="*洋："></a>*洋：</h5><blockquote>
+<p>思路清晰，稳得一匹，来自网友的弹幕666</p>
+</blockquote>
+<h5 id="8542："><a href="#8542：" class="headerlink" title="**8542："></a>**8542：</h5><blockquote>
+<p>16.3的生命周期是mounting：constructer，getdecrivedstatefromprops，render,componedidmount,更新阶段:getdecriviedstatefromprops,shouldcomponentupdate,render,getshotsnapbeforeupdate，componentdidupdate卸载componentwillunmount,生命周期的大调是在16.3版本里面的，16.4又做了一点点微调。16.3和16.4之间的区别是在16.3里面更新的时候只有props修改的时候才会进getdecrivestatefromprops，静态方法。16.4里面更新props.state.forcrupdate只要他们触发更新就会进这个方法。16.4和15之间的区别:废除了componentwillmount.componentwillupdate.componentwiistatefromprops.新增了两静态方法:getdecrivedstatefromprops.getshotsnapbeforeupdate调整的原因是15底层的diff算法是同步递归的只要进入元素对比就停不下来了，直到递归结束，此时渲染线程长时间被递归占领，浏览器容易卡顿，白屏。为了优化这和过程，react引入了fiber框架。他将diff过程拆解成无数个小任务，任务运行在协程上的，他是可打断可恢复的优势，异步</p>
+</blockquote>
+<h5 id="xzx："><a href="#xzx：" class="headerlink" title="xzx："></a>xzx：</h5><blockquote>
+<p>16.3到16.4的生命周期getDirevedStateFromProps的改动原因是啥。既然这个生命周期是专门为了给props映射到State用的，所以16.3的设计很合理，就是在props变更的时候调用</p>
+</blockquote>
+<h5 id="用户9471：-1"><a href="#用户9471：-1" class="headerlink" title="**用户9471："></a>**用户9471：</h5><blockquote>
+<p>异步请求再怎么快也快不过（React 15 下）同步的生命周期,这句话为啥要特地强调react15下（react菜鸡弱弱提问）</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 因为这种用法在 React15 中最为严重，React16 因为官方声明了一部分生命周期是 unsafe 的，所以大家的习惯渐渐发生了改变。</p>
+</blockquote>
+<h5 id="凯："><a href="#凯：" class="headerlink" title="*凯："></a>*凯：</h5><blockquote>
+<p>强强强</p>
+</blockquote>
+<h5 id="用户5792："><a href="#用户5792：" class="headerlink" title="**用户5792："></a>**用户5792：</h5><blockquote>
+<p>娓娓道来，从what到why，老师太棒了</p>
+</blockquote>
+<h5 id="浩："><a href="#浩：" class="headerlink" title="*浩："></a>*浩：</h5><blockquote>
+<p>技术与文笔都是一流 👍</p>
+</blockquote>
+<h5 id="9668："><a href="#9668：" class="headerlink" title="**9668："></a>**9668：</h5><blockquote>
+<p>nice!</p>
+</blockquote>
+<h5 id="涛："><a href="#涛：" class="headerlink" title="**涛："></a>**涛：</h5><blockquote>
+<p>写的很赞，对生命周期有了不一样的认识</p>
+</blockquote>
+<h5 id="男："><a href="#男：" class="headerlink" title="**男："></a>**男：</h5><blockquote>
+<p>哇，老师真的讲得不错~</p>
+</blockquote>
+<h5 id="廷："><a href="#廷：" class="headerlink" title="**廷："></a>**廷：</h5><blockquote>
+<p>讲的真好</p>
+</blockquote>
+<h5 id="晓："><a href="#晓：" class="headerlink" title="**晓："></a>**晓：</h5><blockquote>
+<p>这个why解释的真的让人豁然开朗</p>
+</blockquote>
+<h5 id="宇："><a href="#宇：" class="headerlink" title="**宇："></a>**宇：</h5><blockquote>
+<p>获益匪浅，谢谢老师</p>
+</blockquote>
+<h5 id="3133："><a href="#3133：" class="headerlink" title="**3133："></a>**3133：</h5><blockquote>
+<p>感谢老师剖析react设计哲学 学完豁然开朗</p>
+</blockquote>
+<h5 id="虎："><a href="#虎：" class="headerlink" title="**虎："></a>**虎：</h5><blockquote>
+<p>既有深度，又生动浅显易懂，大师级别的老师，很幸运能买到老师的课，并跟着老师学习</p>
+</blockquote>
+<h5 id="宇：-1"><a href="#宇：-1" class="headerlink" title="**宇："></a>**宇：</h5><blockquote>
+<p>不错很有启发，仿佛明白为什么渲染的时候内存蹭蹭上涨了</p>
+</blockquote>
+<h5 id="console-man："><a href="#console-man：" class="headerlink" title="console_man："></a>console_man：</h5><blockquote>
+<p>秀妍大佬，太强啦</p>
+</blockquote>
+<h5 id="霞："><a href="#霞：" class="headerlink" title="**霞："></a>**霞：</h5><blockquote>
+<p>好棒好棒，对生命周期又有了新的理解</p>
+</blockquote>
+<h5 id="杰："><a href="#杰：" class="headerlink" title="**杰："></a>**杰：</h5><blockquote>
+<p>反复读了几次 ，有所收获😉</p>
+</blockquote>
+<h5 id="克："><a href="#克：" class="headerlink" title="**克："></a>**克：</h5><blockquote>
+<p>讲的太好了，必须得细细去品老师讲的内容。</p>
+</blockquote>
+<h5 id="威："><a href="#威：" class="headerlink" title="**威："></a>**威：</h5><blockquote>
+<p>老师讲得真好，比市面上的react书籍胜10万倍</p>
+</blockquote>
+<h5 id="静："><a href="#静：" class="headerlink" title="**静："></a>**静：</h5><blockquote>
+<p>看完这两个课时，感觉从背各种生命周期的阶段到了理解阶段，再也不会傻傻分不清了</p>
+</blockquote>
+<h5 id="甲："><a href="#甲：" class="headerlink" title="*甲："></a>*甲：</h5><blockquote>
+<p>老师讲得太好了，声音也好听</p>
+</blockquote>
+<h5 id="森："><a href="#森：" class="headerlink" title="**森："></a>**森：</h5><blockquote>
+<p>讲的是真好</p>
+</blockquote>
+<h5 id="林："><a href="#林：" class="headerlink" title="**林："></a>**林：</h5><blockquote>
+<p>讲的不错😀</p>
+</blockquote>
+<h5 id="论："><a href="#论：" class="headerlink" title="**论："></a>**论：</h5><blockquote>
+<p>render阶段里的生命周期这句话如何理解呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 是不是跳读了？答案就在这一讲的原文中：Fiber 架构的重要特征就是可以被打断的异步渲染模式。但这个“打断”是有原则的，根据“能否被打断”这一标准，React 16 的生命周期被划分为了 render 和 commit 两个阶段。render 阶段：纯净且没有副作用，可能会被 React 暂停、终止或重新启动。render 阶段包含的生命周期在原文的图示中哈。</p>
+</blockquote>
+<h5 id="论：-1"><a href="#论：-1" class="headerlink" title="**论："></a>**论：</h5><blockquote>
+<p>强</p>
+</blockquote>
+<h5 id="明："><a href="#明：" class="headerlink" title="**明："></a>**明：</h5><blockquote>
+<p>受益匪浅！</p>
+</blockquote>
+<h5 id="宾："><a href="#宾：" class="headerlink" title="*宾："></a>*宾：</h5><blockquote>
+<p>写的也太好了吧，很清晰</p>
+</blockquote>
+<h5 id="环："><a href="#环：" class="headerlink" title="**环："></a>**环：</h5><blockquote>
+<p>学的很明白，感谢老师</p>
+</blockquote>
+<h5 id="光："><a href="#光：" class="headerlink" title="**光："></a>**光：</h5><blockquote>
+<p>激动人心</p>
+</blockquote>
+<h5 id="星："><a href="#星：" class="headerlink" title="**星："></a>**星：</h5><blockquote>
+<p>真的真的写得好棒</p>
+</blockquote>
+<h5 id="言："><a href="#言：" class="headerlink" title="*言："></a>*言：</h5><blockquote>
+<p>打卡 写的真好！</p>
+</blockquote>
+<h5 id="梅："><a href="#梅：" class="headerlink" title="*梅："></a>*梅：</h5><blockquote>
+<p>老师写得太赞了</p>
+</blockquote>
+<h5 id="旭："><a href="#旭：" class="headerlink" title="*旭："></a>*旭：</h5><blockquote>
+<p>打卡</p>
+</blockquote>
+<h5 id="敖："><a href="#敖：" class="headerlink" title="*敖："></a>*敖：</h5><blockquote>
+<p>大师，我悟了😁</p>
+</blockquote>
+<h5 id="洋：-1"><a href="#洋：-1" class="headerlink" title="**洋："></a>**洋：</h5><blockquote>
+<p>下个课时见</p>
+</blockquote>
+<h5 id="康："><a href="#康：" class="headerlink" title="**康："></a>**康：</h5><blockquote>
+<p>写的太好了👍</p>
+</blockquote>
+<h5 id="阳："><a href="#阳：" class="headerlink" title="*阳："></a>*阳：</h5><blockquote>
+<p>打卡</p>
+</blockquote>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/25/my-first-blog/" data-id="cl9o7le3m0000msw1fykydvc5" data-title="我的第一篇文章" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="claxeer9t000kv8w12xkc2mg1" data-title="为什么React16要更改组件的生命周期?（下）" class="article-share-link">分享</a>
       
       
       
@@ -111,10 +472,339 @@
 
 
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="为什么 title: 要更改组件的生命周期？（上）-要更改组件的生命周期？（上）" class="h-entry article article-type-为什么 title: 要更改组件的生命周期？（上）" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/10/25/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2022-10-25T12:12:08.974Z" itemprop="datePublished">2022-10-25</time>
+    <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-11-26T01:04:23.000Z" itemprop="datePublished">2022-11-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p data-nodeid="1389" class="">React 生命周期已经是一个老生常谈的话题了，几乎没有哪一门 React 入门教材会省略对组件生命周期的介绍。然而，入门教材在设计上往往追求的是“简单省事、迅速上手”，这就导致许多同学对于生命周期知识的刻板印象为“背就完了、别想太多”。</p>
+<p data-nodeid="1390">“背就完了”这样简单粗暴的学习方式，或许可以帮助你理解“What to do”，到达“How to do”，但却不能帮助你去思考和认知“Why to do”。作为一个专业的 React 开发者，我们必须要求自己在知其然的基础上，知其所以然。</p>
+<p data-nodeid="1391">在本课时和下一个课时，我将抱着帮你做到“知其所以然”的目的，以 React 的基本原理为引子，<strong data-nodeid="1503">对 React 15、React 16 两个版本的生命周期进行探讨、比对和总结，通过搞清楚一个又一个的“Why”，来帮你建立系统而完善的生命周期知识体系</strong>。</p>
+<h3 data-nodeid="1392">生命周期背后的设计思想：把握 React 中的“大方向”</h3>
+<p data-nodeid="1393">在介绍具体的生命周期之前，我想先带你初步理解 React 框架中的一些关键的设计思想，以便为你后续的学习提供不可或缺的“加速度”。</p>
+<p data-nodeid="1394">如果你经常翻阅 React 官网或者 React 官方的一些文章，你会发现“<strong data-nodeid="1515">组件</strong>”和“<strong data-nodeid="1516">虚拟 DOM</strong>”这两个词的出镜率是非常高的，它们是 React 基本原理中极为关键的两个概念，也是我们这个小节的学习切入点。</p>
+<h4 data-nodeid="1395">虚拟 DOM：核心算法的基石</h4>
+<p data-nodeid="1396">通过 01 课时的学习，你已经知晓了虚拟 DOM 节点的基本形态，现在我们需要简单了解下虚拟 DOM 在整个 React 工作流中的作用。</p>
+<p data-nodeid="1397">组件在初始化时，会通过调用生命周期中的 render 方法，<strong data-nodeid="1524">生成虚拟 DOM</strong>，然后再通过调用 ReactDOM.render 方法，实现虚拟 DOM 到真实 DOM 的转换。</p>
+<p data-nodeid="1398">当组件更新时，会再次通过调用 render 方法<strong data-nodeid="1534">生成新的虚拟 DOM</strong>，然后借助 diff（这是一个非常关键的算法，我将在“模块二：核心原理”重点讲解）<strong data-nodeid="1535">定位出两次虚拟 DOM 的差异</strong>，从而针对发生变化的真实 DOM 作定向更新。</p>
+<p data-nodeid="1399">以上就是 React 框架核心算法的大致流程。对于这套关键的工作流来说，“虚拟 DOM”是所有操作的大前提，是核心算法的基石。</p>
+<h4 data-nodeid="1400">组件化：工程化思想在框架中的落地</h4>
+<p data-nodeid="1401">组件化是一种优秀的软件设计思想，也是 React 团队在研发效能方面所做的一个重要的努力。</p>
+<p data-nodeid="1402">在一个 React 项目中，几乎所有的可见/不可见的内容都可以被抽离为各种各样的组件，每个组件既是“封闭”的，也是“开放”的。</p>
+<p data-nodeid="1403">所谓“封闭”，主要是针对“渲染工作流”（指从<strong data-nodeid="1549">组件数据改变</strong>到<strong data-nodeid="1550">组件实际更新发生的</strong>过程）来说的。在组件自身的渲染工作流中，每个组件都只处理它内部的渲染逻辑。在没有数据流交互的情况下，组件与组件之间可以做到“各自为政”。</p>
+<p data-nodeid="1404">而所谓“开放”，则是针对组件间通信来说的。React 允许开发者基于“单向数据流”的原则完成组件间的通信。而组件之间的通信又将改变通信双方/某一方内部的数据，进而对渲染结果构成影响。所以说在数据这个“红娘”的牵线搭桥之下，组件之间又是彼此开放的，是可以相互影响的。</p>
+<p data-nodeid="1405">这一“开放”与“封闭”兼具的特性，使得 React 组件<strong data-nodeid="1557">既专注又灵活</strong>，具备高度的可重用性和可维护性。</p>
+<h4 data-nodeid="1406">生命周期方法的本质：组件的“灵魂”与“躯干”</h4>
+<p data-nodeid="1407">之前我曾经在社区读过一篇文章，文中将 render 方法形容为 React 组件的“灵魂”。当时我对这句话产生了非常强烈的共鸣，这里我就想以这个曾经打动过我的比喻为引子，帮助你从宏观上建立对 React 生命周期的感性认知。</p>
+<p data-nodeid="1408">注意，这里提到的 render 方法，和我们 01 课时所说的 ReactDOM.render 可不是一个东西，它指的是 React 组件内部的这个生命周期方法：</p>
+<pre class="lang-js" data-nodeid="1409"><code data-language="js"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;
+
+
+<p>  render() &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“render方法执行”</span>);<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“container”</span>&gt;</span><br>        this is content<br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br></code></pre></p>
+<p data-nodeid="1410">前面咱们介绍了虚拟 DOM、组件化，倘若把这两块知识整合一下，你就会发现这两个概念似乎都在围着 render 这个生命周期打转：虚拟 DOM 自然不必多说，它的生成都要仰仗 render；而组件化概念中所提及的“渲染工作流”，这里指的是从<strong data-nodeid="1570">组件数据改变</strong>到<strong data-nodeid="1571">组件实际更新发生的</strong>过程，这个过程的实现同样离不开 render。</p>
+<p data-nodeid="1411">由此看来，render 方法在整个组件生命周期中确实举足轻重，它担得起“灵魂”这个有分量的比喻。那么如果将 render 方法比作组件的“<strong data-nodeid="1581">灵魂</strong>”，render 之外的生命周期方法就完全可以理解为是组件的“<strong data-nodeid="1582">躯干</strong>”。</p>
+<p data-nodeid="1412">“躯干”未必总是会做具体的事情（比如说我们可以选择性地省略对 render 之外的任何生命周期方法内容的编写），而“灵魂”却总是充实的（render 函数却坚决不能省略）；倘若“躯干”做了点什么，往往都会直接或间接地影响到“灵魂”（因为即便是 render 之外的生命周期逻辑，也大部分是在为 render 层面的效果服务）；“躯干”和“灵魂”一起，共同构成了 React 组件完整而不可分割的“生命时间轴”。</p>
+<h3 data-nodeid="1413">拆解 React 生命周期：从 React 15 说起</h3>
+<p data-nodeid="1414">我发现时下许多资料在讲解 React 生命周期时，喜欢直接拿 React 16 开刀。这样做虽然省事儿，却也模糊掉了新老生命周期变化背后的“Why”（关于两者的差异，我们会在“03 课时”中详细讲解）。这里为了把这个“Why”拎出来，我将首先带你认识 React 15 的生命周期流程。</p>
+<p data-nodeid="1415">在 React 15 中，大家需要关注以下几个生命周期方法：</p>
+<pre class="lang-java" data-nodeid="1416"><code data-language="java">constructor()
+componentWillReceiveProps()
+shouldComponentUpdate()
+componentWillMount()
+componentWillUpdate()
+componentDidUpdate()
+componentDidMount()
+render()
+componentWillUnmount()
+</code></pre>
+<blockquote data-nodeid="1417">
+<p data-nodeid="1418">如果你接触 React 足够早，或许会记得还有 getDefaultProps 和 getInitState 这两个方法，它们都是 React.createClass() 模式下初始化数据的方法。由于这种写法在 ES6 普及后已经不常见，这里不再详细展开。</p>
+</blockquote>
+<p data-nodeid="1419">这些生命周期方法是如何彼此串联、相互依存的呢？这里我为你总结了一张大图：</p>
+<p data-nodeid="1420"><img src="https://s0.lgstatic.com/i/image/M00/5E/31/Ciqc1F-GZbGAGNcBAAE775qohj8453.png" alt="1.png" data-nodeid="1591"></p>
+<p data-nodeid="1421">接下来，我就围绕这张大图，分阶段讨论组件生命周期的运作规律。在学习的过程中，下面这个 Demo 可以帮助你具体地验证每个阶段的工作流程：</p>
+<pre class="lang-js te-preview-highlight" data-nodeid="7991"><code data-language="js"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">"react-dom"</span>;
+<span class="hljs-comment">// 定义子组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;
+  <span class="hljs-keyword">constructor</span>(props) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"进入constructor"</span>);
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-comment">// state 可以在 constructor 里初始化</span>
+    <span class="hljs-keyword">this</span>.state = &#123; <span class="hljs-attr">text</span>: <span class="hljs-string">"子组件的文本"</span> &#125;;
+  &#125;
+  <span class="hljs-comment">// 初始化渲染时调用</span>
+  componentWillMount() &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"componentWillMount方法执行"</span>);
+  &#125;
+  <span class="hljs-comment">// 初始化渲染时调用</span>
+  componentDidMount() &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"componentDidMount方法执行"</span>);
+  &#125;
+  <span class="hljs-comment">// 父组件修改组件的props时会调用</span>
+  componentWillReceiveProps(nextProps) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"componentWillReceiveProps方法执行"</span>);
+  &#125;
+  <span class="hljs-comment">// 组件更新时调用</span>
+  shouldComponentUpdate(nextProps, nextState) &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"shouldComponentUpdate方法执行"</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  &#125;
+
+
+<p>  <span class="hljs-comment">&#x2F;&#x2F; 组件更新时调用</span><br>  componentWillUpdate(nextProps, nextState) &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“componentWillUpdate方法执行”</span>);<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 组件更新后调用</span><br>  componentDidUpdate(preProps, preState) &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“componentDidUpdate方法执行”</span>);<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 组件卸载时调用</span><br>  componentWillUnmount() &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“子组件的componentWillUnmount方法执行”</span>);<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，修改子组件文本内容的方法</span><br>  changeText &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">text</span>: <span class="hljs-string">“修改后的子组件文本”</span><br>    &#125;);<br>  &#125;;<br>  render() &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">“render方法执行”</span>);<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“container”</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.changeText&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“changeText”</span>&gt;</span><br>          修改子组件文本内容<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“textContent”</span>&gt;</span>&#123;this.state.text&#125;<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">p</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“fatherContent”</span>&gt;</span>&#123;this.props.text&#125;<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">p</span>&gt;</span><br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br><span class="hljs-comment">&#x2F;&#x2F; 定义 LifeCycle 组件的父组件</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycleContainer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;</p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; state 也可以像这样用属性声明的形式初始化</span><br>  state &#x3D; &#123;<br>    <span class="hljs-attr">text</span>: <span class="hljs-string">“父组件的文本”</span>,<br>    <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">false</span><br>  &#125;;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，修改父组件文本的方法</span><br>  changeText &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">text</span>: <span class="hljs-string">“修改后的父组件文本”</span><br>    &#125;);<br>  &#125;;<br>  <span class="hljs-comment">&#x2F;&#x2F; 点击按钮，隐藏（卸载）LifeCycle 组件的方法</span><br>  hideChild &#x3D; <span class="hljs-function"><span class="hljs-params">()</span> &#x3D;&gt;</span> &#123;<br>    <span class="hljs-keyword">this</span>.setState(&#123;<br>      <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">true</span><br>    &#125;);<br>  &#125;;<br>  render() &#123;<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“fatherContainer”</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.changeText&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“changeText”</span>&gt;</span><br>          修改父组件文本内容<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>&#x3D;<span class="hljs-string">&#123;this.hideChild&#125;</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“hideChild”</span>&gt;</span><br>          隐藏子组件<br>        <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">button</span>&gt;</span><br>        &#123;this.state.hideChild ? null : <span class="hljs-tag">&lt;<span class="hljs-name">LifeCycle</span> <span class="hljs-attr">text</span>&#x3D;<span class="hljs-string">&#123;this.state.text&#125;</span> &#x2F;&gt;</span>&#125;<br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br>ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">LifeCycleContainer</span> &#x2F;&gt;</span></span>, <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">“root”</span>));<br></code></pre></p>
+<p data-nodeid="1423">该入口文件对应的 index.html 中预置了 id 为 root 的真实 DOM 节点作为根节点，body 标签内容如下：</p>
+<pre class="lang-js" data-nodeid="1424"><code data-language="js">&lt;body&gt;
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"root"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+&lt;/body&gt;
+</code></pre>
+<p data-nodeid="1425">这个 Demo 渲染到浏览器上大概是这样的：</p>
+<p data-nodeid="1426"><img src="https://s0.lgstatic.com/i/image/M00/5D/CC/Ciqc1F-FU-yAMLh0AABeqOeqLek815.png" alt="Drawing 1.png" data-nodeid="1597"></p>
+<p data-nodeid="1427">此处由于我们强调的是对生命周期执行规律的验证，所以样式上从简，你也可以根据自己的喜好添加 CSS 相关的内容。</p>
+<p data-nodeid="1428">接下来我们就结合这个 Demo 和开头的生命周期大图，一起来看看挂载、更新、卸载这 3 个阶段，React 组件都经历了哪些事情。</p>
+<h4 data-nodeid="1429">Mounting 阶段：组件的初始化渲染（挂载）</h4>
+<p data-nodeid="1430">挂载过程在组件的一生中仅会发生一次，在这个过程中，组件被初始化，然后会被渲染到真实 DOM 里，完成所谓的“首次渲染”。</p>
+<p data-nodeid="1431">在挂载阶段，一个 React 组件会按照顺序经历如下图所示的生命周期：</p>
+<p data-nodeid="1432"><img src="https://s0.lgstatic.com/i/image/M00/5E/32/Ciqc1F-GZ1OAWETTAAA3Am2CwU0383.png" alt="3.png" data-nodeid="1605"></p>
+<p data-nodeid="1433">首先我们来看 constructor 方法，该方法仅仅在挂载的时候被调用一次，我们可以在该方法中对 this.state 进行初始化：</p>
+<pre class="lang-java" data-nodeid="1434"><code data-language="java">constructor(props) &#123;
+  console.log(<span class="hljs-string">"进入constructor"</span>);
+  <span class="hljs-keyword">super</span>(props);
+  <span class="hljs-comment">// state 可以在 constructor 里初始化</span>
+  <span class="hljs-keyword">this</span>.state = &#123; text: <span class="hljs-string">"子组件的文本"</span> &#125;;
+&#125;
+</code></pre>
+<p data-nodeid="1435">componentWillMount、componentDidMount 方法同样只会在挂载阶段被调用一次。其中 componentWillMount 会在执行 render 方法前被触发，一些同学习惯在这个方法里做一些初始化的操作，但这些操作往往会伴随一些风险或者说不必要性（这一点大家先建立认知，具体原因将在“03 课时”展开讲解）。</p>
+<p data-nodeid="1436">接下来 render 方法被触发。注意 render 在执行过程中并不会去操作真实 DOM（也就是说不会渲染），它的职能是<strong data-nodeid="1613">把需要渲染的内容返回出来</strong>。真实 DOM 的渲染工作，在挂载阶段是由 ReactDOM.render 来承接的。</p>
+<p data-nodeid="1437">componentDidMount 方法在渲染结束后被触发，此时因为真实 DOM 已经挂载到了页面上，我们可以在这个生命周期里执行真实 DOM 相关的操作。此外，类似于异步请求、数据初始化这样的操作也大可以放在这个生命周期来做（侧面印证了 componentWillMount 真的很鸡肋）。</p>
+<p data-nodeid="1438">这一整个流程对应的其实就是我们 Demo 页面刚刚打开时，组件完成初始化渲染的过程。下图是 Demo 中的 LifeCycle 组件在挂载过程中控制台的输出，你可以用它来验证挂载过程中生命周期顺序的正确性：</p>
+<p data-nodeid="1439"><img src="https://s0.lgstatic.com/i/image/M00/5D/D8/CgqCHl-FU_6AeWUcAAB8X4bjwqE102.png" alt="Drawing 3.png" data-nodeid="1618"></p>
+<h4 data-nodeid="1440">Updating 阶段：组件的更新</h4>
+<p data-nodeid="1441">组件的更新分为两种：一种是由父组件更新触发的更新；另一种是组件自身调用自己的 setState 触发的更新。这两种更新对应的生命周期流程如下图所示：</p>
+<p data-nodeid="1442"><img src="https://s0.lgstatic.com/i/image/M00/5E/3C/CgqCHl-GZf-AUjsLAACmOsiQl3M485.png" alt="2.png" data-nodeid="1623"></p>
+<p data-nodeid="1443"><strong data-nodeid="1627">componentWillReceiProps 到底是由什么触发的？</strong></p>
+<p data-nodeid="1444">从图中你可以明显看出，父组件触发的更新和组件自身的更新相比，多出了这样一个生命周期方法：</p>
+<pre class="lang-java" data-nodeid="1445"><code data-language="java">componentWillReceiveProps(nextProps)
+</code></pre>
+<p data-nodeid="1446">在这个生命周期方法里，nextProps 表示的是接收到新 props 内容，而现有的 props （相对于 nextProps 的“旧 props”）我们可以通过 this.props 拿到，由此便能够感知到 props 的变化。</p>
+<p data-nodeid="1447">写到这里，就不得不在“变化”这个动作上深挖一下了。我在一些社区文章里，包括一些候选人面试时的回答里，都不约而同地见过/听过这样一种说法：<strong data-nodeid="1634">componentWillReceiveProps 是在组件的 props 内容发生了变化时被触发的。</strong></p>
+<p data-nodeid="1448"><strong data-nodeid="1639">这种说法不够严谨</strong>。远的不说，就拿咱们上文给出的 Demo 开刀，该界面的控制台输出在初始化完成后是这样的：</p>
+<p data-nodeid="1449"><img src="https://s0.lgstatic.com/i/image/M00/5D/CC/Ciqc1F-FVA6AYiD4AADSl2lr-_Q663.png" alt="Drawing 5.png" data-nodeid="1642"></p>
+<p data-nodeid="1450">注意，我们代码里面，LifeCycleContainer 这个父组件传递给子组件 LifeCycle 的 props 只有一个 text：</p>
+<pre class="lang-java" data-nodeid="1451"><code data-language="java">&lt;LifeCycle text=&#123;<span class="hljs-keyword">this</span>.state.text&#125; /&gt;
+</code></pre>
+<p data-nodeid="1452">假如我点击“修改父组件文本内容”这个按钮，父组件的 this.state.text 会发生改变，进而带动子组件的 this.props.text 发生改变。此时一定会触发 componentWillReceiveProps 这个生命周期，这是毋庸置疑的：</p>
+<p data-nodeid="1453"><img src="https://s0.lgstatic.com/i/image/M00/5D/CC/Ciqc1F-FVBWAEqTGAAEdsvX2TAM747.png" alt="Drawing 6.png" data-nodeid="1647"></p>
+<p data-nodeid="1454">但如果我现在对父组件的结构进行一个小小的修改，给它一个和子组件完全无关的 state（this.state.ownText），同时相应地给到一个修改这个 state 的方法（this.changeOwnText），并用一个新的 button 按钮来承接这个触发的动作。</p>
+<p data-nodeid="1455">改变后的 LifeCycleContainer 如下所示：</p>
+<pre class="lang-js" data-nodeid="1456"><code data-language="js"><span class="hljs-comment">// 定义 LifeCycle 组件的父组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LifeCycleContainer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;
+  <span class="hljs-comment">// state 也可以像这样用属性声明的形式初始化</span>
+  state = &#123;
+    <span class="hljs-attr">text</span>: <span class="hljs-string">"父组件的文本"</span>,
+    <span class="hljs-comment">// 新增的只与父组件有关的 state</span>
+    <span class="hljs-attr">ownText</span>: <span class="hljs-string">"仅仅和父组件有关的文本"</span>,
+    <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">false</span>
+  &#125;;
+  changeText = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+    <span class="hljs-keyword">this</span>.setState(&#123;
+      <span class="hljs-attr">text</span>: <span class="hljs-string">"修改后的父组件文本"</span>
+    &#125;);
+  &#125;;
+  <span class="hljs-comment">// 修改 ownText 的方法</span>
+  changeOwnText = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+    <span class="hljs-keyword">this</span>.setState(&#123;
+      <span class="hljs-attr">ownText</span>: <span class="hljs-string">"修改后的父组件自有文本"</span>
+    &#125;);
+  &#125;;
+  hideChild = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+    <span class="hljs-keyword">this</span>.setState(&#123;
+      <span class="hljs-attr">hideChild</span>: <span class="hljs-literal">true</span>
+    &#125;);
+  &#125;;
+  render() &#123;
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"fatherContainer"</span>&gt;</span>
+        &#123;/* 新的button按钮 */&#125;
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;this.changeOwnText&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"changeText"</span>&gt;</span>
+          修改父组件自有文本内容
+        <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;this.changeText&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"changeText"</span>&gt;</span>
+          修改父组件文本内容
+        <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;this.hideChild&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"hideChild"</span>&gt;</span>
+          隐藏子组件
+        <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span> &#123;this.state.ownText&#125; <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        &#123;this.state.hideChild ? null : <span class="hljs-tag">&lt;<span class="hljs-name">LifeCycle</span> <span class="hljs-attr">text</span>=<span class="hljs-string">&#123;this.state.text&#125;</span> /&gt;</span>&#125;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  &#125;
+&#125;
+</code></pre>
+<p data-nodeid="1457">新的界面如下图所示：</p>
+<p data-nodeid="1458"><img src="https://s0.lgstatic.com/i/image/M00/5D/CD/Ciqc1F-FVCGAVX_GAAFADHW8-9A107.png" alt="Drawing 7.png" data-nodeid="1653"></p>
+<p data-nodeid="1459">可以看到，this.state.ownText 这个状态和子组件完全无关。但是当我点击“修改父组件自有文本内容”这个按钮的时候，componentReceiveProps 仍然被触发了，效果如下图所示：</p>
+<p data-nodeid="1460"><img src="https://s0.lgstatic.com/i/image/M00/5D/D8/CgqCHl-FVCqASZNkAAGmF-R62cg649.png" alt="Drawing 8.png" data-nodeid="1657"></p>
+<p data-nodeid="1461">耳听为虚，眼见为实。面对这样的运行结果，我不由得要带你复习一下 React 官方文档中的这句话：</p>
+<p data-nodeid="1462"><img src="https://s0.lgstatic.com/i/image/M00/5D/E1/Ciqc1F-FaGuADV5vAACZ2YRV6qQ941.png" alt="图片7.png" data-nodeid="1661"></p>
+<p data-nodeid="1463"><strong data-nodeid="1666">componentReceiveProps 并不是由 props 的变化触发的，而是由父组件的更新触发的</strong>，这个结论，请你谨记。</p>
+<p data-nodeid="1464"><strong data-nodeid="1670">组件自身 setState 触发的更新</strong></p>
+<p data-nodeid="1465">this.setState() 调用后导致的更新流程，前面大图中已经有体现，这里我直接沿用上一个 Demo 来做演示。若我们点击上一个 Demo 中的“修改子组件文本内容”这个按钮：</p>
+<p data-nodeid="1466"><img src="https://s0.lgstatic.com/i/image/M00/5D/D8/CgqCHl-FVDWABuVmAADVzZuKCO0699.png" alt="Drawing 9.png" data-nodeid="1674"></p>
+<p data-nodeid="1467">这个动作将会触发子组件 LifeCycle 自身的更新流程，随之被触发的生命周期函数如下图增加的 console 内容所示：</p>
+<p data-nodeid="1468"><img src="https://s0.lgstatic.com/i/image/M00/5D/CD/Ciqc1F-FVDuASw5bAAEhb9melJQ452.png" alt="Drawing 10.png" data-nodeid="1678"></p>
+<p data-nodeid="1469">先来说说 componentWillUpdate 和 componentDidUpdate 这一对好基友。</p>
+<p data-nodeid="1470">componentWillUpdate 会在 render 前被触发，它和 componentWillMount 类似，允许你在里面做一些不涉及真实 DOM 操作的准备工作；而 componentDidUpdate 则在组件更新完毕后被触发，和 componentDidMount 类似，这个生命周期也经常被用来处理 DOM 操作。此外，我们也常常将 componentDidUpdate 的执行作为子组件更新完毕的标志通知到父组件。</p>
+<p data-nodeid="1471"><strong data-nodeid="1684">render 与性能：初识 shouldComponentUpdate</strong></p>
+<p data-nodeid="1472">这里需要重点提一下 shouldComponentUpdate 这个生命周期方法，它的调用形式如下所示：</p>
+<pre class="lang-js" data-nodeid="1473"><code data-language="js">shouldComponentUpdate(nextProps, nextState)
+</code></pre>
+<p data-nodeid="1474">render 方法由于伴随着对虚拟 DOM 的构建和对比，过程可以说相当耗时。而在 React 当中，很多时候我们会不经意间就频繁地调用了 render。为了避免不必要的 render 操作带来的性能开销，React 为我们提供了 shouldComponentUpdate 这个口子。</p>
+<p data-nodeid="1475">React 组件会根据 shouldComponentUpdate 的返回值，来决定是否执行该方法之后的生命周期，进而决定是否对组件进行<strong data-nodeid="1692">re-render</strong>（重渲染）。shouldComponentUpdate 的默认值为 true，也就是说“无条件 re-render”。在实际的开发中，我们往往通过手动往 shouldComponentUpdate 中填充判定逻辑，或者直接在项目中引入 PureComponent 等最佳实践，来实现“有条件的 re-render”。</p>
+<p data-nodeid="1476">关于 shouldComponentUpdate 及 PureComponent 对 React 的优化，我们会在后续的性能小节中详细展开。这里你只需要认识到 shouldComponentUpdate 的基本使用及其<strong data-nodeid="1698">与 React 性能之间的关联关系</strong>即可。</p>
+<h4 data-nodeid="1477">Unmounting 阶段：组件的卸载</h4>
+<p data-nodeid="1478">组件的销毁阶段本身是比较简单的，只涉及一个生命周期，如下图所示：</p>
+<p data-nodeid="1479"><img src="https://s0.lgstatic.com/i/image/M00/5D/EC/CgqCHl-FaHuAVGc_AABE6JqN9E0073.png" alt="图片6.png" data-nodeid="1703"></p>
+<p data-nodeid="1480">对应上文的 Demo 来看，我们点击“隐藏子组件”后就可以把 LifeCycle 从父组件中移除掉，进而实现卸载的效果。整个过程如下图所示：</p>
+<p data-nodeid="1481"><img src="https://s0.lgstatic.com/i/image/M00/5D/CD/Ciqc1F-FVFeABZvpAAO9lJVFKhs335.png" alt="Drawing 12.png" data-nodeid="1707"></p>
+<p data-nodeid="1482">这个生命周期本身不难理解，我们重点说说怎么触发它。组件销毁的常见原因有以下两个。</p>
+<ul data-nodeid="1483">
+<li data-nodeid="1484">
+<p data-nodeid="1485">组件在父组件中被移除了：这种情况相对比较直观，对应的就是我们上图描述的这个过程。</p>
+</li>
+<li data-nodeid="1486">
+<p data-nodeid="1487">组件中设置了 key 属性，父组件在 render 的过程中，发现 key 值和上一次不一致，那么这个组件就会被干掉。</p>
+</li>
+</ul>
+<p data-nodeid="1488">在本课时，只要能够理解到 1 就可以了。对于 2 这种情况，你只需要先记住有这样一种现象，这就够了。至于组件里面为什么要设置 key，为什么 key 改变后组件就必须被干掉？要回答这个问题，需要你先理解 React 的“调和过程”，而“调和过程”也会是我们第二模块中重点讲解的一个内容。这里我先把这个知识点点出来，方便你定位我们整个知识体系里的<strong data-nodeid="1716">重难点</strong>。</p>
+<h3 data-nodeid="1489">总结</h3>
+<p data-nodeid="1490">在本课时，我们对 React 设计思想中的“虚拟 DOM”和“组件化”这两个关键概念形成了初步的理解，同时也对 React 15 中的生命周期进行了系统的学习和总结。到这里，你已经了解到了 React 生命周期在很长一段“过去”里的形态。</p>
+<p data-nodeid="1491">而在 React 16 中，组件的生命周期其实已经发生了一系列的变化。这些变化到底是什么样的，它们背后又蕴含着 React 团队怎样的思量呢？</p>
+<p data-nodeid="1492">古人说“以史为镜，可以知兴衰”。在下个课时，我们将一起去“照镜子”，对 React 新旧生命周期进行对比，并探求变化的动机。</p>
+<p data-nodeid="1493"><strong data-nodeid="1725">小编有话说</strong>：</p>
+<p data-nodeid="1494">作为一名前端开发人员，我相信大家都会有一个明显的感觉：其实前端并没有想象的那么简单。近年来，前端的职责越来越重要，战场越来越多样，应用也越来越复杂。作为现阶段的“入局者”，你是否能够系统地掌握前端的知识体系？你对技术的理解是否触达底层原理？你的能力是否可以受到大厂青睐？</p>
+<p data-nodeid="1495" class="">为了帮助前端人实现进阶学习，摆脱高不成低不就的困局。拉勾教育不仅开设了前端领域的专栏课，还研发了<a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/fe_enhancement.html?utm_source=lagouedu&amp;utm_medium=zhuanlan&amp;utm_campaign=%E5%A4%A7%E5%89%8D%E7%AB%AF%E9%AB%98%E8%96%AA%E8%AE%AD%E7%BB%83%E8%90%A5" data-nodeid="1730">“大前端高薪训练营”</a>，从知识体系构建、底层基础夯实、实战项目剖析、面试场景模拟到一线大厂内推，一站式解决前端进阶难题，打造你的核心竞争力。<a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/fe_enhancement.html?utm_source=lagouedu&amp;utm_medium=zhuanlan&amp;utm_campaign=%E5%A4%A7%E5%89%8D%E7%AB%AF%E9%AB%98%E8%96%AA%E8%AE%AD%E7%BB%83%E8%90%A5" data-nodeid="1734">点击链接</a>，即可了解更多关于前端进阶的内容。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="5949："><a href="#5949：" class="headerlink" title="**5949："></a>**5949：</h5><blockquote>
+<p>请问，为什么说虚拟DOM生成仰仗render？ 同时render与createElement有什么样的联系呀？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; babel 只是把 JSX 转化成 createElement，这个转化的过程发生在编译阶段，代码还没有运行。执行是在 render 里做的。</p>
+</blockquote>
+<h5 id="ezra-xu："><a href="#ezra-xu：" class="headerlink" title="ezra.xu："></a>ezra.xu：</h5><blockquote>
+<p>加深了对componentWillReceiveProps(nextProps)生命周期函数的理解，即父组件重新渲染时会触发所有子组件的该方法。</p>
+</blockquote>
+<h5 id="6400："><a href="#6400：" class="headerlink" title="**6400："></a>**6400：</h5><blockquote>
+<p>代码样例非常赞，请问如何能获取到可运行的代码，老师有github链接吗？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 虽然没有 Github 链接，但是你可以使用 create-react-app 脚手架来快速完成项目的初始化（传送门 <a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/create-a-new-react-app.html%EF%BC%89%EF%BC%8C%E6%8E%A5%E4%B8%8B%E6%9D%A5%E6%8A%8A%E6%96%87%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%A1%9E%E8%BF%9B%E5%8E%BB%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%E3%80%82">https://zh-hans.reactjs.org/docs/create-a-new-react-app.html），接下来把文中的代码塞进去就可以了。</a></p>
+</blockquote>
+<h5 id="铮："><a href="#铮：" class="headerlink" title="*铮："></a>*铮：</h5><blockquote>
+<p>打卡学习</p>
+</blockquote>
+<h5 id="8621："><a href="#8621：" class="headerlink" title="**8621："></a>**8621：</h5><blockquote>
+<p>原文中“componentDidMount 方法在渲染结束后被触发，此时因为真实 DOM 已经挂载到了页面上，我们可以在这个生命周期里执行真实 DOM 相关的操作。此外，类似于异步请求、数据初始化这样的操作也大可以放在这个生命周期来做（侧面印证了 componentWillMount 真的很鸡肋）”，这里有点疑问，componentWillMount中发起异步请求不是更好么，既不影响生命周期流程，也可以在挂载之后更快地初始化数据和重新渲染。如果在didMount中再发起异步请求，就会慢一些。原文中“componentReceiveProps 并不是由 props 的变化触发的，而是由父组件的更新触发的，这个结论，请你谨记。”这里为什么要设计成父组件更新(即使没有更新子组件相关的状态值)也要触发这个子组件生命周期函数呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; componentWillMount 的局限性在第03课时有非常详细的探讨。关于异步请求这一点，“异步请求再怎么快也快不过（React 15 下）同步的生命周期。componentWillMount 结束后，render 会迅速地被触发，所以说首次渲染依然会在数据返回之前执行。这样做不仅没有达到你预想的目的，还会导致服务端渲染场景下的冗余请求等额外问题，得不偿失”。除此之外，在 Fiber 带来的异步渲染机制下，componentWillMount 可能会导致非常严重的 Bug。最后一点，即使你没有开启异步，React 15 下也有不少人能用 componentWillMount 把自己“玩死”…..等等，以上这些在03课时都有很详细的解释说明。</p>
+</blockquote>
+<h5 id="魁："><a href="#魁：" class="headerlink" title="**魁："></a>**魁：</h5><blockquote>
+<p>调理思路都很清晰，尤其是对于componentReceiveProps这个方法的讲解，看了很多网上的文章也没看明白，谢谢大佬。</p>
+</blockquote>
+<h5 id="川："><a href="#川：" class="headerlink" title="*川："></a>*川：</h5><blockquote>
+<p>调理无比清晰 我很受用</p>
+</blockquote>
+<h5 id="7323："><a href="#7323：" class="headerlink" title="**7323："></a>**7323：</h5><blockquote>
+<p>话不多，但是讲的真清晰</p>
+</blockquote>
+<h5 id="fanta："><a href="#fanta：" class="headerlink" title="fanta："></a>fanta：</h5><blockquote>
+<p>打卡 支持 赞！ 这节其实对生命周期的理解更加深刻 对于vDom还是要从另一个剖面切入来讲 期待</p>
+</blockquote>
+<h5 id="侯："><a href="#侯：" class="headerlink" title="**侯："></a>**侯：</h5><blockquote>
+<p>终于更新了</p>
+</blockquote>
+<h5 id="用户9471："><a href="#用户9471：" class="headerlink" title="**用户9471："></a>**用户9471：</h5><blockquote>
+<p>买过修言大佬两本小册 大佬讲课讲得也好好 很细致</p>
+</blockquote>
+<h5 id="8542："><a href="#8542：" class="headerlink" title="**8542："></a>**8542：</h5><blockquote>
+<p>15的生命周期一共有9个，在组件第一次加载的时候执行3个，component willmount里面做一些不涉真dom的操作，但是很多人喜欢将请求数据写在里面。render执行babel给我转换的createelement方法，然后将所有的组件元素转换成reactelement具有特定数据结构的对象，也就是我们说的虚拟dom，之后会执行componentdidmount，在他里面可以操作真是dom，异步请求数据，当父组件发生变化的时候，就会触发组件的更新此时执行的是componentwillreceiveprops，此时能够接受到最新的props。当组件自己的state发生变化的时候，直接触发的是should componentupdate，这是一个用于做性能优化的组件决定这个组是否更新的开关。和pure component，react.memo类似。接下来如果开关打开，组件更新，就进入了conponentwillupdate，用来做和真实dom无关的事情，此时连虚拟dom都没有产生，所以做好别做和dom有关的事情，这个生命周期和componentwillmount相似，只不过一个是第一次渲染的时候执行，一个是组件更新的时候执行，执行的除过执行时机不同，其他都一样。接下来就是render此时就要做经典的diff计算了，通过比较，产生要渲染的组件虚拟dom，之后进入componentdidupdate，他和componentdidmount一样，除过触发时机不同其他都一样，主要是用来操作dom的。如果子组件要从父组件里面移出，或者子组件的key发生了变化，此时组件就要被卸载，触发componentwillunmount，他里面不能操作state，用来解绑事件，删除定时器等。</p>
+</blockquote>
+<h5 id="用户4967："><a href="#用户4967：" class="headerlink" title="**用户4967："></a>**用户4967：</h5><blockquote>
+<p>老师问个问题，文中有提到“render 在执行过程中并不会去操作真实 DOM（也就是说不会渲染），它的职能是把需要渲染的内容返回出来。真实 DOM 的渲染工作，在挂载阶段是由 ReactDOM.render 来承接的”。那么更新阶段的 DOM 渲染工作是在哪里完成的呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-3"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-3" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 更新阶段和挂载阶段都会触发React生命周期中的 commit 过程，真实 DOM 的渲染是在这个过程里完成的。细节可以参考13-15节。</p>
+</blockquote>
+<h5 id="辉："><a href="#辉：" class="headerlink" title="*辉："></a>*辉：</h5><blockquote>
+<p>打卡，新旧对比非常nice</p>
+</blockquote>
+<h5 id="安："><a href="#安：" class="headerlink" title="**安："></a>**安：</h5><blockquote>
+<p>不错，打卡下</p>
+</blockquote>
+<h5 id="宝："><a href="#宝：" class="headerlink" title="**宝："></a>**宝：</h5><blockquote>
+<p>学习了总结了</p>
+</blockquote>
+<h5 id="用户9471：-1"><a href="#用户9471：-1" class="headerlink" title="**用户9471："></a>**用户9471：</h5><blockquote>
+<p>菜鸡提问 请问为啥类组件里面才有render方法 函数组件里面没有render方法</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-4"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-4" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; render 是 React.Component 类里面的一个实例方法，函数和类不是一个概念。函数组件本身已经覆盖了 render 方法的职能。</p>
+</blockquote>
+<h5 id="WEL："><a href="#WEL：" class="headerlink" title="WEL："></a>WEL：</h5><blockquote>
+<p>刚看不练是傻把式，打卡学习，github练习demo附上：<a target="_blank" rel="noopener" href="https://github.com/henni-719/react-demo">https://github.com/henni-719/react-demo</a></p>
+</blockquote>
+<h5 id="豪："><a href="#豪：" class="headerlink" title="**豪："></a>**豪：</h5><blockquote>
+<p>思路清晰，干货满满，谢谢！</p>
+</blockquote>
+<h5 id="峰："><a href="#峰：" class="headerlink" title="**峰："></a>**峰：</h5><blockquote>
+<p>通俗易懂，赞</p>
+</blockquote>
+<h5 id="2960："><a href="#2960：" class="headerlink" title="**2960："></a>**2960：</h5><blockquote>
+<p>粉了秀妍</p>
+</blockquote>
+<h5 id="0376："><a href="#0376：" class="headerlink" title="**0376："></a>**0376：</h5><blockquote>
+<p>写的简直太好了，强力推荐</p>
+</blockquote>
+<h5 id="锐："><a href="#锐：" class="headerlink" title="**锐："></a>**锐：</h5><blockquote>
+<p>打卡学习</p>
+</blockquote>
+<h5 id="雨："><a href="#雨：" class="headerlink" title="**雨："></a>**雨：</h5><blockquote>
+<p>第二篇学完打卡</p>
+</blockquote>
+<h5 id="康："><a href="#康：" class="headerlink" title="**康："></a>**康：</h5><blockquote>
+<p>沙发</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="claxeera9001ov8w1grepfjib" data-title="" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-代码转dom" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/" class="article-date">
+  <time class="dt-published" datetime="2022-11-26T01:03:42.000Z" itemprop="datePublished">2022-11-26</time>
 </a>
     
   </div>
@@ -125,7 +815,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/10/25/hello-world/">Hello World</a>
+      <a class="p-name article-title" href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
     </h1>
   
 
@@ -133,24 +823,1634 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <p data-nodeid="1113" class="">时下虽然接入 JSX 语法的框架越来越多，但与之缘分最深的毫无疑问仍然是 React。2013 年，当 React 带着 JSX 横空出世时，社区曾对 JSX 有过不少的争议，但如今，越来越多的人面对 JSX 都要说上一句“真香”！本课时我们就来一起认识下这个“真香”的 JSX，聊一聊“JSX 代码是如何‘摇身一变’成为 DOM 的”。</p>
+<h3 data-nodeid="1114">关于 JSX 的 3 个“大问题”</h3>
+<p data-nodeid="1115">在日常的 React 开发工作中，我们已经习惯了使用 JSX 来描述 React 的组件内容。关于 JSX 语法本身，相信每位 React 开发者都不陌生。这里我用一个简单的 React 组件，来帮你迅速地唤醒自己脑海中与 JSX 相关的记忆。下面这个组件中的 render 方法返回值，就是用 JSX 代码来填充的：</p>
+<pre class="lang-js" data-nodeid="1116"><code data-language="js"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">"react-dom"</span>;
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>  render() &#123;<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“App”</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“title”</span>&gt;</span>I am the title<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">h1</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>&#x3D;<span class="hljs-string">“content”</span>&gt;</span>I am the content<span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">p</span>&gt;</span><br>      <span class="hljs-tag">&lt;&#x2F;<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;</p>
+<p><span class="hljs-keyword">const</span> rootElement &#x3D; <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">“root”</span>);<br>ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">App</span> &#x2F;&gt;</span></span>, rootElement);<br></code></pre></p>
+<p data-nodeid="1117">由于本专栏的整体目标是帮助你在 React 这个领域完成从“小工”到“行家”的进阶，此处我无意再去带你反复咀嚼 JSX 的基础语法，而是希望能够引导你去探寻 JSX 背后的故事。针对这“背后的故事”，我总结了 3 个最具代表性和区分度的问题。</p>
+<p data-nodeid="1118">在开始正式讲解之前，我希望你能在自己心中尝试回答这 3 个问题：</p>
+<ul data-nodeid="1119">
+<li data-nodeid="1120">
+<p data-nodeid="1121">JSX 的本质是什么，它和 JS 之间到底是什么关系？</p>
+</li>
+<li data-nodeid="1122">
+<p data-nodeid="1123">为什么要用 JSX？不用会有什么后果？</p>
+</li>
+<li data-nodeid="1124">
+<p data-nodeid="1125">JSX 背后的功能模块是什么，这个功能模块都做了哪些事情？</p>
+</li>
+</ul>
+<p data-nodeid="1126">面对以上问题，如果你无法形成清晰且系统的思路，那么很可能是你把 JSX 想得过于简单了。大多数人只是简单地把它理解为模板语法的一种，但事实上，JSX 作为 React 框架的一大特色，它与 React 本身的运作机制之间存在着千丝万缕的联系。</p>
+<p data-nodeid="1127">上述 3 个问题的答案，就恰恰隐藏在这层“联系”中，在面试场景下，候选人对这层“联系”吃得透不透，是我们评价其在 React 方面是否“资深”的一个重要依据。</p>
+<p data-nodeid="1128">接下来，我就将带你由表及里地起底 JSX 相关的底层原理，帮助你吃透这层“联系”，建立起强大的理论自信。你可以将“能够用自己的话回答上面 3 个问题”来作为本课时的学习目标，待课时结束后，记得回来检验自己的学习成果^_^。</p>
+<h3 data-nodeid="1129">JSX 的本质：JavaScript 的语法扩展</h3>
+<p data-nodeid="1130">JSX 到底是什么，我们先来看看 <a target="_blank" rel="noopener" href="https://reactjs.org/docs/glossary.html#jsx" data-nodeid="1217">React 官网</a>给出的一段定义：</p>
+<blockquote data-nodeid="1131">
+<p data-nodeid="1132">JSX 是 JavaScript 的一种语法扩展，它和模板语言很接近，但是它充分具备 JavaScript 的能力。</p>
+</blockquote>
+<p data-nodeid="1133">“语法扩展”这一点在理解上几乎不会产生歧义，不过“它充分具备 JavaScript 的能力”这句，却总让人摸不着头脑，JSX 和 JS 怎么看也不像是一路人啊？这就引出了“<strong data-nodeid="1225">JSX 语法是如何在 JavaScript 中生效的</strong>”这个问题。</p>
+<h4 data-nodeid="1134">JSX 语法是如何在 JavaScript 中生效的：认识 Babel</h4>
+<p data-nodeid="1135">Facebook 公司给 JSX 的定位是 JavaScript 的“扩展”，而非 JavaScript 的“某个版本”，这就直接决定了浏览器并不会像天然支持 JavaScript 一样地支持 JSX。那么，JSX 的语法是如何在 JavaScript 中生效的呢？<a target="_blank" rel="noopener" href="https://reactjs.org/docs/glossary.html#jsx" data-nodeid="1230">React 官网</a>其实早已给过我们线索：</p>
+<blockquote data-nodeid="1136">
+<p data-nodeid="1137">JSX 会被编译为 React.createElement()，&nbsp;React.createElement() 将返回一个叫作“React Element”的 JS 对象。</p>
+</blockquote>
+<p data-nodeid="1138">这里提到，JSX 在被<strong data-nodeid="1238">编译</strong>后，会变成一个针对 React.createElement 的调用，此时你大可不必急于关注 React.createElement 这个 API 到底做了什么（下文会单独讲解）。咱们先来说说这个“编译”是怎么回事：“编译”这个动作，是由 Babel 来完成的。</p>
+<p data-nodeid="1139"><strong data-nodeid="1242">什么是 Babel 呢？</strong></p>
+<blockquote data-nodeid="1140">
+<p data-nodeid="1141">Babel 是一个工具链，主要用于将 ECMAScript 2015+ 版本的代码转换为向后兼容的 JavaScript 语法，以便能够运行在当前和旧版本的浏览器或其他环境中。<br>
+—— Babel 官网</p>
+</blockquote>
+<p data-nodeid="1142">比如说，ES2015+ 版本推出了一种名为“模板字符串”的新语法，这种语法在一些低版本的浏览器里并不兼容。下面是一段模板字符串的示例代码：</p>
+<pre class="lang-java" data-nodeid="1143"><code data-language="java"><span class="hljs-keyword">var</span> name = <span class="hljs-string">"Guy Fieri"</span>;
+<span class="hljs-keyword">var</span> place = <span class="hljs-string">"Flavortown"</span>;
+`Hello $&#123;name&#125;, ready <span class="hljs-keyword">for</span> $&#123;place&#125;?`;
+</code></pre>
+<p data-nodeid="1144">Babel 就可以帮我们把这段代码转换为大部分低版本浏览器也能够识别的 ES5 代码：</p>
+<pre class="lang-java" data-nodeid="1145"><code data-language="java"><span class="hljs-keyword">var</span> name = <span class="hljs-string">"Guy Fieri"</span>;
+<span class="hljs-keyword">var</span> place = <span class="hljs-string">"Flavortown"</span>;
+<span class="hljs-string">"Hello "</span>.concat(name, <span class="hljs-string">", ready for "</span>).concat(place, <span class="hljs-string">"?"</span>);
+</code></pre>
+<p data-nodeid="1146">类似的，<strong data-nodeid="1255">Babel 也具备将 JSX 语法转换为 JavaScript 代码的能力</strong>。<br>
+那么 Babel 具体会将 JSX 处理成什么样子呢？我们不如直接打开 Babel 的 playground 来看一看。这里我仍然键入文章开头示例代码中的JSX 部分：</p>
+<p data-nodeid="1147"><img src="https://s0.lgstatic.com/i/image/M00/5C/73/CgqCHl-BegWAbxNEAAH9HxafvWE988.png" alt="Drawing 0.png" data-nodeid="1258"></p>
+<p data-nodeid="1148">可以看到，所有的 JSX 标签都被转化成了 React.createElement 调用，这也就意味着，我们写的 JSX 其实写的就是 React.createElement，虽然它看起来有点像 HTML，但也只是“看起来像”而已。<strong data-nodeid="1272">JSX 的本质是</strong>React.createElement<strong data-nodeid="1273">这个 JavaScript 调用的语法糖</strong>，这也就完美地呼应上了 React 官方给出的“<strong data-nodeid="1274">JSX 充分具备 JavaScript 的能力</strong>”这句话。</p>
+<h4 data-nodeid="1149">React 选用 JSX 语法的动机</h4>
+<p data-nodeid="1150">换个角度想想，既然 JSX 等价于一次 React.createElement 调用，那么 React 官方为什么不直接引导我们用 React.createElement 来创建元素呢？</p>
+<p data-nodeid="1151">原因非常简单，我们来看一个相对复杂一些的组件的 JSX 代码和 React.createElement 调用之间的对比。它们各自的形态如下图所示，图中左侧是 JSX 代码，右侧是 React.createElement 调用：</p>
+<p data-nodeid="1152"><img src="https://s0.lgstatic.com/i/image/M00/5C/73/CgqCHl-Beg-AXBihAA4t3S7nxKc532.png" alt="Drawing 1.png" data-nodeid="1280"></p>
+<p data-nodeid="1153">你会发现，在实际功能效果一致的前提下，JSX 代码层次分明、嵌套关系清晰；而 React.createElement 代码则给人一种非常混乱的“杂糅感”，这样的代码不仅读起来不友好，写起来也费劲。</p>
+<p data-nodeid="1154"><strong data-nodeid="1285">JSX 语法糖允许前端开发者使用我们最为熟悉的类 HTML 标签语法来创建虚拟 DOM，在降低学习成本的同时，也提升了研发效率与研发体验。</strong></p>
+<p data-nodeid="1155">读到这里，相信你已经充分理解了“<strong data-nodeid="1291">JSX 是 JavaScript 的一种语法扩展，它和模板语言很接近，但是它充分具备 JavaScript 的能力</strong>。&nbsp;”这一定义背后的深意。那么我们文中反复提及的 React.createElement 又是何方神圣呢？下面我们就深入相关源码来一窥究竟。</p>
+<h3 data-nodeid="1156">JSX 是如何映射为 DOM 的：起底 createElement 源码</h3>
+<p data-nodeid="1157">在分析开始之前，你可以先尝试阅读我追加进源码中的逐行代码解析，大致理解 createElement 中每一行代码的作用：</p>
+<pre class="lang-java te-preview-highlight" data-nodeid="2505"><code data-language="java"><span class="hljs-comment">/**
+ 101. React的创建元素方法
+ */</span>
+<span class="hljs-function">export function <span class="hljs-title">createElement</span><span class="hljs-params">(type, config, children)</span> </span>&#123;
+  <span class="hljs-comment">// propName 变量用于储存后面需要用到的元素属性</span>
+  let propName; 
+  <span class="hljs-comment">// props 变量用于储存元素属性的键值对集合</span>
+  <span class="hljs-keyword">const</span> props = &#123;&#125;; 
+  <span class="hljs-comment">// key、ref、self、source 均为 React 元素的属性，此处不必深究</span>
+  let key = <span class="hljs-keyword">null</span>;
+  let ref = <span class="hljs-keyword">null</span>; 
+  let self = <span class="hljs-keyword">null</span>; 
+  let source = <span class="hljs-keyword">null</span>; 
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; config 对象中存储的是元素的属性</span><br>  <span class="hljs-keyword">if</span> (config !&#x3D; <span class="hljs-keyword">null</span>) &#123;<br>    <span class="hljs-comment">&#x2F;&#x2F; 进来之后做的第一件事，是依次对 ref、key、self 和 source 属性赋值</span><br>    <span class="hljs-keyword">if</span> (hasValidRef(config)) &#123;<br>      ref &#x3D; config.ref;<br>    &#125;<br>    <span class="hljs-comment">&#x2F;&#x2F; 此处将 key 值字符串化</span><br>    <span class="hljs-keyword">if</span> (hasValidKey(config)) &#123;<br>      key &#x3D; <span class="hljs-string">‘’</span> + config.key;<br>    &#125;<br>    self &#x3D; config.__self &#x3D;&#x3D;&#x3D; undefined ? <span class="hljs-keyword">null</span> : config.__self;<br>    source &#x3D; config.__source &#x3D;&#x3D;&#x3D; undefined ? <span class="hljs-keyword">null</span> : config.__source;<br>    <span class="hljs-comment">&#x2F;&#x2F; 接着就是要把 config 里面的属性都一个一个挪到 props 这个之前声明好的对象里面</span><br>    <span class="hljs-keyword">for</span> (propName in config) &#123;<br>      <span class="hljs-keyword">if</span> (<br>        <span class="hljs-comment">&#x2F;&#x2F; 筛选出可以提进 props 对象里的属性</span><br>        hasOwnProperty.call(config, propName) &amp;&amp;<br>        !RESERVED_PROPS.hasOwnProperty(propName)<br>      ) &#123;<br>        props[propName] &#x3D; config[propName];<br>      &#125;<br>    &#125;<br>  &#125;<br>  <span class="hljs-comment">&#x2F;&#x2F; childrenLength 指的是当前元素的子元素的个数，减去的 2 是 type 和 config 两个参数占用的长度</span><br>  <span class="hljs-keyword">const</span> childrenLength &#x3D; arguments.length - <span class="hljs-number">2</span>;<br>  <span class="hljs-comment">&#x2F;&#x2F; 如果抛去type和config，就只剩下一个参数，一般意味着文本节点出现了</span><br>  <span class="hljs-keyword">if</span> (childrenLength &#x3D;&#x3D;&#x3D; <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">&#x2F;&#x2F; 直接把这个参数的值赋给props.children</span><br>    props.children &#x3D; children;<br>    <span class="hljs-comment">&#x2F;&#x2F; 处理嵌套多个子元素的情况</span><br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childrenLength &gt; <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">&#x2F;&#x2F; 声明一个子元素数组</span><br>    <span class="hljs-keyword">const</span> childArray &#x3D; Array(childrenLength);<br>    <span class="hljs-comment">&#x2F;&#x2F; 把子元素推进数组里</span><br>    <span class="hljs-keyword">for</span> (let i &#x3D; <span class="hljs-number">0</span>; i &lt; childrenLength; i++) &#123;<br>      childArray[i] &#x3D; arguments[i + <span class="hljs-number">2</span>];<br>    &#125;<br>    <span class="hljs-comment">&#x2F;&#x2F; 最后把这个数组赋值给props.children</span><br>    props.children &#x3D; childArray;<br>  &#125; </p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; 处理 defaultProps</span><br>  <span class="hljs-keyword">if</span> (type &amp;&amp; type.defaultProps) &#123;<br>    <span class="hljs-keyword">const</span> defaultProps &#x3D; type.defaultProps;<br>    <span class="hljs-keyword">for</span> (propName in defaultProps) &#123;<br>      <span class="hljs-keyword">if</span> (props[propName] &#x3D;&#x3D;&#x3D; undefined) &#123;<br>        props[propName] &#x3D; defaultProps[propName];<br>      &#125;<br>    &#125;<br>  &#125;</p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; 最后返回一个调用ReactElement执行方法，并传入刚才处理过的参数</span><br>  <span class="hljs-keyword">return</span> ReactElement(<br>    type,<br>    key,<br>    ref,<br>    self,<br>    source,<br>    ReactCurrentOwner.current,<br>    props,<br>  );<br>&#125;<br></code></pre></p>
+<p data-nodeid="1159">上面是对源码细节的初步展示，接下来我会带你逐步提取源码中的关键知识点和核心思想。</p>
+<h4 data-nodeid="1160">入参解读：创造一个元素需要知道哪些信息</h4>
+<p data-nodeid="1161">我们先来看看方法的入参：</p>
+<pre class="lang-java" data-nodeid="1162"><code data-language="java"><span class="hljs-function">export function <span class="hljs-title">createElement</span><span class="hljs-params">(type, config, children)</span>
+</span></code></pre>
+<p data-nodeid="1163">createElement 有 3 个入参，这 3 个入参囊括了 React 创建一个元素所需要知道的全部信息。</p>
+<ul data-nodeid="1164">
+<li data-nodeid="1165">
+<p data-nodeid="1166">type：用于标识节点的类型。它可以是类似“h1”“div”这样的标准 HTML 标签字符串，也可以是 React 组件类型或 React fragment 类型。</p>
+</li>
+<li data-nodeid="1167">
+<p data-nodeid="1168">config：以对象形式传入，组件所有的属性都会以键值对的形式存储在 config 对象中。</p>
+</li>
+<li data-nodeid="1169">
+<p data-nodeid="1170">children：以对象形式传入，它记录的是组件标签之间嵌套的内容，也就是所谓的“子节点”“子元素”。</p>
+</li>
+</ul>
+<p data-nodeid="1171">如果文字描述使你觉得抽象，下面这个调用示例可以帮你增进对概念的理解：</p>
+<pre class="lang-java" data-nodeid="1172"><code data-language="java">React.createElement(<span class="hljs-string">"ul"</span>, &#123;
+  <span class="hljs-comment">// 传入属性键值对</span>
+  className: <span class="hljs-string">"list"</span>
+   <span class="hljs-comment">// 从第三个入参开始往后，传入的参数都是 children</span>
+&#125;, React.createElement(<span class="hljs-string">"li"</span>, &#123;
+  key: <span class="hljs-string">"1"</span>
+&#125;, <span class="hljs-string">"1"</span>), React.createElement(<span class="hljs-string">"li"</span>, &#123;
+  key: <span class="hljs-string">"2"</span>
+&#125;, <span class="hljs-string">"2"</span>));
+</code></pre>
+<p data-nodeid="1173">这个调用对应的 DOM 结构如下：</p>
+<pre class="lang-js" data-nodeid="1174"><code data-language="js">&lt;ul className=<span class="hljs-string">"list"</span>&gt;
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">"1"</span>&gt;</span>1<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">"2"</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>
+&lt;/ul&gt;
+</code></pre>
+<p data-nodeid="1175">对入参的形式和内容有了大致的把握之后，下面我们继续来讲解 createElement 的函数逻辑。</p>
+<h4 data-nodeid="1176">createElement 函数体拆解</h4>
+<p data-nodeid="1177" class="">前面你已经阅读过 createElement 源码细化到每一行的解读，这里我想和你探讨的是 createElement<strong data-nodeid="1310">在逻辑层面的任务流转</strong>。针对这个过程，我为你总结了下面这张流程图：</p>
+<p data-nodeid="1178"><img src="https://s0.lgstatic.com/i/image/M00/5C/69/Ciqc1F-BeuGAepNsAACqreYXrj0410.png" alt="Drawing 3.png" data-nodeid="1313"></p>
+<p data-nodeid="1179">这个流程图，或许会打破不少同学对 createElement 的幻想。<strong data-nodeid="1323">在实际的面试场景下，许多候选人由于缺乏对源码的了解，谈及 createElement 时总会倾向于去夸大它的“工作量”</strong>。但其实，相信你也已经发现了，createElement 中并没有十分复杂的涉及算法或真实 DOM 的逻辑，它的<strong data-nodeid="1324">每一个步骤几乎都是在格式化数据</strong>。</p>
+<p data-nodeid="1180">说得更直白点，createElement 就像是开发者和 ReactElement 调用之间的一个“<strong data-nodeid="1334">转换器</strong>”、一个<strong data-nodeid="1335">数据处理层</strong>。它可以从开发者处接受相对简单的参数，然后将这些参数按照 ReactElement 的预期做一层格式化，最终通过调用 ReactElement 来实现元素的创建。整个过程如下图所示：</p>
+<p data-nodeid="1181"><img src="https://s0.lgstatic.com/i/image/M00/5C/69/Ciqc1F-BevGANuu4AACN5mBDMlg569.png" alt="Drawing 5.png" data-nodeid="1338"></p>
+<p data-nodeid="1182">现在看来，createElement 原来只是个“参数中介”。此时我们的注意力自然而然地就聚焦在了 ReactElement 上，接下来我们就乘胜追击，一起去挖一挖 ReactElement 的源码吧！</p>
+<h4 data-nodeid="1183">出参解读：初识虚拟 DOM</h4>
+<p data-nodeid="1184">上面已经分析过，createElement 执行到最后会 return 一个针对 ReactElement 的调用。这里关于 ReactElement，我依然先给出源码 + 注释形式的解析：</p>
+<pre class="lang-java" data-nodeid="1185"><code data-language="java"><span class="hljs-keyword">const</span> ReactElement = function(type, key, ref, self, source, owner, props) &#123;
+  <span class="hljs-keyword">const</span> element = &#123;
+    <span class="hljs-comment">// REACT_ELEMENT_TYPE是一个常量，用来标识该对象是一个ReactElement</span>
+    $$typeof: REACT_ELEMENT_TYPE,
+
+
+<pre><code>&lt;span class=&quot;hljs-comment&quot;&gt;// 内置属性赋值&lt;/span&gt;
+type: type,
+key: key,
+ref: ref,
+props: props,
+
+&lt;span class=&quot;hljs-comment&quot;&gt;// 记录创造该元素的组件&lt;/span&gt;
+_owner: owner,
+</code></pre>
+<p>  };</p>
+<p>  <span class="hljs-comment">&#x2F;&#x2F; </span><br>  <span class="hljs-keyword">if</span> (<strong>DEV</strong>) {<br>    <span class="hljs-comment">&#x2F;&#x2F; 这里是一些针对 <strong>DEV</strong> 环境下的处理，对于大家理解主要逻辑意义不大，此处我直接省略掉，以免混淆视听</span><br>  }</p>
+<p>  <span class="hljs-keyword">return</span> element;<br>};<br></code></pre></p>
+<p data-nodeid="1186">ReactElement 的代码出乎意料的简短，从逻辑上我们可以看出，ReactElement 其实只做了一件事情，那就是“<strong data-nodeid="1351">创建</strong>”，说得更精确一点，是“<strong data-nodeid="1352">组装</strong>”：ReactElement 把传入的参数按照一定的规范，“组装”进了 element 对象里，并把它返回给了 React.createElement，最终 React.createElement 又把它交回到了开发者手中。整个过程如下图所示：</p>
+<p data-nodeid="1187"><img src="https://s0.lgstatic.com/i/image/M00/5C/74/CgqCHl-Bex6AM5rhAACJMrix5bk913.png" alt="Drawing 7.png" data-nodeid="1355"></p>
+<p data-nodeid="1188">如果你想要验证这一点，可以尝试输出我们示例中 App 组件的 JSX 部分：</p>
+<pre class="lang-js" data-nodeid="1189"><code data-language="js"><span class="hljs-keyword">const</span> AppJSX = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"App"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"title"</span>&gt;</span>I am the title<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"content"</span>&gt;</span>I am the content<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>)
+
+
+<p><span class="hljs-built_in">console</span>.log(AppJSX)<br></code></pre></p>
+<p data-nodeid="1190">你会发现它确实是一个标准的 ReactElement 对象实例，如下图（生产环境下的输出结果）所示：</p>
+<p data-nodeid="1191"><img src="https://s0.lgstatic.com/i/image/M00/5C/69/Ciqc1F-BezKAW4rXAAIUYQW6Lk0911.png" alt="Drawing 8.png" data-nodeid="1360"></p>
+<p data-nodeid="1192">这个 ReactElement 对象实例，本质上是<strong data-nodeid="1370">以 JavaScript 对象形式存在的对 DOM 的描述</strong>，也就是老生常谈的“虚拟 DOM”（<strong data-nodeid="1371">准确地说，是虚拟 DOM 中的一个节点</strong>。关于虚拟 DOM， 我们将在专栏的“模块二：核心原理”中花大量的篇幅来研究它，此处你只需要能够结合源码，形成初步认知即可）。</p>
+<p data-nodeid="1193">既然是“虚拟 DOM”，那就意味着和渲染到页面上的真实 DOM 之间还有一些距离，这个“距离”，就是由大家喜闻乐见的<strong data-nodeid="1377">ReactDOM.render</strong>方法来填补的。</p>
+<p data-nodeid="1194">在每一个 React 项目的入口文件中，都少不了对 React.render 函数的调用。下面我简单介绍下 ReactDOM.render 方法的入参规则：</p>
+<pre class="lang-java" data-nodeid="1195"><code data-language="java">ReactDOM.render(
+    <span class="hljs-comment">// 需要渲染的元素（ReactElement）</span>
+    element, 
+    <span class="hljs-comment">// 元素挂载的目标容器（一个真实DOM）</span>
+    container,
+    <span class="hljs-comment">// 回调函数，可选参数，可以用来处理渲染结束后的逻辑</span>
+    [callback]
+)
+</code></pre>
+<p data-nodeid="1196">ReactDOM.render 方法可以接收 3 个参数，其中<strong data-nodeid="1388">第二个参数就是一个真实的 DOM 节点</strong>，<strong data-nodeid="1389">这个真实的 DOM 节点充当“容器”的角色</strong>，React 元素最终会被渲染到这个“容器”里面去。比如，示例中的 App 组件，它对应的 render 调用是这样的：</p>
+<pre class="lang-java" data-nodeid="1197"><code data-language="java"><span class="hljs-keyword">const</span> rootElement = document.getElementById(<span class="hljs-string">"root"</span>);
+ReactDOM.render(&lt;App /&gt;, rootElement);
+</code></pre>
+<p data-nodeid="1198">注意，这个真实 DOM 一定是确实存在的。比如，在 App 组件对应的 index.html 中，已经提前预置 了 id 为 root 的根节点：</p>
+<pre class="lang-js" data-nodeid="1199"><code data-language="js">&lt;body&gt;
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"root"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+&lt;/body&gt;
+</code></pre>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="雨："><a href="#雨：" class="headerlink" title="**雨："></a>**雨：</h5><blockquote>
+<p>原来自己一直没弄明白JSX ，老师讲的很透彻，期待后面的课程</p>
+</blockquote>
+<h5 id="忠："><a href="#忠：" class="headerlink" title="*忠："></a>*忠：</h5><blockquote>
+<p>有一处不太理解，希望能够指教下：React不能作为单独一个库使用吗，比如我在html里面直接引入react.min.js，然后写JSX使用，是必须要结合babel一起使用吗？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 你可以在 html 里面直接引入 react.min.js，react 以什么样的形式引入不会对 JSX 构成什么影响；JSX 的问题在于浏览器没法直接识别它，所以我们需要一个编译器或者说具备编译能力的东东（一般是 Babel，或许有人也会用 Typescript 或者别的东西，这个选择是不定的，只能说大多数人更倾向于使用 Babel）来做这个转译的工作。</p>
+</blockquote>
+<h5 id="侯："><a href="#侯：" class="headerlink" title="**侯："></a>**侯：</h5><blockquote>
+<p>秀妍写得太好啦，从掘金追过来的迷弟，忍不住想要催更</p>
+</blockquote>
+<h5 id="5949："><a href="#5949：" class="headerlink" title="**5949："></a>**5949：</h5><blockquote>
+<p>请问构建出最终的虚拟DOM，应该需要递归的过程吧，能否麻烦补充完善一下递归的流程呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 专栏会涵盖这部分内容，可以关注下大纲和整体课程设计，虚拟DOM树的构建在第二模块。本课时归属于基础篇，知识讲解的侧重点和第二模块是不同的。</p>
+</blockquote>
+<h5 id="汐文："><a href="#汐文：" class="headerlink" title="**汐文："></a>**汐文：</h5><blockquote>
+<p>1.JSX即是React.createElement()的语法糖。2.ReactElement即是虚拟DOM，是将createElement出来的数据结构化。3.render即是把所有ReactElement挂载到一个真实的DOM容器上。</p>
+</blockquote>
+<h5 id="伟："><a href="#伟：" class="headerlink" title="**伟："></a>**伟：</h5><blockquote>
+<p>大佬分享的太好了，深入浅出🙌</p>
+</blockquote>
+<h5 id="6400："><a href="#6400：" class="headerlink" title="**6400："></a>**6400：</h5><blockquote>
+<p>1.React.createElement对JSX进行数据处理、清洗2.ReactElement是符合虚拟DOM规范的JS对象3.React.render将虚拟节点变成真实节点挂载在HTML上；</p>
+</blockquote>
+<h5 id="9332："><a href="#9332：" class="headerlink" title="**9332："></a>**9332：</h5><blockquote>
+<p>播音主持专业的吗？太厉害了</p>
+</blockquote>
+<h5 id="平："><a href="#平：" class="headerlink" title="*平："></a>*平：</h5><blockquote>
+<p>所以其实不能脱离babel以及ReactDOM.render来看JSX，因为没有这两个它没法发挥作用</p>
+</blockquote>
+<h5 id="console-man："><a href="#console-man：" class="headerlink" title="console_man："></a>console_man：</h5><blockquote>
+<p>秀妍大佬出品，必属精品</p>
+</blockquote>
+<h5 id="攀："><a href="#攀：" class="headerlink" title="*攀："></a>*攀：</h5><blockquote>
+<p>react17将createElement 改为了jsx函数，由编译器（bable）或者ts引入调用。</p>
+</blockquote>
+<h5 id="梅："><a href="#梅：" class="headerlink" title="*梅："></a>*梅：</h5><blockquote>
+<p>期待老师后面的更新</p>
+</blockquote>
+<h5 id="阳："><a href="#阳：" class="headerlink" title="*阳："></a>*阳：</h5><blockquote>
+<p>写的不错，之前阅读过源码、调试，老哥讲的算是一次深入学习了。</p>
+</blockquote>
+<h5 id="Tusi："><a href="#Tusi：" class="headerlink" title="Tusi："></a>Tusi：</h5><blockquote>
+<p>文笔不错，写作思路清晰！刚看到津津有味发现还没更，哈哈！</p>
+</blockquote>
+<h5 id="楠："><a href="#楠：" class="headerlink" title="**楠："></a>**楠：</h5><blockquote>
+<p>自己写写，看看源码，收获会更大哦</p>
+</blockquote>
+<h5 id="浩："><a href="#浩：" class="headerlink" title="*浩："></a>*浩：</h5><blockquote>
+<p>学习了！</p>
+</blockquote>
+<h5 id="7107："><a href="#7107：" class="headerlink" title="**7107："></a>**7107：</h5><blockquote>
+<p>秀妍秀妍，我是德善😆😆😆</p>
+</blockquote>
+<h5 id="用户5615："><a href="#用户5615：" class="headerlink" title="**用户5615："></a>**用户5615：</h5><blockquote>
+<p>很清晰，比很多一来就晒很多代码的好很多.</p>
+</blockquote>
+<h5 id="东："><a href="#东：" class="headerlink" title="**东："></a>**东：</h5><blockquote>
+<p>ReactDOM.render方法的第二个参数作为真实DOM的容器可以是body吗？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 这个问题可以通过自己本地跑一个demo得到答案，也可以通过把专栏中的代码直接copy下来修改React.render方法的第二个参数得到答案。这两种途径都比口头提问对自己的帮助更大，不信你试试看。</p>
+</blockquote>
+<h5 id="松："><a href="#松：" class="headerlink" title="*松："></a>*松：</h5><blockquote>
+<p>老师太牛了，深入浅出，看了一遍理清了createElement的主流程，厉害厉害</p>
+</blockquote>
+<h5 id="磊："><a href="#磊：" class="headerlink" title="*磊："></a>*磊：</h5><blockquote>
+<p>条例清晰，过程平滑，语言平实，很不错！</p>
+</blockquote>
+<h5 id="清："><a href="#清：" class="headerlink" title="**清："></a>**清：</h5><blockquote>
+<p>完全没学过react的直接学习会不会难度颇高？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-编辑回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 试着学习一下，要相信自己，有问题也可以在留言中提问哦</p>
+</blockquote>
+<h5 id="宝："><a href="#宝：" class="headerlink" title="**宝："></a>**宝：</h5><blockquote>
+<p>清晰明确</p>
+</blockquote>
+<h5 id="里的火："><a href="#里的火：" class="headerlink" title="**里的火："></a>**里的火：</h5><blockquote>
+<p>厉害👍👍👍👍👍👍👍👍👍👍👍</p>
+</blockquote>
+<h5 id="EagleClark："><a href="#EagleClark：" class="headerlink" title="EagleClark："></a>EagleClark：</h5><blockquote>
+<p>老师讲得很透彻啊，以前都没想过这些问题。</p>
+</blockquote>
+<h5 id="森："><a href="#森：" class="headerlink" title="**森："></a>**森：</h5><blockquote>
+<p>请问下老师， ReactDOM.render()中的第一个参数，是整个应用对应的完整的虚拟dom吧？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-3"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-3" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 可以这样理解。</p>
+</blockquote>
+<h5 id="云："><a href="#云：" class="headerlink" title="**云："></a>**云：</h5><blockquote>
+<p>React.render将虚拟节点变成真实节点挂载在HTML上，这个地方是如何实现的呢？一直有疑问</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-4"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-4" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 专栏的第13-15讲详细地结合源码分析了这个问题，可以去看看。</p>
+</blockquote>
+<h5 id="7679："><a href="#7679：" class="headerlink" title="**7679："></a>**7679：</h5><blockquote>
+<p>大佬讲解的非常好通俗易懂</p>
+</blockquote>
+<h5 id="巍："><a href="#巍：" class="headerlink" title="*巍："></a>*巍：</h5><blockquote>
+<p>确实讲的很清晰，循序渐进，很有收获吗</p>
+</blockquote>
+<h5 id="华："><a href="#华：" class="headerlink" title="**华："></a>**华：</h5><blockquote>
+<p>文章的思路以及讲解比较透彻且容易理解， 很赞但是这里有个疑问： 文中提到JSX映射到DOM时， 只做了父子元素之间的初始化， 那么对于多层元素嵌套是怎么处理的呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-5"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-5" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; JSX映射到DOM的详细过程在13-16讲有系统深入的分析，可以去看看。</p>
+</blockquote>
+<h5 id="0064："><a href="#0064：" class="headerlink" title="**0064："></a>**0064：</h5><blockquote>
+<p>之前用的vue，没看过react，但是确实写的很清楚，看完这个对jsx到虚拟dom到挂在真实dom都很清晰了</p>
+</blockquote>
+<h5 id="津："><a href="#津：" class="headerlink" title="**津："></a>**津：</h5><blockquote>
+<p>讲的太好了 期待学习后面的课程</p>
+</blockquote>
+<h5 id="莉："><a href="#莉：" class="headerlink" title="*莉："></a>*莉：</h5><blockquote>
+<p>重新认识一遍，有收获</p>
+</blockquote>
+<h5 id="慧："><a href="#慧：" class="headerlink" title="**慧："></a>**慧：</h5><blockquote>
+<p>还得写，才能把学到的变成自己的~😋</p>
+</blockquote>
+<h5 id="华：-1"><a href="#华：-1" class="headerlink" title="**华："></a>**华：</h5><blockquote>
+<p>大佬说的确实很清晰😀</p>
+</blockquote>
+<h5 id="昊："><a href="#昊：" class="headerlink" title="**昊："></a>**昊：</h5><blockquote>
+<p>读了第一个课时，感觉非常好，让我有一个成体系的概念，期待下一个课时！</p>
+</blockquote>
+<h5 id="飞："><a href="#飞：" class="headerlink" title="*飞："></a>*飞：</h5><blockquote>
+<p>老师讲的很好，受益匪浅</p>
+</blockquote>
+<h5 id="Loktar："><a href="#Loktar：" class="headerlink" title="Loktar："></a>Loktar：</h5><blockquote>
+<p>一直很喜欢React，老师的这种源码+注释+解析的方式真的非常的用心，对理解源码很有帮助，期待老师的后续课程更新，希望所有Reacter与React一起越走越远</p>
+</blockquote>
+<h5 id="帅："><a href="#帅：" class="headerlink" title="*帅："></a>*帅：</h5><blockquote>
+<p>不错</p>
+</blockquote>
+<h5 id="一："><a href="#一：" class="headerlink" title="*一："></a>*一：</h5><blockquote>
+<p>就喜欢这种梳理性的文章</p>
+</blockquote>
+<h5 id="涛："><a href="#涛：" class="headerlink" title="**涛："></a>**涛：</h5><blockquote>
+<p>比Vue多了一层Jsx😈</p>
+</blockquote>
+<h5 id="的天空："><a href="#的天空：" class="headerlink" title="**的天空："></a>**的天空：</h5><blockquote>
+<p>能请教下，上面得画图软件，是使用得什么？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; PPT哦</p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/25/hello-world/" data-id="cl9o6smzk00003cw14nded9qv" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/" data-id="claxeer9u000nv8w18zhqcjjt" data-title="代码转dom" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-React知识链" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/" class="article-date">
+  <time class="dt-published" datetime="2022-11-26T01:02:32.000Z" itemprop="datePublished">2022-11-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p data-nodeid="841" class="">在接下来的一段时间里，我们将一起深入 React 这个框架领域，完成从“小工”到“专家”的蜕变。</p>
+<p data-nodeid="842">作为一名React 重度用户，与其说我对 React 源码、底层原理及周边生态有着较为深入的探究，不如说我对它们有着浓厚的兴趣。早期，我专注于性能优化和前端工程化，曾将线上大型应用性能提升率做到 40%，并基于 React 打造过团队新基建。此外，我还担任过多年一线前端面试官，积累了丰富的面试经验。</p>
+<p data-nodeid="843">前端生涯至今，我从未停止过挑战自己的能力边界，始终乐于拥抱新的技术和工具，这不止让我保持了很好的职场竞争力，还使我深知新手从入门到精通过程中的痛点和难点。</p>
+<p data-nodeid="844">作为一线开发者，我不认同技术圈时下盛行的“造名词”风气，痛恨故弄玄虚的“语言壁垒”——其实<strong data-nodeid="911">技术本身在多数情况下都是一些简单且有趣的东西，人们越是试图神化它，越容易脱离技术本质</strong>。这也是我在这个专栏中秉持和践行的一个原则。</p>
+<h3 data-nodeid="845">学好 React，到底有多爽？</h3>
+<p data-nodeid="846"><img src="https://s0.lgstatic.com/i/image/M00/5D/40/CgqCHl-ECi-Aeep6AACZ17MFsQw154.png" alt="Lark20201012-154736.png" data-nodeid="915"></p>
+<p data-nodeid="847">在过去的几年，“变化”始终是前端框架世界里的一号关键词：前有 jQuery 刚刚式微时各路神仙各显神通，后有 React/Vue/Angular 三分天下，如今又渐渐演变成了 React/Vue 两分天下。</p>
+<p data-nodeid="848">而反观框架本身，你会发现 Vue、React 乃至 Angular 之间不仅写法越来越像，甚至在设计层面也日渐趋同——它们似乎像是约好了一样，在齐刷刷地朝着 WebComponents 标准前进。因此在展望未来的前端框架时，我们有充分的理由相信，属于前端框架的一号关键词终有一日会从“变化”发展为“稳定”或“标准化”。</p>
+<p data-nodeid="849">在这样的趋势下，站在任何主观视角去拉踩任何前端框架的行为都是不合适的。<strong data-nodeid="923">学习者在意的不应是“哪个框架最牛”这样娱乐性的问题，而应该是学习的效用</strong>。</p>
+<p data-nodeid="850">那么学习 React，将会带来什么样的效用呢？</p>
+<h4 data-nodeid="851">利好个人职业生涯：大厂更喜欢 React</h4>
+<p data-nodeid="852">若单说岗位数量，我不敢妄言，但<strong data-nodeid="935">在一二线的互联网大厂中，React 的绝对优势凸显无疑。</strong>（比如，阿里就统一使用 React 作为底层技术栈，并且在内部紧密共建 React 生态。）国外的一份<a target="_blank" rel="noopener" href="https://2019.stateofjs.com/front-end-frameworks/" data-nodeid="933">“2019 年度 JavaScript 趋势报告”</a>中，React 也被评估为综合指数最高的前端框架：</p>
+<p data-nodeid="853"><img src="https://s0.lgstatic.com/i/image/M00/5D/1E/CgqCHl-D4tuAIhZGAACpSU_Pme8543.png" alt="Drawing 0.png" data-nodeid="938"></p>
+<p data-nodeid="854">在招聘上，大厂普遍青睐 React 人才，各种高薪职位中不乏“精通 React”“掌握 React”的字眼。作为前端，我们必须认识到这样一个现状：<strong data-nodeid="944">大厂（包括国内、国外）更喜欢 React，当我们立下一个有朝一日进大厂的志愿时，就意味着必须先下定决心搞定 React</strong>。</p>
+<p data-nodeid="855"><img src="https://s0.lgstatic.com/i/image/M00/5D/13/Ciqc1F-D4uWAEDz9AACMs7KhhTk568.png" alt="Drawing 1.png" data-nodeid="947"></p>
+<div data-nodeid="856"><p style="text-align:center">（信息来源：拉勾网）</p></div>
+<h4 data-nodeid="857">强化项目实战能力：吃透 React，疑难杂症不在话下</h4>
+<p data-nodeid="858">面试时，React 相关的问题往往具备较高的区分度，能够在 React 方面脱颖而出的候选人并不多。很多时候，候选人似乎也确实不理解面试官“为什么要问得这么难”。比如常见的吐槽就有“我不读源码，不研究调用栈，用 React 写业务照样一把梭”这样的说辞。</p>
+<p data-nodeid="859">确实，通过阅读 React 文档以及市面上一些“快速上手”“XX 实战”类型的学习材料，也能胜任一定的业务开发工作，但当业务复杂度攀升，“奇形怪状”的问题就会如雨后春笋般接连冒头。当你对 React 的运行机制不甚了解时，遇到这样的“疑难杂症”，就很容易懵掉。</p>
+<p data-nodeid="860">面试环节的 React 深度考察，正是为了筛选出这些能够真正吃透 React、解决复杂问题的“高级玩家”：<strong data-nodeid="960">对 React 的理解深度</strong>，<strong data-nodeid="961">将决定着你所能解决的实战问题复杂度的上限</strong>。</p>
+<h4 data-nodeid="861">普通开发者的“逆袭”机会：一个好的框架，就是最好的老师</h4>
+<p data-nodeid="862">这两年，许多中小型公司的前端工程师都面临着这样一个困境：<strong data-nodeid="968">业务含金量不高，老板又不重视，技术专项难以提取，架构机会更是没有……好像永远都没办法破局，难道我这辈子就这样了吗</strong>？</p>
+<p data-nodeid="863">当然不是！当环境无法给我们提供优质的成长途径时，不妨自己尝试创造途径，比如：</p>
+<ul data-nodeid="864">
+<li data-nodeid="865">
+<p data-nodeid="866">深挖一个优质的前端框架，吃透其底层原理；</p>
+</li>
+<li data-nodeid="867">
+<p data-nodeid="868">跟框架作者（React 团队）学架构思想、学编码规范、学设计模式。</p>
+</li>
+</ul>
+<p data-nodeid="869">React 正是一个优秀前端框架的典型 ，它在架构上融合了数据驱动视图、组件化、函数式编程、面向对象、Fiber 等经典设计“哲学”，在底层技术选型上涉及了 JSX、虚拟 DOM 等经典解决方案，在周边生态上至少涵盖了状态管理和前端路由两大领域的最佳实践。此外，它还自建了状态管理机制与事件系统，创造性地在前端框架中引入了 Hooks 思想...... React 十年如一日的稳定输出背后，有太多值得我们去吸收和借鉴的东西。</p>
+<p data-nodeid="870">这个专栏我将带你掌握目前行业里相对前沿且具有代表性的一套东西，也是真正能够在你的职业生涯里沉淀下来、发挥长期效用的“底层技能”。</p>
+<h3 data-nodeid="871">React 为什么这么难学？</h3>
+<p data-nodeid="872">在实际的招聘过程中，我和同事都曾经不止一次地发过这样的感慨：<strong data-nodeid="980">当下要想从社区招到一个符合预期的 React 开发，真的太太太太太太难了</strong>。</p>
+<p data-nodeid="873">不知道你有没有观察到一个比较有趣的现象：Vue 知识体系/原理的相关内容百花齐放，但 React 知识体系/原理的相关内容却屈指可数。</p>
+<p data-nodeid="874">市面上以 React 为主题的进阶性内容，大部分是在教会一系列 API 的基础上，描述如何去实战一个具体的项目，即专精于“使用”；而为数不多的源码分析性内容，虽然试图去拆解“原理”，但却往往伴随着细化到逐行代码的知识粒度，对读者的时间、耐力和既有水平（提炼知识、抽象知识的能力）都提出了很高的要求。</p>
+<p data-nodeid="875">这些现象的背后，和 React 令人望而却步的庞大知识体系、精密复杂的底层原理以及长长的知识链路是分不开的。平心而论，学透 React 很难，而我想帮你解决的，也正是这个“难”。</p>
+<h3 data-nodeid="876">课程设计：串联知识链路，讲透底层逻辑</h3>
+<p data-nodeid="3600" class="te-preview-highlight">我分享技术内容有两年多了，一直将“接地气、说人话”作为写作的第一要务，这个专栏更是将“<strong data-nodeid="3606">把复杂的问题简单化、把琐碎的问题系统化</strong>”作为课程设计的核心原则。它并非平铺直叙的学习笔记，而是一次我与你之间的对话。</p>
+
+
+
+
+
+
+<p data-nodeid="878">我希望做一个能够将学习体验与知识深度中和到最佳状态，切实为你带来学习效用的专栏。为此，专栏在设计层面做了以下几件事情。</p>
+<h4 data-nodeid="879">设计原则：贴着大厂面试逻辑做大纲，贴着源码讲原理</h4>
+<p data-nodeid="880">大厂的 React 面试不是走过场，更不是“造火箭”式的炫技，它是最有“效用导向”的一个学习依据。如果能够将大厂面试的逻辑利用充分，我们将实现面试和应用的双重突破。</p>
+<p data-nodeid="881">贴着源码讲原理，绝不是带着你死磕源码，源码 !== 原理，源码是代码，而原理是逻辑，代码是繁杂冗长的，原理却可以是简洁清晰的。在一些场景下，源码确实能够成为一个不错的教具，但阅读源码不是抵达原理的唯一途径。因此，必要时我会提取对你理解问题有帮助的源码；也会在一些场景下选取其他的教具，确保你能够用正确且高效的姿势抵达知识的重点。</p>
+<p data-nodeid="882">专栏所涉及的原理，<strong data-nodeid="1002">可以帮你解决实际工作中的大多数疑难杂症，也可以 Match 上大厂对资深前端工程师的技术深度的要求</strong>。</p>
+<h4 data-nodeid="883">对于体系性较强的知识：创建足够充分的上下文</h4>
+<p data-nodeid="884" class="">之前曾经读到过木心关于红楼梦的书评，印象极深：“红楼梦中的诗词像是水中摇曳的水草，美极。若是捞出来看，就干巴巴了。”</p>
+<p data-nodeid="885">同样的道理也适用于 React 的知识链路：<strong data-nodeid="1010">一些知识之所以难学，不是因为它有多复杂，而是因为理解它是需要上下文的</strong>。你若把它放到正确的上下文里，可能想通这件事也就是一瞬间的工夫；但如果你的学习上下文是断裂的，那么知识点本身自然会变得“干巴巴”，难以下咽。</p>
+<h4 data-nodeid="886">对于复杂度较高的知识：用现象向原理提问</h4>
+<p data-nodeid="887">考虑来学习这门专栏的同学的学习阶段参差不齐，我在讲解复杂原理时，会尽量遵循“<strong data-nodeid="1017">先提现象/问题，再挖原理</strong>”这个顺序，将困难知识的学习坡度降至最低。专栏中有一些内容的前置知识，我写得比较细，一般也会提前标明这是“先导知识”，如果你是高端玩家，直接跳过即可。</p>
+<p data-nodeid="888">整个专栏的结构规划思路如下。</p>
+<ul data-nodeid="889">
+<li data-nodeid="890">
+<p data-nodeid="891"><strong data-nodeid="1023">模块一：基础夯实</strong>。这部分内容涉及 React 的基本原理和源码，对大多数人普遍薄弱的、说不清楚的基础知识做深入浅出的讲解，帮你突破一些重点和难点。</p>
+</li>
+<li data-nodeid="892">
+<p data-nodeid="893"><strong data-nodeid="1028">模块二：核心原理</strong>。这部分内容源于日常开发中的疑难杂症、大厂面试的压轴难题，呈现出框架的底层逻辑和源码设计，我将用最少的篇幅来提取尽量多的信息。如果你想要从事一些高级岗位，或者精通 React，那么这块的内容你肯定避不开，而面试官能够通过这些内容，对候选人的能力做一个评价，甚至是定级。</p>
+</li>
+<li data-nodeid="894">
+<p data-nodeid="895"><strong data-nodeid="1033">模块三：周边生态</strong>。很多人用过 Redux、听说过 React-Router，但为什么要用它？其背后的工作原理、设计思想又是怎样的？专栏要讲的就是这部分比较有区分度的内容，面向使用过 React 全家桶，或者接触过还不具备熟练使用能力的前端工程师，解决你出了 Bug 却不知如何调试的问题。</p>
+</li>
+<li data-nodeid="896">
+<p data-nodeid="897"><strong data-nodeid="1038">模块四：生产实践</strong>。对于一个优秀的前端应用来说，性能和设计模式是永恒的主题，性能决定用户体验，设计模式决定研发效率。这部分将结合我团队的实践经验以及当下行业里推崇的最佳实践，为你输出实战观点。对于这些最佳实践，你不仅要知道怎么做，还要理解“为什么这么做”。学完个模块可以强化你的实际应用能力，提升自主研发创新实践的线索和灵感。</p>
+</li>
+</ul>
+<p data-nodeid="898"><img src="https://s0.lgstatic.com/i/image/M00/7E/2E/CgqCHl_O8AiAMsLrAAOzA7Lqfa0393.png" alt="Lark20201208-111532.png" data-nodeid="1041"></p>
+<h3 data-nodeid="899">讲师寄语</h3>
+<p data-nodeid="900"><strong data-nodeid="1047">我认为，学习的本质是重复</strong>，对于重要的知识，我会翻来覆去地说，想方设法让你记住它。所以，如果你在学习过程中发现某一块知识似曾相识或者早已埋下伏笔，多半意味着你发现了一个重难点，请牢牢抓住它。</p>
+<p data-nodeid="901">为了将晦涩的知识转化为你手里实实在在的生产力，专栏的框架和内容也历经了多次的迭代和重构。每一次的果断推翻早期设想，每一次的重构表达逻辑，都是希望帮你更好地消化吸收这份知识。希望你也能够不吝耐心和智慧，顺利走完整个 React 学习曲线中最难的一段路。</p>
+<p data-nodeid="902" class="">到这里，我的故事就结束了，而你和我的故事才刚刚开始。欢迎在留言区分享你的前端经历，或者写写学习 React 过程中遇到的问题、想要学习的内容，让我们一起写出“我们”的故事，开启 React 奇幻之旅。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="盼："><a href="#盼：" class="headerlink" title="*盼："></a>*盼：</h5><blockquote>
+<p>支持，买过大佬的小册 也很棒</p>
+</blockquote>
+<h5 id="5010887679："><a href="#5010887679：" class="headerlink" title="**5010887679："></a>**5010887679：</h5><blockquote>
+<p>看了一下目录，必追！</p>
+</blockquote>
+<h5 id="liang："><a href="#liang：" class="headerlink" title="**liang："></a>**liang：</h5><blockquote>
+<p>从小册就开始跟修大学前端，继续追～～～～</p>
+</blockquote>
+<h5 id="同学："><a href="#同学：" class="headerlink" title="**同学："></a>**同学：</h5><blockquote>
+<p>别的先不说，修言这声音真的爱了。</p>
+</blockquote>
+<h5 id="磊15372643554："><a href="#磊15372643554：" class="headerlink" title="**磊15372643554："></a>**磊15372643554：</h5><blockquote>
+<p>最近在准备跳槽，立个flag，一定要坚持学完老师的课程</p>
+</blockquote>
+<h5 id="余："><a href="#余：" class="headerlink" title="*余："></a>*余：</h5><blockquote>
+<p>技术和文笔都很棒的作者</p>
+</blockquote>
+<h5 id="旭："><a href="#旭：" class="headerlink" title="*旭："></a>*旭：</h5><blockquote>
+<p>现在部门招人都要求懂React，作为老人真是亚历山大&#x3D; &#x3D;！</p>
+</blockquote>
+<h5 id="1696："><a href="#1696：" class="headerlink" title="**1696："></a>**1696：</h5><blockquote>
+<p>由浅入深，逻辑清晰！</p>
+</blockquote>
+<h5 id="syan："><a href="#syan：" class="headerlink" title="**syan："></a>**syan：</h5><blockquote>
+<p>继续跟大佬学前端！！希望可以突破自己的能力边界！！！</p>
+</blockquote>
+<h5 id="兰："><a href="#兰：" class="headerlink" title="**兰："></a>**兰：</h5><blockquote>
+<p>哇 这个声音~爱了爱了！</p>
+</blockquote>
+<h5 id="鹏："><a href="#鹏：" class="headerlink" title="**鹏："></a>**鹏：</h5><blockquote>
+<p>声音控，哈哈</p>
+</blockquote>
+<h5 id="旺："><a href="#旺：" class="headerlink" title="**旺："></a>**旺：</h5><blockquote>
+<p>没想到和老师这么合拍儿！我也看过木鱼水心的红楼梦😄</p>
+</blockquote>
+<h5 id="慧："><a href="#慧：" class="headerlink" title="**慧："></a>**慧：</h5><blockquote>
+<p>React14的发布仿佛就在昨日，转眼就到了16，活到老，学到老～😂😂😂</p>
+</blockquote>
+<h5 id="楠："><a href="#楠：" class="headerlink" title="**楠："></a>**楠：</h5><blockquote>
+<p>刚看了目录，就交钱了。加油</p>
+</blockquote>
+<h5 id="东："><a href="#东：" class="headerlink" title="**东："></a>**东：</h5><blockquote>
+<p>是真的牛批</p>
+</blockquote>
+<h5 id="芝："><a href="#芝：" class="headerlink" title="**芝："></a>**芝：</h5><blockquote>
+<p>喜欢这教学风格</p>
+</blockquote>
+<h5 id="浩："><a href="#浩：" class="headerlink" title="*浩："></a>*浩：</h5><blockquote>
+<p>mark</p>
+</blockquote>
+<h5 id="前："><a href="#前：" class="headerlink" title="**前："></a>**前：</h5><blockquote>
+<p>2021&#x2F;06&#x2F;10</p>
+</blockquote>
+<h5 id="鹤："><a href="#鹤：" class="headerlink" title="*鹤："></a>*鹤：</h5><blockquote>
+<p>修言大佬牛逼（破音！！！）</p>
+</blockquote>
+<h5 id="console-man："><a href="#console-man：" class="headerlink" title="console_man："></a>console_man：</h5><blockquote>
+<p>秀妍大佬出品，必买之</p>
+</blockquote>
+<h5 id="龙："><a href="#龙：" class="headerlink" title="**龙："></a>**龙：</h5><blockquote>
+<p>哇，修大佬。JUE金的三本小册、MU课的专栏。现在又到了拉钩教育了。并且我都买了。支持大佬</p>
+</blockquote>
+<h5 id="Y："><a href="#Y：" class="headerlink" title="Y："></a>Y：</h5><blockquote>
+<p>刚开始接触react，希望能够跟老师学好react😁😁😁</p>
+</blockquote>
+<h5 id="飞："><a href="#飞：" class="headerlink" title="**飞："></a>**飞：</h5><blockquote>
+<p>点赞！</p>
+</blockquote>
+<h5 id="5905："><a href="#5905：" class="headerlink" title="**5905："></a>**5905：</h5><blockquote>
+<p>我是通过读手册认识修言大佬的，很喜欢他的教学风格</p>
+</blockquote>
+<h5 id="肆："><a href="#肆：" class="headerlink" title="*肆："></a>*肆：</h5><blockquote>
+<p>讲话好好听，支持一下</p>
+</blockquote>
+<h5 id="力："><a href="#力：" class="headerlink" title="**力："></a>**力：</h5><blockquote>
+<p>修言大佬的声音，爱了爱了</p>
+</blockquote>
+<h5 id="1572："><a href="#1572：" class="headerlink" title="**1572："></a>**1572：</h5><blockquote>
+<p>图知我者谓我心忧</p>
+</blockquote>
+<h5 id="兆："><a href="#兆：" class="headerlink" title="**兆："></a>**兆：</h5><blockquote>
+<p>打个卡，立个flag，正好项目要用react native开发，努力成为小专家</p>
+</blockquote>
+<h5 id="华："><a href="#华：" class="headerlink" title="**华："></a>**华：</h5><blockquote>
+<p>对于cra创建的项目，想使用css module,通过config-override.js配置webpack. 对于less文件，使用style.xxx的时候不起作用。</p>
+</blockquote>
+<h5 id="明："><a href="#明：" class="headerlink" title="**明："></a>**明：</h5><blockquote>
+<p>看过目录以及前言，非常厉害，感谢作者！</p>
+</blockquote>
+<h5 id="聪："><a href="#聪：" class="headerlink" title="*聪："></a>*聪：</h5><blockquote>
+<p>用了2年多的React了，总感觉还飘在表层，希望能跟着老师的步伐对React有一个整体的思路</p>
+</blockquote>
+<h5 id="翔："><a href="#翔：" class="headerlink" title="**翔："></a>**翔：</h5><blockquote>
+<p>看到修言大佬就直接购买了</p>
+</blockquote>
+<h5 id="9527："><a href="#9527：" class="headerlink" title="**9527："></a>**9527：</h5><blockquote>
+<p>打卡，期待！</p>
+</blockquote>
+<h5 id="伟："><a href="#伟：" class="headerlink" title="**伟："></a>**伟：</h5><blockquote>
+<p>跟着大佬进阶高级</p>
+</blockquote>
+<h5 id="锐："><a href="#锐：" class="headerlink" title="**锐："></a>**锐：</h5><blockquote>
+<p>真的是好东西</p>
+</blockquote>
+<h5 id="6400："><a href="#6400：" class="headerlink" title="**6400："></a>**6400：</h5><blockquote>
+<p>刚开始实战react，能体会到学习项目用到的APi简单，但是从0到1独立打造一个React工业级项目，会不知道从何入手</p>
+</blockquote>
+<h5 id="铭："><a href="#铭：" class="headerlink" title="**铭："></a>**铭：</h5><blockquote>
+<p>开篇词，真棒！</p>
+</blockquote>
+<h5 id="洋："><a href="#洋：" class="headerlink" title="**洋："></a>**洋：</h5><blockquote>
+<p>希望能学好，技术更进一步。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/" data-id="claxeer9q000dv8w12pyv18f5" data-title="React知识链" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-排序“" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:48:10.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h2 id="什么是排序"><a href="#什么是排序" class="headerlink" title="什么是排序"></a>什么是排序</h2><blockquote>
+<p>排序（sort）就是重新排列表中的元素，使得表中的元素满足按关键字有序的过程</p>
+</blockquote>
+<h3 id="举个栗子-🌰"><a href="#举个栗子-🌰" class="headerlink" title="举个栗子 🌰"></a>举个栗子 🌰</h3><p>把下列数字按照<strong>升序</strong>进行排序</p>
+<p>排序前：   1    5     4    6   7    9    2</p>
+<p>排序后：   1    2     4    5   6    7    9</p>
+<h2 id="冒泡排序的思想"><a href="#冒泡排序的思想" class="headerlink" title="冒泡排序的思想"></a>冒泡排序的思想</h2><ul>
+<li><p>从后往前（或从前往后）两两⽐较相邻元素的值，<br>若为逆序（即A[i-1]&gt;A[i]），则交换它们，直到序<br>列⽐较完。称这样过程为“⼀趟”冒泡排序。</p>
+</li>
+<li><p>每一趟排序都能将一个元素确定在最终位置，确定了最终位置的元素无需再进行处理<br><a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html">圣弗朗西斯科大学数据结构可视化</a></p>
+</li>
+</ul>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BoubbleSort</span><span class="params">(arr []<span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="comment">//i表示需要执行的趟数，j表示具体参与交换的元素下标</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; length<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; (length<span class="number">-1</span>)-i; j++ &#123;</span><br><span class="line">			<span class="comment">//如果后者元素小于前者则交换，即让大元素往后走</span></span><br><span class="line">			<span class="comment">//改变这里if判断条件的符号可以让数组倒序排列</span></span><br><span class="line">			<span class="keyword">if</span> arr[j+<span class="number">1</span>] &lt; arr[j] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;第%v趟排序的结果为: %v\n&quot;</span>, i+<span class="number">1</span>, arr)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//return arr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">BoubbleSort</span>(<span class="params">arr</span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> length = arr.<span class="property">length</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>;i&lt;length-<span class="number">1</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">0</span>;j&lt;length-<span class="number">1</span>-i;j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[j+<span class="number">1</span>]&lt;arr[j]) &#123;</span><br><span class="line">                <span class="keyword">let</span> temp = arr[j];</span><br><span class="line">                arr[j] = arr[j+<span class="number">1</span>]</span><br><span class="line">                arr[j+<span class="number">1</span>] = temp</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`第<span class="subst">$&#123;i&#125;</span>趟排序的结果为：<span class="subst">$&#123;arr&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>,<span class="number">32</span>,<span class="number">21</span>,<span class="number">13</span>,<span class="number">22</span>,<span class="number">7</span>]</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">BoubbleSort</span>(arr));</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的细节</p>
+<ul>
+<li>外层for循环控制的是需要处理的趟数</li>
+<li>内层for循环处理每一趟的元素，使得经过一趟处理之后最大的元素移动到待排序列的<strong>最后</strong></li>
+<li>外层循环最多只需要处理<strong>length-1</strong>趟，因为每一趟都会在序列末尾确定好一个元素的位置，处理<strong>length-1</strong>趟之后，最后只剩下一个元素需要处理，毋庸置疑，这个元素已经处在正确的位置上了</li>
+<li>内层循环处理的范围到<strong>每一趟的倒数第二个元素</strong>,而外层循环每执行一次就会在最后确定好一个元素的位置，使得第i趟处理完之后，第i+1趟需要处理的元素少了一个(相比于最开始少了i个)<br><strong>存在的问题</strong></li>
+</ul>
+<blockquote>
+<p>当待排序列有序之后，算法不会停止，而是等到循环执行完成之后才退出</p>
+</blockquote>
+<h2 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h2><p>经过分析之后我们发现，需要解决的问题是：<strong>让待排序列有序之后停止排序</strong></p>
+<p>经过短暂的思考我们发现一个巧妙的解决办法：</p>
+<blockquote>
+<p>让外层循环开始执行时，设置一个flag标志，初值为flse。如果内层循环执行，把flag设置为true，之后进行判断如果flag&#x3D;&#x3D;flse直接退出循环。</p>
+</blockquote>
+<p>分析：如果在某一趟处理之后待排序列已经有序，下一趟执行的时候flag被设置为false，因为已经有序，内层循环不再执行，flag仍为false，此时退出循环</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//优化后的冒泡排序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OptimizedBbs</span><span class="params">(arr []<span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; length<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">var</span> flag = <span class="literal">false</span></span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; (length<span class="number">-1</span>)-i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j+<span class="number">1</span>] &lt; arr[j] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">				flag = <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> !flag &#123;</span><br><span class="line">			<span class="comment">//return arr</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;第%d趟排序: %v\n&quot;</span>, i+<span class="number">1</span>, arr)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//return arr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h2 id="算法思想"><a href="#算法思想" class="headerlink" title="算法思想"></a>算法思想</h2><blockquote>
+<p>在待排序表L[1…n]中任取⼀个元素pivot作为枢轴（或基准，通常取⾸元素），通过⼀趟排序将待排序表划分为独⽴的两部分L[1…k-1]和L[k+1…n]，使得L[1…k-1]中的所有元素⼩于pivot，L[k+1…n]中的所有元素⼤于等于pivot，则pivot放在了其最终位置hexoL(k)上，这个过程称为⼀次“划分”。然后分别递归地对两个⼦表重复上述过程，直⾄每部分内只有⼀个元素或空为⽌，即所有元素放在了其最终位置上。</p>
+</blockquote>
+<h2 id="需要注意的细节"><a href="#需要注意的细节" class="headerlink" title="需要注意的细节"></a>需要注意的细节</h2><ul>
+<li>每次划分需要选择一个基准元素pivot，比该元素小的元素放在pivot左边，比他大的元素放在右边，一次划分后会确定pivot的最终位置</li>
+<li>划分终止的条件是low和high指针相遇，low指针初始在左用于寻找大于pivot的元素，并把它放入high所指向的位置，high指针在右用于把小于pivot的元素放在pivot左边</li>
+<li>划分最开始是从high指针开始的，处理完一个元素之后，会转向处理low指针<br>上代码</li>
+<li>快速排序是不稳定的</li>
+<li>空间复杂度: O(n)</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//partition 用于进行划分，确定基准元素的位置并将其返回</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">partition</span><span class="params">(arr []<span class="type">int</span>, low, high <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="comment">//把第一个位置的元素作为基准元素</span></span><br><span class="line">	pivot := arr[low]</span><br><span class="line">	<span class="keyword">for</span> low &lt; high &#123;</span><br><span class="line">		<span class="comment">//用于控制high指针寻找第一个比pivot小的元素</span></span><br><span class="line">		<span class="keyword">for</span> low &lt; high &amp;&amp; arr[high] &gt;= pivot &#123;</span><br><span class="line">			high--</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//把大于pivot的元素放在low所指向的位置</span></span><br><span class="line">		arr[low] = arr[high]</span><br><span class="line">		<span class="comment">//控制low指针寻找比pivot大的元素</span></span><br><span class="line">		<span class="keyword">for</span> low &lt; high &amp;&amp; arr[low] &lt;= pivot &#123;</span><br><span class="line">			low++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//把比pivot大的元素放在high所指向的位置</span></span><br><span class="line">		arr[high] = arr[low]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//一趟划分结束的条件是，low和high相遇也就是遍历完要划分的列表</span></span><br><span class="line">	<span class="comment">//此时pivot的位置已经确定就是low和high所指向的位置，所以这里把pivot放在low或者high指向的位置都可</span></span><br><span class="line">	arr[low] = pivot</span><br><span class="line">	<span class="comment">//返回pivot的位置</span></span><br><span class="line">	<span class="keyword">return</span> low</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">QuickSort</span><span class="params">(arr []<span class="type">int</span>, low, high <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">//递归的对列表的各个部分进行划分</span></span><br><span class="line">	<span class="keyword">if</span> low &lt; high &#123;</span><br><span class="line">		pivotPos := partition(arr, low, high)</span><br><span class="line">		QuickSort(arr, low, pivotPos<span class="number">-1</span>)</span><br><span class="line">		QuickSort(arr, pivotPos+<span class="number">1</span>, high)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>力扣例题<br><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/">https://leetcode.cn/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/</a></p>
+<p>参考资料<br><a target="_blank" rel="noopener" href="https://leetcode.cn/circle/discuss/eBo9UB/#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F">https://leetcode.cn/circle/discuss/eBo9UB/#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/" data-id="claxeera6001fv8w1eu7wgqnt" data-title="排序“" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Map和Set" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/Map%E5%92%8CSet/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:46:59.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/Map%E5%92%8CSet/">Map和Set</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>set是一种被叫做集合的数据结构，是由一堆无序的，相关联的，不重复的元素组成的</p>
+<p>map是一种叫做字典的数据结构，每一个元素都有他对应的名字</p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>Set是ES6新增的数据集合，与数组相似，但Set的值都是唯一的，不会出现重复</p>
+<p>Set本身也是一个构造函数，可以直接用来生成实例</p>
+<p>Set的类型也是一个对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const s = new Set();</span><br></pre></td></tr></table></figure>
+
+<p>Set的遍历顺序就是插入顺序</p>
+<p>Set的增删改查</p>
+<p>​	<strong>增删改查</strong></p>
+<p>​	add（）</p>
+<p>​	该方法可以向Set中添加一个值，返回的是他本身，对于已经存在的值，Set不会进行处理</p>
+<p>​	delete（）</p>
+<p>​	该方法用于删除一个值，返回的是布尔值，来表示操作是否成功</p>
+<p>​	has（）</p>
+<p>​	该方法返回一个布尔值，用来查找该值是否为Set的成员</p>
+<p>​	clear（）</p>
+<p>​	清除Set中的所有成员</p>
+<p><strong>遍历</strong></p>
+<p>keys（）返回键名</p>
+<p>values（）返回键值</p>
+<p>因为Set没有键名，只有键值所有两个方法行为一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">let set = new Set([&#x27;red&#x27;, &#x27;green&#x27;, &#x27;blue&#x27;]);</span><br><span class="line"></span><br><span class="line">for (let item of set.keys()) &#123;</span><br><span class="line">  console.log(item);</span><br><span class="line">&#125;//red, green, blue</span><br><span class="line"></span><br><span class="line">for (let item of set.values()) &#123;</span><br><span class="line">  console.log(item);</span><br><span class="line">&#125;//red, green, blue</span><br></pre></td></tr></table></figure>
+
+<p>entries（）返回键值对</p>
+<p>forEach（）用于对每个成员执行某种操作，没有返回值，同时forEach方法有第二个参数，用于绑定处理函数的this</p>
+<p>Set的默认遍历结构就是values（），所以可以直接使用for. . .of遍历</p>
+<p>一般Set常与扩展运算符（. . .）一起实现数组或者字符串的去重</p>
+<p>通过再加上filter来实现并集，交际和差集</p>
+<p>还可以使用数组的map方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">let a = new Set([1, 2, 3]);</span><br><span class="line">let b = new Set([4, 3, 2]);</span><br><span class="line"></span><br><span class="line">a = new Set([...a].map(x =&gt; x * 2));</span><br><span class="line">// 返回Set结构：&#123;2, 4, 6&#125;</span><br><span class="line"></span><br><span class="line">// 并集</span><br><span class="line">let union = new Set([...a, ...b]);</span><br><span class="line">// Set &#123;1, 2, 3, 4&#125;</span><br><span class="line"></span><br><span class="line">// 交集</span><br><span class="line">let intersect = new Set([...a].filter(x =&gt; b.has(x)));</span><br><span class="line">// set &#123;2, 3&#125;</span><br><span class="line"></span><br><span class="line">// （a 相对于 b 的）差集</span><br><span class="line">let difference = new Set([...a].filter(x =&gt; !b.has(x)));</span><br><span class="line">// Set &#123;1&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map是一种有序列表，他的键和值可以是任意类型</p>
+<p>Map本身也是一个构造函数，可以用来直接生成实例</p>
+<p><strong>增删改查</strong></p>
+<p>Map同样也具有增删改查的方法</p>
+<p>​	size 用来返回Map的成员总数</p>
+<p>​	set（）有两个参数，第一个是键名，第二个是键值，如果已有键名，那么就会传入新的键值，如果没有就生成该键值对，set也可以采用链式写法</p>
+<p>​	get（）可以用来读取对应的键值，找不到则返回undefined</p>
+<p>​	has（）用来检测Map中是否存在某个键，返回布尔值</p>
+<p>​	delete（）用于删除某个键，返回一个布尔值来表明操作结果</p>
+<p>​	clear（）用于清除所有的成员</p>
+<p><strong>遍历</strong></p>
+<p>keys（）返回Map中的所有键名</p>
+<p>values（）返回所有键值</p>
+<p>entries（）返回所有键值对</p>
+<p>forEach（）遍历所有成员,同Set的forEach</p>
+<h2 id="WeakSet和WeakMap"><a href="#WeakSet和WeakMap" class="headerlink" title="WeakSet和WeakMap"></a>WeakSet和WeakMap</h2><h3 id="WeakSet"><a href="#WeakSet" class="headerlink" title="WeakSet"></a>WeakSet</h3><p>​	WeakSet与Set结构类似，同样值不会重复，但WeakSet的成员只能是对象，且WeakSet是弱引用，垃圾回收机制不考虑，所以WeakSet没有存储当前对象的列表，无法遍历</p>
+<p>​	WeakSet有三个方法add（），delete（），has（）</p>
+<p>​	</p>
+<h3 id="WeakMap"><a href="#WeakMap" class="headerlink" title="WeakMap"></a>WeakMap</h3><p>​	WeakMap和Map也是类似的，同样也是只接受对象作为键名，其他与WeakSet类似</p>
+<p>​	WeakMap有四个用法 get（），set（），has（），delete（）</p>
+<p>​	</p>
+<p>WeakMap和WeakSet都用于存储DOM节点，因为他们的垃圾回收机制，能够很好的防止内存泄漏</p>
+<p>​	</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/Map%E5%92%8CSet/" data-id="claxeer9p000bv8w1bea6777g" data-title="Map和Set" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-玩转-Webpack-高级特性应对项目优化需求（下）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/%E7%8E%A9%E8%BD%AC-Webpack-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%BA%94%E5%AF%B9%E9%A1%B9%E7%9B%AE%E4%BC%98%E5%8C%96%E9%9C%80%E6%B1%82%EF%BC%88%E4%B8%8B%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:44:55.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/%E7%8E%A9%E8%BD%AC-Webpack-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%BA%94%E5%AF%B9%E9%A1%B9%E7%9B%AE%E4%BC%98%E5%8C%96%E9%9C%80%E6%B1%82%EF%BC%88%E4%B8%8B%EF%BC%89/">玩转 Webpack 高级特性应对项目优化需求（下）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天我将继续和你分享 Webpack 另外的一个高级特性，Code Splitting（分块打包）。</p>
+<h3>All in One 的弊端</h3>
+<p>通过 Webpack 实现前端项目整体模块化的优势固然明显，但是它也会存在一些弊端：它最终会将我们所有的代码打包到一起。试想一下，如果我们的应用非常复杂，模块非常多，那么这种 All in One 的方式就会导致打包的结果过大，甚至超过 4～5M。</p>
+<p>在绝大多数的情况下，应用刚开始工作时，并不是所有的模块都是必需的。如果这些模块全部被打包到一起，即便应用只需要一两个模块工作，也必须先把 bundle.js 整体加载进来，而且前端应用一般都是运行在浏览器端，这也就意味着应用的响应速度会受到影响，也会浪费大量的流量和带宽。</p>
+<p>所以这种 All in One 的方式并不合理，更为合理的方案是<strong>把打包的结果按照一定的规则分离到多个 bundle 中，然后</strong>根据<strong>应用的运行需要按需加载</strong>。这样就可以降低启动成本，提高响应速度。</p>
+<p>可能你会联想到我们在开篇词中讲过，Webpack 就是通过把项目中散落的模块打包到一起，从而提高加载效率，那么为什么这里又要分离？这不是自相矛盾吗？</p>
+<p>其实这并不矛盾，只是物极必反罢了。Web 应用中的资源受环境所限，太大不行，太碎更不行。因为我们开发过程中划分模块的颗粒度一般都会非常的细，很多时候一个模块只是提供了一个小工具函数，并不能形成一个完整的功能单元。</p>
+<p>如果我们不将这些资源模块打包，直接按照开发过程中划分的模块颗粒度进行加载，那么运行一个小小的功能，就需要加载非常多的资源模块。</p>
+<p>再者，目前主流的 HTTP 1.1 本身就存在一些缺陷，例如：</p>
+<ul>
+<li>同一个域名下的并行请求是有限制的；</li>
+<li>每次请求本身都会有一定的延迟；</li>
+<li>每次请求除了传输内容，还有额外的请求头，大量请求的情况下，这些请求头加在一起也会浪费流量和带宽。</li>
+</ul>
+<p>综上所述，模块打包肯定是必要的，但当应用体积越来越大时，我们也要学会变通。</p>
+<h3>Code Splitting</h3>
+<p>为了解决打包结果过大导致的问题，Webpack 设计了一种分包功能：Code Splitting（代码分割）。</p>
+<p>Code Splitting 通过把项目中的资源模块按照我们设计的规则打包到不同的 bundle 中，从而降低应用的启动成本，提高响应速度。</p>
+<p>Webpack 实现分包的方式主要有两种：</p>
+<ul>
+<li>根据业务不同配置多个打包入口，输出多个打包结果；</li>
+<li>结合 ES Modules 的动态导入（Dynamic Imports）特性，按需加载模块。</li>
+</ul>
+<h4>多入口打包</h4>
+<p>多入口打包一般适用于传统的多页应用程序，最常见的划分规则就是一个页面对应一个打包入口，对于不同页面间公用的部分，再提取到公共的结果中。</p>
+<p>Webpack 配置多入口打包的方式非常简单，这里我准备了一个<a target="_blank" rel="noopener" href="https://github.com/zce/webpack-multi-entry">相应的示例</a>，具体结构如下：</p>
+<blockquote>
+<p>示例源码</p>
+<ul>
+<li>GitHub：<a target="_blank" rel="noopener" href="https://github.com/zce/webpack-multi-entry">https://github.com/zce/webpack-multi-entry</a></li>
+<li>CodeSandbox：<a target="_blank" rel="noopener" href="https://codesandbox.io/s/github/zce/webpack-multi-entry">https://codesandbox.io/s/github/zce/webpack-multi-entry</a></li>
+</ul>
+</blockquote>
+<pre><code data-language="java" class="lang-java">.
+├── dist
+├── src
+│   ├── common
+│   │   ├── fetch.js
+│   │   └── global.css
+│   ├── album.css
+│   ├── album.html
+│   ├── album.js
+│   ├── index.css
+│   ├── index.html
+│   └── index.js
+├── <span class="hljs-keyword">package</span>.json
+└── webpack.config.js
+</code></pre>
+<p>这个示例中有两个页面，分别是 index 和 album。代码组织的逻辑也很简单：</p>
+<ul>
+<li>index.js 负责实现 index 页面功能逻辑；</li>
+<li>album.js 负责实现 album 页面功能逻辑；</li>
+<li>global.css 是公用的样式文件；</li>
+<li>fetch.js 是一个公用的模块，负责请求 API。</li>
+</ul>
+<p>我们回到配置文件中，这里我们尝试为这个案例配置多入口打包，具体配置如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./webpack.config.js</span>
+<span class="hljs-keyword">const</span> HtmlWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'html-webpack-plugin'</span>)
+<span class="hljs-built_in">module</span>.exports = &#123;
+  <span class="hljs-attr">entry</span>: &#123;
+    <span class="hljs-attr">index</span>: <span class="hljs-string">'./src/index.js'</span>,
+    <span class="hljs-attr">album</span>: <span class="hljs-string">'./src/album.js'</span>
+  &#125;,
+  <span class="hljs-attr">output</span>: &#123;
+    <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].bundle.js'</span> <span class="hljs-comment">// [name] 是入口名称</span>
+  &#125;,
+  <span class="hljs-comment">// ... 其他配置</span>
+  <span class="hljs-attr">plugins</span>: [
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin(&#123;
+      <span class="hljs-attr">title</span>: <span class="hljs-string">'Multi Entry'</span>,
+      <span class="hljs-attr">template</span>: <span class="hljs-string">'./src/index.html'</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">'index.html'</span>
+    &#125;),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin(&#123;
+      <span class="hljs-attr">title</span>: <span class="hljs-string">'Multi Entry'</span>,
+      <span class="hljs-attr">template</span>: <span class="hljs-string">'./src/album.html'</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">'album.html'</span>
+    &#125;)
+  ]
+&#125;
+</code></pre>
+<p>一般 entry 属性中只会配置一个打包入口，如果我们需要配置多个入口，可以把 entry 定义成一个对象。</p>
+<blockquote>
+<p>注意：这里 entry 是定义为对象而不是数组，如果是数组的话就是把多个文件打包到一起，还是一个入口。</p>
+</blockquote>
+<p>在这个对象中一个属性就是一个入口，属性名称就是这个入口的名称，值就是这个入口对应的文件路径。那我们这里配置的就是 index 和 album 页面所对应的 JS 文件路径。</p>
+<p>一旦我们的入口配置为多入口形式，那输出文件名也需要修改，因为两个入口就有两个打包结果，不能都叫 bundle.js。我们可以在这里使用 [name] 这种占位符来输出动态的文件名，[name] 最终会被替换为入口的名称。</p>
+<p>除此之外，在配置中还通过 html-webpack-plugin 分别为 index 和 album 页面生成了对应的 HTML 文件。</p>
+<p>完成配置之后，我们就可以打开命令行终端，运行 Webpack 打包，那此次打包会有两个入口。打包完成后，我们找到输出目录，这里就能看到两个入口文件各自的打包结果了，如下图所示：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/EA/CgqCHl7Ez4KAXb6IAAB9gPjr4iw703.png" alt="image (11).png"></p>
+<p>但是这里还有一个小问题，我们打开任意一个输出的 HTML 文件，具体结果如下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/DE/Ciqc1F7Ez4yAFCd6AAFu5g0zQLk550.png" alt="image (12).png"></p>
+<p>你就会发现 index 和 album 两个打包结果都被页面载入了，而我们希望的是每个页面只使用它对应的那个输出结果。</p>
+<p>所以这里还需要修改配置文件，我们回到配置文件中，找到输出 HTML 的插件，默认这个插件会自动注入所有的打包结果，如果需要指定所使用的 bundle，我们可以通过 HtmlWebpackPlugin 的 chunks 属性来设置。我们分别为两个页面配置使用不同的 chunk，具体配置如下：</p>
+<blockquote>
+<p>TIPS：每个打包入口都会形成一个独立的 chunk（块）。</p>
+</blockquote>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./webpack.config.js</span>
+<span class="hljs-keyword">const</span> HtmlWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'html-webpack-plugin'</span>)
+<span class="hljs-built_in">module</span>.exports = &#123;
+  <span class="hljs-attr">entry</span>: &#123;
+    <span class="hljs-attr">index</span>: <span class="hljs-string">'./src/index.js'</span>,
+    <span class="hljs-attr">album</span>: <span class="hljs-string">'./src/album.js'</span>
+  &#125;,
+  <span class="hljs-attr">output</span>: &#123;
+    <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].bundle.js'</span> <span class="hljs-comment">// [name] 是入口名称</span>
+  &#125;,
+  <span class="hljs-comment">// ... 其他配置</span>
+  <span class="hljs-attr">plugins</span>: [
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin(&#123;
+      <span class="hljs-attr">title</span>: <span class="hljs-string">'Multi Entry'</span>,
+      <span class="hljs-attr">template</span>: <span class="hljs-string">'./src/index.html'</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">'index.html'</span>,
+      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">'index'</span>] <span class="hljs-comment">// 指定使用 index.bundle.js</span>
+    &#125;),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin(&#123;
+      <span class="hljs-attr">title</span>: <span class="hljs-string">'Multi Entry'</span>,
+      <span class="hljs-attr">template</span>: <span class="hljs-string">'./src/album.html'</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">'album.html'</span>,
+      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">'album'</span>] <span class="hljs-comment">// 指定使用 album.bundle.js</span>
+    &#125;)
+  ]
+&#125;
+</code></pre>
+<p>完成以后我们再次回到命令行终端，然后运行打包，打包结果如下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/EA/CgqCHl7Ez6OAIz0wAAFGLXodY44387.png" alt="image (13).png"></p>
+<p>这一次打包的结果就完全正常了。</p>
+<p>那这就是配置多入口打包的方法，以及如何指定在 HTML 中注入的 bundle。</p>
+<p><strong>提取公共模块</strong></p>
+<p>多入口打包本身非常容易理解和使用，但是它也存在一个小问题，就是不同的入口中一定会存在一些公共使用的模块，如果按照目前这种多入口打包的方式，就会出现多个打包结果中有相同的模块的情况。</p>
+<p>例如我们上述案例中，index 入口和 album 入口中就共同使用了 global.css 和 fetch.js 这两个公共的模块。这里是因为我们的示例比较简单，所以重复的影响没有那么大，但是如果我们公共使用的是 jQuery 或者 Vue.js 这些体积较大的模块，那影响就会比较大，不利于公共模块的缓存。</p>
+<p>所以我们还需要把这些公共的模块提取到一个单独的 bundle 中。Webpack 中实现公共模块提取非常简单，我们只需要在优化配置中开启 splitChunks 功能就可以了，具体配置如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./webpack.config.js</span>
+<span class="hljs-built_in">module</span>.exports = &#123;
+  <span class="hljs-attr">entry</span>: &#123;
+    <span class="hljs-attr">index</span>: <span class="hljs-string">'./src/index.js'</span>,
+    <span class="hljs-attr">album</span>: <span class="hljs-string">'./src/album.js'</span>
+  &#125;,
+  <span class="hljs-attr">output</span>: &#123;
+    <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].bundle.js'</span> <span class="hljs-comment">// [name] 是入口名称</span>
+  &#125;,
+  <span class="hljs-attr">optimization</span>: &#123;
+    <span class="hljs-attr">splitChunks</span>: &#123;
+      <span class="hljs-comment">// 自动提取所有公共模块到单独 bundle</span>
+      <span class="hljs-attr">chunks</span>: <span class="hljs-string">'all'</span>
+    &#125;
+  &#125;
+  <span class="hljs-comment">// ... 其他配置</span>
+&#125;
+</code></pre>
+<p>我们回到配置文件中，这里在 optimization 属性中添加 splitChunks 属性，那这个属性的值是一个对象，这个对象需要配置一个 chunks 属性，我们这里将它设置为 all，表示所有公共模块都可以被提取。</p>
+<p>完成以后我们打开命令行终端，再次运行 Webpack 打包，打包结果如下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/EA/CgqCHl7Ez8-ALpdfAABzb5Czbeo871.png" alt="image (14).png"></p>
+<p>此时在我们的 dist 下就会额外生成一个 JS 文件，在这个文件中就是 index 和 album 中公共的模块部分了。</p>
+<p>除此之外，splitChunks 还支持很多高级的用法，可以实现各种各样的分包策略，这些我们可以在<a target="_blank" rel="noopener" href="https://webpack.js.org/plugins/split-chunks-plugin/">文档</a>中找到对应的介绍。</p>
+<h4>动态导入</h4>
+<p>除了多入口打包的方式，Code Splitting 更常见的实现方式还是结合 ES Modules 的动态导入特性，从而实现按需加载。</p>
+<p>按需加载是开发浏览器应用中一个非常常见的需求。一般我们常说的按需加载指的是加载数据或者加载图片，但是我们这里所说的按需加载，指的是在应用运行过程中，需要某个资源模块时，才去加载这个模块。这种方式极大地降低了应用启动时需要加载的资源体积，提高了应用的响应速度，同时也节省了带宽和流量。</p>
+<p>Webpack 中支持使用动态导入的方式实现模块的按需加载，而且所有动态导入的模块都会被自动提取到单独的 bundle 中，从而实现分包。</p>
+<p>相比于多入口的方式，动态导入更为灵活，因为我们可以通过代码中的逻辑去控制需不需要加载某个模块，或者什么时候加载某个模块。而且我们分包的目的中，很重要的一点就是让模块实现按需加载，从而提高应用的响应速度。</p>
+<p>接下来，我们具体来看如何使用动态导入特性，这里我已经设计了一个可以发挥按需加载作用的场景，具体效果如下图所示：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/EA/CgqCHl7Ez--AA39kACvspSgItKU114.gif" alt="example.gif"></p>
+<p>在这个应用的主体区域，如果我们访问的是首页，它显示的是一个文章列表，如果我们访问的是相册页，它显示的就是相册列表。</p>
+<p>回到代码中，我们来看目前的实现方式，具体结构如下：</p>
+<pre><code data-language="java" class="lang-java">.
+├── src
+│   ├── album
+│   │   ├── album.css
+│   │   └── album.js
+│   ├── common
+│   │   ├── fetch.js
+│   │   └── global.css
+│   ├── posts
+│   │   ├── posts.css
+│   │   └── posts.js
+│   ├── index.html
+│   └── index.js
+├── <span class="hljs-keyword">package</span>.json
+└── webpack.config.js
+</code></pre>
+<p>文章列表对应的是这里的 posts 组件，而相册列表对应的是 album 组件。我在打包入口（index.js）中同时导入了这两个模块，然后根据页面锚点的变化决定显示哪个组件，核心代码如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/index.js</span>
+<span class="hljs-keyword">import</span> posts <span class="hljs-keyword">from</span> <span class="hljs-string">'./posts/posts'</span>
+<span class="hljs-keyword">import</span> album <span class="hljs-keyword">from</span> <span class="hljs-string">'./album/album'</span>
+<span class="hljs-keyword">const</span> update = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+  <span class="hljs-keyword">const</span> hash = <span class="hljs-built_in">window</span>.location.hash || <span class="hljs-string">'#posts'</span>
+  <span class="hljs-keyword">const</span> mainElement = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.main'</span>)
+  mainElement.innerHTML = <span class="hljs-string">''</span>
+  <span class="hljs-keyword">if</span> (hash === <span class="hljs-string">'#posts'</span>) &#123;
+    mainElement.appendChild(posts())
+  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hash === <span class="hljs-string">'#album'</span>) &#123;
+    mainElement.appendChild(album())
+  &#125;
+&#125;
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'hashchange'</span>, update)
+update()
+</code></pre>
+<p>在这种情况下，就可能产生资源浪费。试想一下：如果用户只需要访问其中一个页面，那么加载另外一个页面对应的组件就是浪费。</p>
+<p>如果我们采用动态导入的方式，就不会产生浪费的问题了，因为所有的组件都是惰性加载，只有用到的时候才会去加载。具体实现代码如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/index.js</span>
+<span class="hljs-comment">// import posts from './posts/posts'</span>
+<span class="hljs-comment">// import album from './album/album'</span>
+<span class="hljs-keyword">const</span> update = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+  <span class="hljs-keyword">const</span> hash = <span class="hljs-built_in">window</span>.location.hash || <span class="hljs-string">'#posts'</span>
+  <span class="hljs-keyword">const</span> mainElement = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.main'</span>)
+  mainElement.innerHTML = <span class="hljs-string">''</span>
+  <span class="hljs-keyword">if</span> (hash === <span class="hljs-string">'#posts'</span>) &#123;
+    <span class="hljs-comment">// mainElement.appendChild(posts())</span>
+    <span class="hljs-keyword">import</span>(<span class="hljs-string">'./posts/posts'</span>).then(<span class="hljs-function">(<span class="hljs-params">&#123; <span class="hljs-keyword">default</span>: posts &#125;</span>) =&gt;</span> &#123;
+      mainElement.appendChild(posts())
+    &#125;)
+  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hash === <span class="hljs-string">'#album'</span>) &#123;
+    <span class="hljs-comment">// mainElement.appendChild(album())</span>
+    <span class="hljs-keyword">import</span>(<span class="hljs-string">'./album/album'</span>).then(<span class="hljs-function">(<span class="hljs-params">&#123; <span class="hljs-keyword">default</span>: album &#125;</span>) =&gt;</span> &#123;
+      mainElement.appendChild(album())
+    &#125;)
+  &#125;
+&#125;
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'hashchange'</span>, update)
+update()
+</code></pre>
+<blockquote>
+<p>P.S. 为了动态导入模块，可以将 import 关键字作为函数调用。当以这种方式使用时，import 函数返回一个 Promise 对象。这就是 ES Modules 标准中的 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports">Dynamic Imports</a>。</p>
+</blockquote>
+<p>这里我们先移除 import 这种静态导入，然后在需要使用组件的地方通过 import 函数导入指定路径，那这个方法返回的是一个 Promise。在这个 Promise 的 then 方法中我们能够拿到模块对象。由于我们这里的 posts 和 album 模块是以默认成员导出，所以我们需要解构模块对象中的 default，先拿到导出成员，然后再正常使用这个导出成员。</p>
+<p>完成以后，Webpack Dev Server 自动重新打包，我们再次回到浏览器，此时应用仍然是可以正常工作的。</p>
+<p>那我们再回到命令行终端，重新运行打包，然后看看此时的打包结果具体是怎样的。打包完成以后我们打开 dist 目录，具体结果如下图所示：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/EA/CgqCHl7E0AiAT-imAAHBvVxQKR4701.png" alt="image (15).png"></p>
+<p>此时 dist 目录下就会额外多出三个 JS 文件，其中有两个文件是动态导入的模块，另外一个文件是动态导入模块中公共的模块，这三个文件就是由动态导入自动分包产生的。</p>
+<p>以上就是动态导入在 Webpack 中的使用。整个过程我们无需额外配置任何地方，只需要按照 ES Modules 动态导入的方式去导入模块就可以了，Webpack 内部会自动处理分包和按需加载。</p>
+<p>如果你使用的是 Vue.js 之类的 SPA 开发框架的话，那你项目中路由映射的组件就可以通过这种动态导入的方式实现按需加载，从而实现分包。</p>
+<h4>魔法注释</h4>
+<p>默认通过动态导入产生的 bundle 文件，它的 name 就是一个序号，这并没有什么不好，因为大多数时候，在生产环境中我们根本不用关心资源文件的名称。</p>
+<p>但是如果你还是需要给这些 bundle 命名的话，就可以使用 Webpack 所特有的魔法注释去实现。具体方式如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// 魔法注释</span>
+<span class="hljs-keyword">import</span>(<span class="hljs-comment">/* webpackChunkName: 'posts' */</span><span class="hljs-string">'./posts/posts'</span>)
+  .then(<span class="hljs-function">(<span class="hljs-params">&#123; <span class="hljs-keyword">default</span>: posts &#125;</span>) =&gt;</span> &#123;
+    mainElement.appendChild(posts())
+  &#125;)
+</code></pre>
+<p>所谓魔法注释，就是在 import 函数的形式参数位置，添加一个行内注释，这个注释有一个特定的格式：webpackChunkName: '<chunk-name>'，这样就可以给分包的 chunk 起名字了。</chunk-name></p>
+<p>完成过后，我们再次打开命令行终端，运行 Webpack 打包，那此时我们生成 bundle 的 name 就会使用刚刚注释中提供的名称了，具体结果如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/DF/Ciqc1F7E0DuAVFEdAAHM4Eurysw225.png" alt="image (16).png"></p>
+<p>除此之外，魔法注释还有个特殊用途：如果你的 chunkName 相同的话，那相同的 chunkName 最终就会被打包到一起，例如我们这里可以把这两个 chunkName 都设置为 components，然后再次运行打包，那此时这两个模块都会被打包到一个文件中，具体操作如下图所示：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/0D/DF/Ciqc1F7E0EOAB4zFAALyynED1R4662.png" alt="image (17).png"></p>
+<p>借助这个特点，你就可以根据自己的实际情况，灵活组织动态加载的模块了。</p>
+<h3>写在最后</h3>
+<p>最后我们来总结一下今天的核心内容，我们介绍了为什么要进行分包，以及 Webpack Code Splitting 的两种实现方式，分别是多入口打包和动态导入，其中动态导入会更常用到。</p>
+<p>在这里，我想跟你再额外聊几句我的看法，其实从事开发工作就是不断“制造”问题，再不断解决问题。也正是在这样的一个制造问题解决问题的过程中，行业的技术、标准、工具不断迭代，不断完善，这是一个向好的过程。作为开发人员千万不要怕麻烦，应该多思考，多积累，才能更好地适应，甚至是引领行业的变化。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="新："><a href="#新：" class="headerlink" title="*新："></a>*新：</h5><blockquote>
+<p>讲道理，这个讲的真的不错，一开始我就挺抗拒学webpack，但是项目有用到，不会也不行，看了很多教程都是一知半解，许久不用也就忘了。但是这个课程，真的很不错，对我个人需求很契合。<span style="font-size: 0.427rem;">真的很有深入浅出的特点，我一般是看一遍，在听一遍，加深影响，入门之后，踩坑了在看一遍。讲的非常不错。</span><div><span style="font-size: 0.427rem;">我相信网上大多数讲师水平是有的，但是出的课程没有一个像这样课程规划的好，至少我目前看到第10讲，也并没有一节很敷衍的课程，每一节课出的很稳，很舒服，听起来没有跳跃的负担。很不错，给个赞！</span></div></p>
+</blockquote>
+<h5 id="俊："><a href="#俊：" class="headerlink" title="**俊："></a>**俊：</h5><blockquote>
+<p>内容串联的很自然，很舒服，学起来没有心智负担，赞！</p>
+</blockquote>
+<h5 id="青："><a href="#青：" class="headerlink" title="**青："></a>**青：</h5><blockquote>
+<p>老师，调试的过程中发现打包后，公共模块（album~index.bundle.js）并没有引入到index.html或者album.html中，这是需要加什么配置么</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; chunks 中加入公共模块即可</p>
+</blockquote>
+<h5 id="民："><a href="#民：" class="headerlink" title="**民："></a>**民：</h5><blockquote>
+<p>学习学习</p>
+</blockquote>
+<h5 id="峰："><a href="#峰：" class="headerlink" title="**峰："></a>**峰：</h5><blockquote>
+<p>看得津津有味，打算开始系统的学习webpack了</p>
+</blockquote>
+<h5 id="园："><a href="#园：" class="headerlink" title="**园："></a>**园：</h5><blockquote>
+<p>老师，vue cli这种构建的项目没有设置splitChunks 是怎么自动分包的呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; vue-cli 内部配置了 splitChunks 选项，你可以使用 vue-cli-service inspect 命令查看 vue-cli 最终内部的配置</p>
+</blockquote>
+<h5 id="盼："><a href="#盼：" class="headerlink" title="*盼："></a>*盼：</h5><blockquote>
+<p>老师讲得很好，不浮于表面，有深度</p>
+</blockquote>
+<h5 id="随行："><a href="#随行：" class="headerlink" title="**随行："></a>**随行：</h5><blockquote>
+<p>一口气看到这，写得很棒👍🏻👍🏻👍🏻</p>
+</blockquote>
+<h5 id="汉："><a href="#汉：" class="headerlink" title="*汉："></a>*汉：</h5><blockquote>
+<p>实话说 这是我学过的最扎实最浅显易懂强烈推荐的webpack精品课</p>
+</blockquote>
+<h5 id="4501："><a href="#4501：" class="headerlink" title="**4501："></a>**4501：</h5><blockquote>
+<p>请问老师，vue-cli3中如何做到资源按需加载呢？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：-2" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; vue-cli 生成的项目采用的是 vue-cli-service 实现的构建，这个 vue-cli-service 内部集成的就是 webpack，所以我们介绍的按需加载方式，在这种类型的项目中同样可以正常使用</p>
+</blockquote>
+<h5 id="2r："><a href="#2r：" class="headerlink" title="2r："></a>2r：</h5><blockquote>
+<p>讲的不错</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/%E7%8E%A9%E8%BD%AC-Webpack-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%BA%94%E5%AF%B9%E9%A1%B9%E7%9B%AE%E4%BC%98%E5%8C%96%E9%9C%80%E6%B1%82%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="claxeera8001lv8w18ci5hppz" data-title="玩转 Webpack 高级特性应对项目优化需求（下）" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Vue-j-3-0-到底带来了哪些变化？" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/Vue-j-3-0-%E5%88%B0%E5%BA%95%E5%B8%A6%E6%9D%A5%E4%BA%86%E5%93%AA%E4%BA%9B%E5%8F%98%E5%8C%96%EF%BC%9F/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:44:11.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/Vue-j-3-0-%E5%88%B0%E5%BA%95%E5%B8%A6%E6%9D%A5%E4%BA%86%E5%93%AA%E4%BA%9B%E5%8F%98%E5%8C%96%EF%BC%9F/">Vue.j 3.0 到底带来了哪些变化？</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在 4 月 22 日的直播中，我就 “Vue.js 3.0 到底带来了哪些变化？” 这个话题，分享了一些自己的看法。在这里我做了一篇内容梳理，希望对你有所帮助。如果你想要了解直播当天的详细内容，可以观看本课时的视频或者音频内容。</p>
+<p>今天的内容会分为以下五个部分：</p>
+<ul>
+<li>Composition APIs；</li>
+<li>设计动机 / 核⼼优势；</li>
+<li>基于 Webpack 构建；</li>
+<li>Vue CLI experimental；</li>
+<li>Official Libraries。</li>
+</ul>
+<p>首先，我们先回顾一下 Vue 的发展历程：</p>
+<ul>
+<li>2018-09-30：Vue.js 2.0 两周年，公开宣布 Vue.js 3.0 开发计划；</li>
+<li>2019-10-05：Vue.js 3.0 公开源代码；</li>
+<li>2019-12-20：Vue.js 发布 3.0-alpha.0 版本；</li>
+<li>2020-04-17：Vue.js 发布 3.0-beta.1 版本；</li>
+<li>2020-01-05：vue-cli-plugin-vue-next v0.0.2；</li>
+<li>2020-02-18：vue-router-next v4.0.0-alpha.0；</li>
+<li>2020-03-14：eslint-plugin-vue v7.0.0-alpha.0；</li>
+<li>2020-03-15：vuex v4.0.0-alpha.1；</li>
+<li>2020-04-12：vue-test-utils-next v2.0.0-alpha.1。</li>
+</ul>
+<p>这里我希望你要了解：</p>
+<ul>
+<li>新版本发布固然有它的优势，但是并不一定所有的企业都会立即采用；</li>
+<li>新版本的发布不代表老版本已经一无是处，版本的迭代更新是一个必然发展状态，但它会带动起来一些周边的生态发展。</li>
+</ul>
+<h3>快速体验 Composition APIs</h3>
+<h4>vs. Options APIs</h4>
+<p>如下图所示：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6kKAEB86AANiAJDnjVQ357.png" alt="image.png"></p>
+<p>Vue.js 3.0 核⼼优势：</p>
+<ul>
+<li>没有 this，没烦恼；</li>
+<li>更好的类型推导能⼒（TypeScript）；</li>
+<li>更友好的 Tree-shaking ⽀持（渐进式体验）；</li>
+<li>更⼤的代码压缩空间；</li>
+<li>更灵活的逻辑复⽤能⼒。</li>
+</ul>
+<h4>逻辑复用案例</h4>
+<p>对于逻辑复用这块我们可以通过几个小案例来体会一下。</p>
+<p><strong>案例一、常用功能性状态复用：</strong></p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6kyASlkDAAENklOYlj0705.png" alt="image (1).png"></p>
+<p><strong>案例二、获取数据逻辑复用：</strong></p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6mOAcMILAAD_9U0vYHo031.png" alt="image (2).png"></p>
+<p><strong>案例三、BOM API 封装：</strong></p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/Ciqc1F6v6myAQliaAAHwBa16R38975.png" alt="image (3).png"></p>
+<h3>基于 Webpack 构建</h3>
+<p>由于 Vue CLI 自身还没有很好的支持 Vue.js 3.0 版本，所以对于 3.0 项目的构建，我们还是需要直接使用 Webpack 构建。这里我们分享一个基于 Webpack 构建 Vue.js 3.0 的基本操作。</p>
+<p>以下是具体命令行操作：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/Ciqc1F6v6nWAX5aTAANGepPtsvc770.png" alt="image (4).png"></p>
+<p>项目结构设计如下：</p>
+<pre><code data-language="js" class="lang-js">└─ vue-next-sample ····························· project root 
+   ├─ public ··································· <span class="hljs-keyword">static</span> dir 
+   │  └─ index.html ···························· index template 
+   ├─ src ······································ source dir 
+   │  ├─ App.vue ······························· root component (sfc) 
+   │  └─ main.js ······························· app entry 
+   ├─ package.json ····························· package file 
+   └─ webpack.config.js ························ webpack config
+</code></pre>
+<p>其中 Webpack 的核心配置如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6oGAeKLEAANJ8E2ZEDA820.png" alt="image (5).png"></p>
+<h3>基于 Vue CLI experimental</h3>
+<p>Vue CLI 对 Vue.js 3.0 的支持目前是以一个<a target="_blank" rel="noopener" href="https://github.com/vuejs/vue-cli-plugin-vue-next">插件（vue-cli-plugin-vue-next）</a>的形式实现的，目前属于实验阶段（experimental）。</p>
+<p>具体使用方法如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6omAOOrAAAIRJLu2wak852.png" alt="image (6).png"></p>
+<p>这里你需要注意，千万不要在成熟项⽬中使⽤这个插件直接升级项目，这会导致很多问题，后面 Vue 官方会给出 2.x 项目升级到 3.0 的迁移工具，到时候再视情况决定是否使用。</p>
+<h3>结合 Official Libraries</h3>
+<p>最后这一块内容是关于官方的几个库的最新版本，以及如何去结合 Vue.js 3.0 使用：</p>
+<h4>Vue Router</h4>
+<p><a target="_blank" rel="noopener" href="https://github.com/vuejs/vue-router-next">vue-router</a> 一直以来是使用 Vue.js 开发 SPA 类型应用必不可少的，针对 3.0，vue-router 也有一些调整。</p>
+<p>注册（定义）路由的用法：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/Ciqc1F6v6pKAaRIRAAHzDZjGLng133.png" alt="image (7).png"></p>
+<p>组件中获取当前路由信息的方法：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6p2AG_EpAAEJL03CUDk536.png" alt="image (8).png"></p>
+<h4>Vuex</h4>
+<p>对于 <a target="_blank" rel="noopener" href="https://github.com/vuejs/vuex/tree/4.0">Vuex</a>，API 改动是最小的，基本上没有什么变化。</p>
+<p>创建 Store 的方法：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/Ciqc1F6v6qeAJtdfAAFPEAP3Tos147.png" alt="image (9).png"></p>
+<p>组件中使用 Store 的方式一（跟 2.x 一样）：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/CgqCHl6v6q6Af8R9AAFcCB1sJGY955.png" alt="image (10).png"></p>
+<p>方式二，使用 useStore API（推荐）：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/01/FD/Ciqc1F6v6raAHqIEAAJm6pO4Vnw344.png" alt="image (11).png"></p>
+<p>除此之外，Vue.js 官方还给出了目前官方的一些周边库的状态，下表为：Official Libraries Vue 3.0 Support Status</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vue-router</td>
+<td>Alpha <a target="_blank" rel="noopener" href="https://github.com/vuejs/rfcs/pulls?q=is%3Apr+is%3Aopen+label%3Arouter">[Proposed RFCs]</a> <a target="_blank" rel="noopener" href="https://github.com/vuejs/vue-router-next">[GitHub]</a> <a target="_blank" rel="noopener" href="https://unpkg.com/browse/vue-router@4.0.0-alpha.7/">[npm]</a></td>
+</tr>
+<tr>
+<td>vuex</td>
+<td>Alpha, with same API <a target="_blank" rel="noopener" href="https://github.com/vuejs/vuex/tree/4.0">[GitHub]</a> <a target="_blank" rel="noopener" href="https://unpkg.com/browse/vuex@4.0.0-alpha.1/">[npm]</a></td>
+</tr>
+<tr>
+<td>vue-class-component</td>
+<td>Alpha <a target="_blank" rel="noopener" href="https://github.com/vuejs/vue-class-component/tree/next">[GitHub]</a> <a target="_blank" rel="noopener" href="https://unpkg.com/browse/vue-class-component@8.0.0-alpha.2/">[npm]</a></td>
+</tr>
+<tr>
+<td>vue-cli</td>
+<td>Experimental support via vue-cli-plugin-vue-next</td>
+</tr>
+<tr>
+<td>eslint-plugin-vue</td>
+<td>Alpha <a target="_blank" rel="noopener" href="https://github.com/vuejs/eslint-plugin-vue">[GitHub]</a> <a target="_blank" rel="noopener" href="https://unpkg.com/browse/eslint-plugin-vue@7.0.0-alpha.0/">[npm]</a></td>
+</tr>
+<tr>
+<td>vue-test-utils</td>
+<td>Pre-alpha <a target="_blank" rel="noopener" href="https://github.com/vuejs/vue-test-utils-next">[GitHub]</a> <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@vue/test-utils">[npm]</a></td>
+</tr>
+<tr>
+<td>vue-devtools</td>
+<td>WIP</td>
+</tr>
+<tr>
+<td>jsx</td>
+<td>WIP</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="kvsur："><a href="#kvsur：" class="headerlink" title="kvsur："></a>kvsur：</h5><blockquote>
+<p>请问截图里面的三等号是什么插件啊？😀</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-讲师回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-讲师回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 讲师回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 我用的是 Fira Code 这种编程专用字体，这种字体有连体特性</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/Vue-j-3-0-%E5%88%B0%E5%BA%95%E5%B8%A6%E6%9D%A5%E4%BA%86%E5%93%AA%E4%BA%9B%E5%8F%98%E5%8C%96%EF%BC%9F/" data-id="claxeer9q000ev8w1bszx6bn1" data-title="Vue.j 3.0 到底带来了哪些变化？" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-资深前端工程师培养计划" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/%E8%B5%84%E6%B7%B1%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%B9%E5%85%BB%E8%AE%A1%E5%88%92/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:43:43.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/%E8%B5%84%E6%B7%B1%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%B9%E5%85%BB%E8%AE%A1%E5%88%92/">资深前端工程师培养计划</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天我们一起聊聊大前端时代下的前端进阶之路。</p>
+<p>可能你会问：为什么要聊这个话题？</p>
+<p>原因很简单，时值当下，作为一名合格的前端开发人员，我相信你一定会有一个很明显的感觉：前端并没有想象的那么简单。越来越多的人开始称呼我们这个行业为“大前端”。</p>
+<p>之所以称之为大前端，自然是因为前端的职责越来越重要，战场越来越多样，应用也越来越复杂。但是从目前的实际情况来看，很多人对前端的认识还是停留在网页开发的阶段。</p>
+<p>所以我想在我们 Webpack 专栏的最后，跟你分享下我所理解的大前端时代：盘点当下的技术热点和趋势，以此来了解当下的前端开发者到底应该如何持续学习，才能更从容地应对行业的发展。也希望你能够通过我们今天介绍的内容，得到一点启发，真正意义上理解前端开发，做到从“新手入坑”到“华丽转身”的蜕变。</p>
+<h3>纵观前端发展</h3>
+<p>在介绍具体的内容之前，按照我一贯的风格，我们先来简单了解一下“历史”。还是那句话：读史使人明智。</p>
+<p>最早期，所有人对前端的认知：就是用 HTML + CSS + JavaScript 完成网页切图。当时的前端只是 Web 开发的附属品，绝大多数情况都是处于被后端开发人员驱动的状态。</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/17/99/Ciqc1F7XUlGALT8XAACvOB8a5t8185.png" alt=""></p>
+<p>而现如今，前端主导整个应用的开发已经成为常态。伴随着这种状态的变迁，前端技术在这些年也发生了翻天覆地的变化，核心技术不再局限于 HTML、CSS、JavaScript 本身。</p>
+<p>举个例子，十年前 jQuery 几乎绝对性的垄断了 JavaScript 库生态，而十年后的今天，我们都在喊着 <em>You don't need jQuery</em>。现阶段的前端已经不再是往页面上引入几个库、调用几个函数就能满足应用开发需求的状态。如今，前端都拥有自己的工程，独立的发挥空间。</p>
+<p>不仅如此，从传统的前端发展到现在的大前端，前端的边界正在变得越来越宽泛，前端开发也慢慢趋向于泛客户端开发。</p>
+<p>现如今，当我们聊起前端，听到的大多是各种框架、Node.js、Serverless、泛客户端之类的话题。我把这些内容总结了一下，大致分为以下这几点：</p>
+<ul>
+<li>层出不穷的框架和工具；</li>
+<li>各式各样的载体（客户端）；</li>
+<li>蓄势待发的云开发（Serverless）；</li>
+<li>无所不能的全栈；</li>
+<li>开发岗位的周边软技能。</li>
+</ul>
+<blockquote>
+<p>P.S. 泛客户端指的是各种各样的客户端载体，例如移动 App、H5、公众号、小程序等等。</p>
+</blockquote>
+<p>当然，这并不是说，作为现阶段的“入局者”，你只需要学习这些内容。这里的前提是假设你已经满足了一个前端开发者的常规技能要求：</p>
+<ul>
+<li>HTML + CSS + JavaScript；</li>
+<li>AJAX 基本的前后端数据交互；</li>
+<li>了解基本的 Node.js（NPM、CommonJS）；</li>
+<li>Vue.js / React 开发简单的 Web 应用；</li>
+<li>了解一些 Web 开发中的基础概念。</li>
+</ul>
+<h3>热点趋势盘点</h3>
+<p>言归正传，接下来我们具体聊聊我眼中大前端的热点趋势。希望深处前端行业的你，能够从中获得些许持续学习的思路和方向。</p>
+<h4>TypeScript</h4>
+<p>你应该知道，JavaScript 是一门弱类型而且还是动态类型的语言，语言本身的类型系统是非常薄弱的，甚至可以说 JavaScript 根本就没有类型系统。</p>
+<p>这样的特征就决定了 JavaScript 并不适合开发大型企业级应用，因为在大型应用开发过程中，我们的代码会非常复杂，开发周期也会特别长。这种情况下没有一个强大的类型系统，我们的开发成本和维护成本都会非常高。</p>
+<p>为了弥补 JavaScript 类型系统的不足，微软公司推出了 TypeScript 编程语言。</p>
+<p>TypeScript 是一门基于 JavaScript 基础之上的编程语言，很多时候我们都在说它是一个 JavaScript 的超集（扩展集）。</p>
+<p>所谓超集，其实就是在 JavaScript 原有的基础之上多了一些扩展特性。多出来的主要就是：</p>
+<ul>
+<li>一套更强大的类型系统；</li>
+<li>对 ECMAScript 新特性的支持；</li>
+</ul>
+<p><img src="https://s0.lgstatic.com/i/image/M00/17/99/Ciqc1F7XUluARVBdAAEW3jxAR7w079.png" alt=""></p>
+<p>这也就是说，使用 TypeScript 过后，我们开发者在开发过程中可以直接使用 TypeScript 所提供的新特性，以及 TypeScript 中更强大的类型系统去完成开发工作。然后将其编译为能在生产环境中直接运行的 JavaScript 代码。</p>
+<p>那 TypeScript 的意义也就很明显了：</p>
+<ul>
+<li>类型系统可以帮我们避免开发过程中有可能出现的类型异常，提高编码的效率，以及代码的可靠程度。</li>
+<li>ECMAScript 几年迭代了很多非常有用的新功能，但是在很多陈旧的环境中都会出现兼容问题。TypeScript 支持自动转换这些新特性，所以我们可以立即去使用它们。</li>
+</ul>
+<p>即便我们不需要类型系统，通过 TypeScript 去使用 ECMAScript 的新特性也是一个很好的选择。因为 TypeScript 最终可以选择编译到最低 ES3 版本的代码，所以兼容性非常好。</p>
+<p>因为 TypeScript 最终都是编译为 JavaScript。所以任何一种使用 JavaScript 开发的应用程序，都可以使用 TypeScript 开发。例如浏览器应用，Node.js 应用，React Native，或者是 Electron 桌面应用。</p>
+<p>目前很多大型开源项目都已经开始采用 TypeScript 开发，最知名的自然是 Google 的 Angular 框架。另外，Vue.js 从 3.0 版本开始，也会使用 TypeScript 取代之前的 JavaScript + Flow。</p>
+<p>慢慢地你会发现 TypeScript 已经成为前端领域中的第二语言。如果你开发的是小项目需要灵活自由，那么自然选择 JavaScript。相反如果你开发的是长周期的大型项目，所有人都会建议你选择 TypeScript。</p>
+<p>当然，再美好的东西也都会有缺点，TypeScript 最大的缺点就是语言本身多了很多概念，例如接口、泛型、枚举等等，这些概念会增加我们的学习成本。不过好在 TypeScript 属于渐进式的语言，即便我们什么特性都不知道，也可以立马按照 JavaScript 标准语法去编写 TypeScript 代码，然后了解一个特性再使用一个特性。</p>
+<p>再者就是对于周期短的小型项目，TypeScript 可能会增加一些开发成本，因为我们要额外编写很多的类型声明。但是如果是一个长期维护的大型项目，这些成本不算什么。纵观全局，TypeScript 整体带来的优势足以抵消它的劣势。</p>
+<h4>服务端渲染</h4>
+<p>目前主流的前端框架都是采用客户端渲染（CSR）的模式工作的，所谓客户端渲染，指的就是从服务器发回来的 HTML 中并没有页面内容，所有的内容都是等到页面中的 JavaScript 代码执行完成过后，动态创建出来的。大体过程我们可以参考下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/17/A4/CgqCHl7XUmaABendAALcfRvkfcg376.png" alt=""></p>
+<p>这种客户端渲染模式的弊端显而易见：</p>
+<ul>
+<li>页面的“白屏”时间更长，用户体验不好；</li>
+<li>HTML 中无内容，SEO 不友好。</li>
+</ul>
+<p>针对客户端渲染模式的问题，服务端渲染（SSR）就能够很好地加以解决。SSR 大体过程可以参考下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/17/A4/CgqCHl7XUm6APed4AAMTz0CqJ7s937.png" alt=""></p>
+<p>相比于客户端渲染，服务端渲染就是在服务端多做了一些额外的工作：传统客户端渲染模式，在服务端接收到请求过后，只需要找到对应的 HTML 静态文件返回给客户端即可；而服务端渲染模式下，服务端接收到请求过后，会先执行一遍对应的 JavaScript，让页面在服务端先渲染一遍，然后将渲染的结果发送给客户端。所以客户端接收到的就是渲染过后的 HTML，自然也就没有上述问题。</p>
+<p>目前主流的前端框架，比如 React、Vue.js、Angular 都有对应的服务端渲染方案，不过如果直接原生实现服务端渲染，那么需要你掌握的内容会比较多，也比较杂，其中的很多概念也会比较难理解。很多时候我们会选择直接使用一些集成式的服务端渲染框架，比如 Next.js 或者 Nuxt.js。</p>
+<h4>Serverless</h4>
+<p>Serverless 是一种架构模式，翻译过来应该叫作无服务器架构。近几年被推向了风口浪尖，背后的原因除了一些人的 “盲从”，更为重要的是 Serverless 确实带来了一种全新的开发体验：对于使用 Serverless 架构进行开发的项目，开发者最明显的感受就是更关注应用的业务本身，不必再去过多关心服务器和运行平台的一系列问题。</p>
+<p>传统情况下，我们开发一个 Web 应用，除了需要考虑业务本身，还需要考虑很多其他方面的东西，比如：服务器的操作系统、虚拟机、硬件资源配置、运行环境版本等等。如果你经历过这种模式下的应用初次部署，一定会头皮发麻。而且不仅初次配置麻烦，后期维护成本也很高，比如定期更新环境、清理缓存之类的。这让我想起了以前的一句玩笑话：一天 8 小时，6 小时折腾服务器。</p>
+<p>再到后来，我们的服务逐渐切换到了云服务器上，在这种情况下，基本上不用关心太多的服务器底层维护问题，我们更多地是考虑运行环境的维护，这使得维护成本大大降低。</p>
+<p>再到以后，我们可能会逐渐切换到 Serverless 架构上。无服务器，并不是真的没有服务器，只是开发人员眼中不需要关注服务器。开发人员只需要按照一定的要求完成开发工作，剩下的所有事情全部交给 Serverless 容器完成。</p>
+<p>可能你会好奇：Serverless 真的有这么神奇吗？没有服务器，如何将应用运行起来呢？</p>
+<p>其实也没有特别神奇，你仔细想想，我们的应用主要由两大块组成，分别是逻辑与存储。Serverless 中就通过两种方式解决了这两块的需求，分别是：</p>
+<ul>
+<li>函数即服务，Function as a Service，FaaS；</li>
+<li>后端即服务，Backend as a Service，BaaS。</li>
+</ul>
+<p>其中 FaaS 中的函数指的就是计算函数，通俗一点描述，你可以理解为，你写了一个实现业务的函数，然后把这个函数丢给容器，容器就会自动把这个函数映射到一个服务上面，然后你就可以直接通过 HTTP 调用这个服务接口，也就是调用这个函数了。</p>
+<p>而 BaaS 相对综合一点，它提供了一系列后端常用服务，比如数据或文件的存储、消息推送、账户系统等等。</p>
+<p>结合这两点完全就可覆盖我们应用中绝大多数业务功能的开发，这就是 Serverless。它的优势十分明显：</p>
+<ul>
+<li>不需要再考虑什么物理机/虚拟机，结合工作流的情况下，代码提交自动部署，直接运行；</li>
+<li>没有服务器，维护成本自然大大降低，安全性稳定性更高；</li>
+<li>都是弹性伸缩云，硬件资源需要多少分配多少，不用担心性能问题；</li>
+<li>大多数 Serverless 服务商的计价方式都是按使用情况（如流量、CPU 占用）来收费；</li>
+</ul>
+<p>总之，Serverless 必将大势所趋。</p>
+<h4>Flutter 移动 App 开发</h4>
+<p>Flutter 是 Google 2018&nbsp;年公开发布的一个移动 App 开发方案，通过 Flutter 前端开发者就能够开发出真正意义上的原生 App。</p>
+<p>在此之前，前端面对移动 App 开发需求都是通过 H5 + WebView + JsBridge 的方式，或者 React Native 框架实现。这些方式虽说都能够实现移动 App 开发，但是都存在这样或者那样的问题，最明显的表现就是体验还是达不到原生实现的效果，性能上有所欠缺。</p>
+<p>H5 的性能问题不用多说，始终是 Web 平台，相比于原生根本不在一条起跑线。而像 RN 这种方案，性能上最大的弊端在于 RN 项目最终打包的结构还是一个 JS bundle，也就是说还是需要到运行阶段才能够去解析 JavaScript（JIT）。</p>
+<p>Flutter 就是一个纯原生的开发方案，采用的是静态编译（AOT），也可以叫作提前编译。一个 Flutter 项目编译后的结果就是原生应用，相比于即时编译（JIT）性能自然有显著提升。</p>
+<p>Flutter 甚至还是一个跨平台方案，因为在 2019 年 Flutter 宣布支持 Web 平台，这标志着 Flutter 已经全面支持所有平台。详细内容可以参考 <a target="_blank" rel="noopener" href="https://flutter.dev">Flutter 官网</a>。</p>
+<p>当然，Flutter 的缺点同样明显：Flutter 平台采用的编程语言是 Google 推出的 <a target="_blank" rel="noopener" href="https://dart.dev">Dart</a>，而非 JavaScript 或者 TypeScript，所以学习成本相对高一点。我个人认为没有选择 JavaScript 或者 TypeScript 的原因有两点：</p>
+<ul>
+<li>JavaScript 类型系统的不足；</li>
+<li>吃了 Java 的亏，涨了个教训。</li>
+</ul>
+<h4>多端统一开发方案</h4>
+<p>随着这两年各种各样小程序或者快应用平台的诞生，互联网应用的载体种类（客户端形式）越来越多。由于这些不同平台的开发方式类似而又不完全相同，所以就产生了一个新的问题：开发人员要为不同的平台单独维护一个项目，这对于开发者而言需要关注的内容就会更多，学习成本也就更高。</p>
+<p>目前前端行业中已经出现了一些很成熟的多端统一开发方案，例如 <a target="_blank" rel="noopener" href="https://taro.aotu.io">Taro</a>、<a target="_blank" rel="noopener" href="https://uniapp.dcloud.io">uni-app</a>。在这类方案下，开发者只需要编写一套代码，就可以直接发布在 iOS、Android 或是各类小程序平台中，大大降低了开发和维护的成本。</p>
+<p>对于这类方案，一来我们应该掌握它们，以此应对层出不穷的客户端形式；二来我们也应该尝试去理解它们的实现原理，这会帮助我们更好地应对以后的开发工作。</p>
+<h3>写在最后</h3>
+<p>总之，不要给自己的学习设立边界，顺着主线，趁年轻多学习一点东西总是好的。</p>
+<p>古人有一句老话 :“ 学源于思”，意思是说，学问是从思考中得来的。所以除了学习，还有一点也是我经常强调的，就是多思考为什么，这也是我成长过程中最大的收获，正是因为养成了勤于思考的习惯，我才能看到更多别人没有关注到的细节，才能解决别人解决不了的问题。</p>
+<p>最后我也想借此机会介绍一下我们正在做的这个「大前端高薪训练营」。</p>
+<p>这个培养计划主要针对咱们前端在职人群，初衷就是为了把我的所学和心得跟大家分享，帮助大家能够更加系统地掌握大前端的知识体系。在经过一套完整的前端在职人员市场调研后，我和我的团队就开始投入到大前端高薪训练营的研发中，内容涵盖：</p>
+<ul>
+<li>前端工程化；</li>
+<li>核心框架的原理与进阶；</li>
+<li>Node.js 开发；</li>
+<li>泛客户端开发；</li>
+<li>大量行业技术和解决方案。</li>
+</ul>
+<p>研发这套课程的目的就是为了帮助你有针对性地获取前端知识、开阔学习思路，让你对未来前端领域的发展有更广阔的认识，从而获得更多的提升机会，得到一份更好的工作或者更高的报酬。同时作为技术人，我也希望你能养成持续学习的习惯，时刻保持对新技术的敏感度和好奇心，阶段性的规划出自己的学习计划。</p>
+<p>现在还有活动，拉勾有百万补贴计划，为本专栏的读者预留了20个名额，希望你能学有所获，我在训练营等你。</p>
+<p>点击链接：<br>
+<a target="_blank" rel="noopener" href="https://kaiwu.lagou.com/fe_enhancement.html">https://kaiwu.lagou.com/fe_enhancement.html</a> 了解更多详情。</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/17/99/Ciqc1F7XUn6AbC_LAAomitrnym0658.png" alt=""></p>
+<p>最后送给你一句话：奋斗勇担当，学习正当时。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="红："><a href="#红：" class="headerlink" title="**红："></a>**红：</h5><blockquote>
+<p>已加入训练营，下半年开启修炼模式啦</p>
+</blockquote>
+<h5 id="源："><a href="#源：" class="headerlink" title="**源："></a>**源：</h5><blockquote>
+<p>看完啦，很棒</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-编辑回复："><a href="#amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 谢谢小可爱</p>
+</blockquote>
+<h5 id="彬："><a href="#彬：" class="headerlink" title="**彬："></a>**彬：</h5><blockquote>
+<p>一口气看完！写的太好了谢谢老师！😆</p>
+</blockquote>
+<h5 id="玲："><a href="#玲：" class="headerlink" title="**玲："></a>**玲：</h5><blockquote>
+<p>看完了，感谢</p>
+</blockquote>
+<h5 id="辉："><a href="#辉：" class="headerlink" title="**辉："></a>**辉：</h5><blockquote>
+<p>我想问大前端这个训练营也是webpack这位老师负责讲么？</p>
+</blockquote>
+<h6 id="amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：-1"><a href="#amp-nbsp-amp-nbsp-amp-nbsp-编辑回复：-1" class="headerlink" title="&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复："></a>&amp;nbsp;&amp;nbsp;&amp;nbsp; 编辑回复：</h6><blockquote>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp; 当然是滴，有什么问题可以关注拉勾教育咨询小助手哦</p>
+</blockquote>
+<h5 id="浩："><a href="#浩：" class="headerlink" title="*浩："></a>*浩：</h5><blockquote>
+<p>老师对整个大前端的发展认识的还是很到位的。</p>
+</blockquote>
+<h5 id="超："><a href="#超：" class="headerlink" title="**超："></a>**超：</h5><blockquote>
+<p>多谢老师的年费会员，webpack文章很给力，通俗易懂还很有精华😋</p>
+</blockquote>
+<h5 id="冰："><a href="#冰：" class="headerlink" title="**冰："></a>**冰：</h5><blockquote>
+<p>优秀</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/%E8%B5%84%E6%B7%B1%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%B9%E5%85%BB%E8%AE%A1%E5%88%92/" data-id="claxeera8001nv8w19ezydtvt" data-title="资深前端工程师培养计划" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-如何使用-Parcel-零配置完成打包任务？" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/02/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Parcel-%E9%9B%B6%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%88%90%E6%89%93%E5%8C%85%E4%BB%BB%E5%8A%A1%EF%BC%9F/" class="article-date">
+  <time class="dt-published" datetime="2022-11-02T11:43:06.000Z" itemprop="datePublished">2022-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/11/02/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Parcel-%E9%9B%B6%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%88%90%E6%89%93%E5%8C%85%E4%BB%BB%E5%8A%A1%EF%BC%9F/">如何使用 Parcel 零配置完成打包任务？</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天我要带你了解一个近两年非常火的打包工具：Parcel。</p>
+<p>Parcel 是一款完全零配置的前端打包器，它提供了 “傻瓜式” 的使用体验，我们只需了解它提供的几个简单的命令，就可以直接使用它去构建我们的前端应用程序了。</p>
+<p>下面我们直接来看具体如何去使用 Parcel。</p>
+<h3>快速上手</h3>
+<p>这里我们先创建一个空目录，然后通过 npm init 初始化一个项目中的 package.json 文件。</p>
+<p>完成以后我们就可以安装 Parcel 模块了，具体命令如下：</p>
+<pre><code data-language="shell" class="lang-shell"><span class="hljs-meta">$</span><span class="bash"> npm install parcel-bundler --save-dev</span>
+</code></pre>
+<p>这里需要注意 Parcel 的 npm 模块名称叫作 parcel-bundler，我们同样应该将它安装到项目的开发依赖中。</p>
+<p>安装完成过后，parcel-bundler 模块就在 node_modules/.bin 目录中提供了一个叫作 parcel 的 CLI 程序，后续我们就是使用这个 CLI 程序执行应用打包。</p>
+<p>既然是打包应用代码，那我们这里就得先有代码。我们回到项目中创建一些必需的文件，结构如下：</p>
+<pre><code data-language="java" class="lang-java">.
+├── src
+│   ├── index.html
+│   ├── logger.js
+│   └── main.js
+└── <span class="hljs-keyword">package</span>.json
+</code></pre>
+<p>首先在根目录下新建一个 src 目录，用于存放开发阶段编写的源代码，同时创建两个 JS 文件，分别是 logger.js 和 main.js，然后再创建一个 index.html 文件，这个 index.html 文件会将是 Parcel 打包的入口文件。</p>
+<p>虽然 Parcel 跟 Webpack 一样都支持以任意类型文件作为打包入口，不过 Parcel 官方还是建议我们使用 HTML 文件作为入口。官方的理由是 HTML 是应用在浏览器端运行时的入口。</p>
+<p>那在这个 HTML 入口文件中，我们可以像平时一样去编写代码，也可以正常去引用资源。在它里面引用的资源，最终都会被 Parcel 打包到一起。</p>
+<p>我们这里先尝试在 index.html 中引入 main.js 脚本文件，具体代码如下：</p>
+<pre><code data-language="xml" class="lang-xml"><span class="hljs-comment">&lt;!-- ./src/index.html --&gt;</span>
+<span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"en"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Parcel Tutorials<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"main.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<p>紧接着，在 main.js 中按照 ES Modules 的方式导入 logger.js 中的成员，具体代码如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/main.js</span>
+<span class="hljs-keyword">import</span> &#123; log &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">'./logger'</span>
+log(<span class="hljs-string">'hello parcel'</span>)
+<span class="hljs-comment">// ./src/logger.js</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> log = <span class="hljs-function"><span class="hljs-params">msg</span> =&gt;</span> &#123;
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'---------- INFO ----------'</span>)
+  <span class="hljs-built_in">console</span>.log(msg)
+&#125;
+</code></pre>
+<p>Parcel 同样支持对 ES Modules 模块的打包。</p>
+<p>完成以后，我们打开命令行终端，然后使用 npx 去运行 node_modules 目录下的 parcel 命令。具体命令如下：</p>
+<pre><code data-language="shell" class="lang-shell"><span class="hljs-meta">$</span><span class="bash"> npx parcel src/index.html</span>
+</code></pre>
+<p>parcel 命令需要我们传入打包入口文件路径，那我们这里就应该是 src/index.html。</p>
+<p>此时如果执行这个命令，Parcel 就会根据这里传入的参数，先找到 index.html，然后在根据 HTML 中的 script 标签，找到 main.js，最后再顺着 import 语句找到 logger.js 模块，从而完成整体打包。</p>
+<p>回车执行过后，这里我们发现 Parcel 这个命令不仅仅帮我们打包了应用，而且还同时开启了一个开发服务器，这就跟 Webpack Dev Server 一样。</p>
+<p>我们打开这个地址，启动浏览器，然后打开开发人员工具。Parcel 同样支持自动刷新这样的功能。具体效果如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/15/BE/Ciqc1F7UozCAaPTaAAUS6rk6md0993.png" alt="image (3).png"></p>
+<p>以上就是 Parcel 的基本使用，相比于 Webpack，Parcel 在使用上的确简化了很多。</p>
+<h4>模块热替换</h4>
+<p>如果你需要的是模块热替换的体验，Parcel 中也可以支持。我们回到 main.js 文件中，这里同样需要使用 HMR 的 API。具体代码如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/main.js</span>
+<span class="hljs-keyword">import</span> &#123; log &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">'./logger'</span>
+log(<span class="hljs-string">'hello parcel'</span>)
+<span class="hljs-comment">// HMR API</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.hot) &#123;
+  <span class="hljs-built_in">module</span>.hot.accept(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'HMR～'</span>)
+  &#125;)
+&#125;
+</code></pre>
+<p>我们需要先判断一下 module.hot 对象是否存在，如果存在则证明当前环境可以使用 HMR 的 API，那我们就可以使用 module.hot.accept 方法去处理热替换。</p>
+<p>不过这里的 accept 方法与 Webpack 提供的 HMR 有点不太一样，Webpack 中的 accept 方法支持接收两个参数，用来处理指定的模块更新后的逻辑。</p>
+<p>而这里 Parcel 提供的 accept 只需要接收一个回调参数，作用就是当前模块更新或者所依赖的模块更新过后自动执行传入的回调函数，这相比于之前 Webpack 中的用法要简单很多。</p>
+<p>关于模块更新后的处理逻辑，这里我们就不再过多介绍了，你可以参考我们在 08 课时 Webpack HMR 中的介绍。</p>
+<h4>自动安装依赖</h4>
+<p>除了热替换，Parcel 还支持一个非常友好的功能：自动安装依赖。试想一下，你正在开发一个应用的过程中，突然需要使用某个第三方模块，那此时你就需要先停止正在运行的 Dev Server，然后再去安装这个模块，安装完成过后再重新启动 Dev Server。有了自动安装依赖的功能就不必如此麻烦了。</p>
+<p>我们回到 main.js 文件中，假设我们这里想要使用一下 jquery。虽然我们并没有安装这个模块，但是因为有了自动安装依赖功能，我们这里只管正常导入，正常使用就好了。具体效果如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/16/00/Ciqc1F7U03qAE1KxADTVBtOwcSs532.gif" alt="1.gif"></p>
+<p>在文件保存过后，Parcel 会自动去安装刚刚导入的模块包，极大程度地避免手动操作。</p>
+<h4>其他类型资源加载</h4>
+<p>除此以外，Parcel 同样支持加载其他类型的资源模块，而且相比于其他的打包器，在 Parcel 中加载其他类型的资源模块同样是零配置的。</p>
+<p>例如我们这里再来添加一个 style.css 的样式文件，并且在这个文件中添加一些简单的样式，具体如下：</p>
+<pre><code data-language="java" class="lang-java"> .
+ ├── src
+ │   ├── index.html
+ │   ├── logger.js
+ │   ├── main.js
++│   └── style.css
+ └── <span class="hljs-keyword">package</span>.json
+</code></pre>
+<p>然后回到 main.js 中通过 import 导入这个样式文件，具体如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/main.js</span>
+<span class="hljs-keyword">import</span> &#123; log &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">'./logger'</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">'./style.css'</span>
+log(<span class="hljs-string">'hello parcel'</span>)
+</code></pre>
+<p>保存过后，样式文件可以立即生效。效果如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/15/CA/CgqCHl7Uo1eAHNwFAAVD1HZtuN0096.png" alt="image (4).png"></p>
+<p>你会发现，导入样式的操作，整个过程我们并没有停下来做额外的事情。</p>
+<p>总之，Parcel 希望给开发者的体验就是想做什么，只管去做，其他额外的事情就交给工具来处理。</p>
+<h4>动态导入</h4>
+<p>另外，Parcel 同样支持直接使用动态导入，内部也会自动处理代码拆分，我们也一起来尝试一下。</p>
+<p>这里我们先将静态导入的 jQuery 注释掉。然后使用动态导入的方式导入 jQuery 模块。具体代码如下：</p>
+<pre><code data-language="javascript" class="lang-javascript"><span class="hljs-comment">// ./src/main.js</span>
+<span class="hljs-comment">// import $ from 'jquery'</span>
+<span class="hljs-keyword">import</span> &#123; log &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">'./logger'</span>
+log(<span class="hljs-string">'hello parcel'</span>)
+<span class="hljs-keyword">import</span>(<span class="hljs-string">'jquery'</span>).then(<span class="hljs-function"><span class="hljs-params">$</span> =&gt;</span> &#123;
+  $(<span class="hljs-built_in">document</span>.body).append(<span class="hljs-string">'&lt;h1&gt;Hello Parcel&lt;/h1&gt;'</span>)
+&#125;)
+</code></pre>
+<p>import 函数返回的就是一个 Promise 对象，在这个 Promise 对象 then 方法的回调中，我们就能够拿到导入的模块对象了，然后我们就可以把使用 jQuery 的代码移到这个回调函数中。</p>
+<p>保存过后，回到浏览器，找到开发人员工具的 Network 面板，这里就能够看到拆分出来的 jquery 所对应的 bundle 文件请求了。具体效果如下图：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/15/BE/Ciqc1F7Uo2WASIAhAAGVL6iiNuQ803.png" alt="image (5).png"></p>
+<p>那以上基本上就是 Parcel 最常用的一些特性了，使用上根本没有任何难度，从头到尾我们都只是执行了一个 Parcel 命令。</p>
+<h4>生产模式打包</h4>
+<p>接下来我们来看，Parcel 如何以生产模式打包。生产模式打包，具体命令如下：</p>
+<pre><code data-language="shell" class="lang-shell"><span class="hljs-meta">$</span><span class="bash"> npx parcel build src/index.html</span>
+</code></pre>
+<p>我们只需要执行 parcel build 然后跟上打包入口文件路径，就可以以生产模式运行打包了。</p>
+<p>这里补充一点，相同体量的项目打包，Parcel 的构建速度会比 Webpack 快很多。因为 Parcel&nbsp;内部使用的是多进程同时工作，充分发挥了多核 CPU 的性能。</p>
+<blockquote>
+<p>P.S. Webpack 中也可以使用一个叫作 <a target="_blank" rel="noopener" href="https://github.com/amireh/happypack">happypack</a> 的插件实现这一点。</p>
+</blockquote>
+<p>那我们这里再来看一下输出的打包结果，具体结果如下：</p>
+<p><img src="https://s0.lgstatic.com/i/image/M00/15/BE/Ciqc1F7Uo3GARoNnAABz_Av9vqc833.png" alt="image (6).png"></p>
+<p>此时，dist 目录下就都是本次打包的结果了。这里的输出文件也都会被压缩，而且样式代码也会被单独提取到单个文件中。</p>
+<p>那这就是 Parcel 的体验，整体体验下来就是一个感觉：舒服，因为它在使用上真的太简单了。</p>
+<h3>写在最后</h3>
+<p>Parcel 是 2017 年发布的，出现的原因是因为当时的 Webpack 使用过于烦琐，文档也不是很清晰明了，所以 Parcel 一经推出就迅速被推上风口浪尖。其核心特点就是：</p>
+<ul>
+<li>真正做到了完全零配置，对项目没有任何的侵入；</li>
+<li>自动安装依赖，开发过程更专注；</li>
+<li>构建速度更快，因为内部使用了多进程同时工作，能够充分发挥多核 CPU 的效率。</li>
+</ul>
+<p>但是目前看来，如果你去观察开发者的实际使用情况，绝大多数项目的打包还是会选择 Webpack。个人认为原因有两点：</p>
+<ol>
+<li>Webpack 生态更好，扩展更丰富，出现问题容易解决；</li>
+<li>随着这两年的发展，Webpack 越来越好用，开发者也越来越熟悉。</li>
+</ol>
+<p>所以，Parcel 这样的工具对于开发者而言，我们去了解它，也就是为了保持对新鲜技术和工具的敏感度，从而更好地把握技术趋势和走向，仅此而已。</p>
+
+<hr>
+<h3 id="精选评论"><a href="#精选评论" class="headerlink" title="精选评论"></a>精选评论</h3><h5 id="红："><a href="#红：" class="headerlink" title="**红："></a>**红：</h5><blockquote>
+<p>老师的课程讲的真好！</p>
+</blockquote>
+<h5 id="宇："><a href="#宇：" class="headerlink" title="**宇："></a>**宇：</h5><blockquote>
+<p>越简单就越不灵活，越灵活就越复杂</p>
+</blockquote>
+<h5 id="婷："><a href="#婷：" class="headerlink" title="**婷："></a>**婷：</h5><blockquote>
+<p>终于看到了最后~赞呀</p>
+</blockquote>
+<h5 id="4928："><a href="#4928：" class="headerlink" title="**4928："></a>**4928：</h5><blockquote>
+<p>parcel主要缺点还是不能自定义配置，用在一下小项目中还是不错的</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/02/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Parcel-%E9%9B%B6%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%88%90%E6%89%93%E5%8C%85%E4%BB%BB%E5%8A%A1%EF%BC%9F/" data-id="claxeer9z000xv8w1f1hs5b1o" data-title="如何使用 Parcel 零配置完成打包任务？" class="article-share-link">分享</a>
       
       
       
@@ -163,6 +2463,11 @@
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+  </nav>
 
 </section>
         
@@ -178,9 +2483,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a></li></ul>
     </div>
   </div>
 
@@ -188,16 +2493,28 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2022/10/25/my-first-blog/">我的第一篇文章</a>
+            <a href="/2022/11/26/%E4%B8%BA%E4%BB%80%E4%B9%88React16%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%EF%BC%88%E4%B8%8B%EF%BC%89/">为什么React16要更改组件的生命周期?（下）</a>
           </li>
         
           <li>
-            <a href="/2022/10/25/hello-world/">Hello World</a>
+            <a href="/2022/11/26/%E8%A6%81%E6%9B%B4%E6%94%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9F%EF%BC%88%E4%B8%8A%EF%BC%89/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/%E4%BB%A3%E7%A0%81%E8%BD%ACdom/">代码转dom</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/26/React%E7%9F%A5%E8%AF%86%E9%93%BE/">React知识链</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/02/%E6%8E%92%E5%BA%8F%E2%80%9C/">排序“</a>
           </li>
         
       </ul>
